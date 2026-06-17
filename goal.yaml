@@ -228,8 +228,8 @@ strategies:
     publish: twine upload dist/ifuri-{version}*
     publish_enabled: true
     dependencies:
-      file: requirements.txt
-      lock: pip freeze > requirements.txt
+      file: uv.lock
+      lock: uv lock --upgrade && uv sync
   nodejs:
     test: npm test
     build: npm run build
