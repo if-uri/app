@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import threading
 import tkinter as tk
+import webbrowser
 from tkinter import ttk
 from typing import Any, TYPE_CHECKING
 
-from .chat_channels import list_chat_channels, send_chat_message_routed
+from .chat_channels import fetch_chat_history, list_chat_channels, send_chat_message_routed
 from .storage import load_workspace, save_workspace
+from .url_params import voice_url
 
 if TYPE_CHECKING:
     from .gui import IfuriDesktop
@@ -82,12 +84,17 @@ class ChatTabMixin:
         self.chat_input = tk.Text(composer, height=3, wrap="word", font=("TkDefaultFont", 11))
         self.chat_input.grid(row=0, column=0, sticky="ew")
         self.chat_input.bind("<Control-Return>", lambda _e: (self._send_chat_message(), "break"))
+        self.chat_input.bind("<KeyRelease>", lambda _e: self._sync_chat_prompt_url())
 
         bar = ttk.Frame(composer)
         bar.grid(row=1, column=0, sticky="e", pady=(6, 0))
         self.chat_dry_run = tk.BooleanVar(value=False)
-        ttk.Checkbutton(bar, text="dry-run", variable=self.chat_dry_run).pack(side="left", padx=(0, 8))
+        ttk.Checkbutton(bar, text="dry-run", variable=self.chat_dry_run, command=self._sync_chat_prompt_url).pack(side="left", padx=(0, 8))
+        ttk.Button(bar, text="Web ↗", command=self._open_chat_in_browser).pack(side="left", padx=(0, 8))
         ttk.Button(bar, text="Wyślij", command=self._send_chat_message).pack(side="left")
+
+        self._chat_voice_url = tk.StringVar(value="")
+        ttk.Entry(composer, textvariable=self._chat_voice_url, state="readonly").grid(row=2, column=0, sticky="ew", pady=(6, 0))
 
         self.after(400, self._refresh_chat_channels)
 
@@ -98,6 +105,35 @@ class ChatTabMixin:
         ws = load_workspace()
         ep = (ws.get("urisys") or {}).get("endpoint")
         return str(ep).rstrip("/") if ep else None
+
+    def _runtime_base_url(self: IfuriDesktop) -> str:
+        if getattr(self, "runtime", None):
+            return self.runtime.url.rstrip("/")
+        port = int(self.port_var.get()) if hasattr(self, "port_var") else 8765
+        return f"http://127.0.0.1:{port}"
+
+    def _chat_prompt_text(self: IfuriDesktop) -> str:
+        return self.chat_input.get("1.0", tk.END).strip()
+
+    def _sync_chat_prompt_url(self: IfuriDesktop) -> None:
+        prompt = self._chat_prompt_text()
+        channel_id = self._chat_active.get("id") if self._chat_active else None
+        url = voice_url(
+            self._runtime_base_url(),
+            lang="pl",
+            theme="dark",
+            view="chat",
+            channel=channel_id,
+            prompt=prompt or None,
+            dry_run="1" if self.chat_dry_run.get() else None,
+        )
+        self._chat_voice_url.set(url)
+
+    def _open_chat_in_browser(self: IfuriDesktop) -> None:
+        self._sync_chat_prompt_url()
+        url = self._chat_voice_url.get()
+        if url:
+            webbrowser.open(url)
 
     def _refresh_chat_channels(self: IfuriDesktop) -> None:
         self.chat_scan_status.set("Skan LAN…")
@@ -155,7 +191,36 @@ class ChatTabMixin:
         if ch.get("type") == "urisys-node" and ch.get("endpoint"):
             self.workspace.setdefault("urisys", {})["endpoint"] = ch["endpoint"]
             save_workspace(self.workspace)
-        self._render_chat_thread()
+        self._load_chat_history_from_urisys(ch)
+        self._sync_chat_prompt_url()
+
+    def _load_chat_history_from_urisys(self: IfuriDesktop, ch: dict[str, Any]) -> None:
+        self.chat_log.configure(state="normal")
+        self.chat_log.delete("1.0", tk.END)
+        self.chat_log.insert(tk.END, "Ładowanie historii z urisys-node…\n")
+        self.chat_log.configure(state="disabled")
+
+        def worker() -> None:
+            try:
+                data = fetch_chat_history(
+                    str(ch.get("id") or ""),
+                    router_endpoint=self._router_endpoint(),
+                    channel=ch,
+                )
+                rows = [
+                    (str(m.get("role") or "assistant"), str(m.get("text") or ""))
+                    for m in (data.get("messages") or [])
+                ]
+            except Exception as exc:
+                rows = [("assistant", f"Historia niedostępna: {exc}")]
+            self.after(0, lambda: self._apply_chat_history(ch["id"], rows))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _apply_chat_history(self: IfuriDesktop, channel_id: str, rows: list[tuple[str, str]]) -> None:
+        self._chat_threads[channel_id] = rows[-100:]
+        if self._chat_active and self._chat_active.get("id") == channel_id:
+            self._render_chat_thread()
 
     def _render_chat_thread(self: IfuriDesktop) -> None:
         self.chat_log.configure(state="normal")
@@ -187,6 +252,7 @@ class ChatTabMixin:
         if not text:
             return
         self.chat_input.delete("1.0", tk.END)
+        self._sync_chat_prompt_url()
         channel = dict(self._chat_active)
         dry = self.chat_dry_run.get()
         router = self._router_endpoint()
@@ -205,12 +271,12 @@ class ChatTabMixin:
                 reply = result.get("text") or result.get("error") or str(result)
             except Exception as exc:
                 reply = f"Błąd: {exc}"
-            self.after(0, lambda: self._finish_chat_reply(reply))
+            self.after(0, lambda: self._finish_chat_reply(channel, reply))
 
         threading.Thread(target=worker, daemon=True).start()
 
-    def _finish_chat_reply(self: IfuriDesktop, reply: str) -> None:
-        if not self._chat_active:
+    def _finish_chat_reply(self: IfuriDesktop, channel: dict[str, Any], reply: str) -> None:
+        if not self._chat_active or self._chat_active.get("id") != channel.get("id"):
             return
         cid = self._chat_active["id"]
         thread = self._chat_threads.get(cid, [])
@@ -218,3 +284,4 @@ class ChatTabMixin:
             thread.pop()
         self._append_chat("assistant", reply)
         self.append_log(f"chat [{self._chat_active.get('title')}]: {reply[:120]}")
+        self._load_chat_history_from_urisys(self._chat_active)

@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 import time
 from pathlib import Path
 from typing import Any
 
 from .sample_data import default_workspace
+
+_workspace_lock = threading.Lock()
 
 
 def app_home() -> Path:
@@ -70,12 +73,19 @@ def normalize_workspace(data: dict[str, Any]) -> dict[str, Any]:
 
 def save_workspace(data: dict[str, Any]) -> Path:
     normalize_workspace(data)
-    ensure_home()
-    path = workspace_path()
-    tmp = path.with_suffix(".json.tmp")
-    with tmp.open("w", encoding="utf-8") as fh:
-        json.dump(data, fh, indent=2, ensure_ascii=False)
-    tmp.replace(path)
+    with _workspace_lock:
+        ensure_home()
+        path = workspace_path()
+        tmp = path.with_suffix(f".json.{os.getpid()}.{threading.get_ident()}.tmp")
+        try:
+            with tmp.open("w", encoding="utf-8") as fh:
+                json.dump(data, fh, indent=2, ensure_ascii=False)
+                fh.flush()
+                os.fsync(fh.fileno())
+            os.replace(tmp, path)
+        finally:
+            if tmp.exists():
+                tmp.unlink(missing_ok=True)
     return path
 
 

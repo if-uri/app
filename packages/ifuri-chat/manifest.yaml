@@ -1,0 +1,26 @@
+id: ifuri-chat-pack
+version: 1
+scheme: app
+description: Local chat history fallback (urisys-node /app/chat is preferred when available).
+
+uri_patterns:
+  - pattern: app://local/chat/query/messages
+    kind: query
+    operation: list_messages
+    query_type: app.v1.ChatMessagesQuery
+    result_type: app.v1.ChatMessagesResult
+    side_effects: false
+    approval: not_required
+
+  - pattern: app://local/chat/query/channels
+    kind: query
+    operation: list_channels
+    query_type: app.v1.ChatChannelsQuery
+    result_type: app.v1.ChatChannelsResult
+    side_effects: false
+    approval: not_required
+
+handlers:
+  python:
+    list_messages: python://handlers.messages:list_messages
+    list_channels: python://handlers.messages:list_channels

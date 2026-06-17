@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ifuri"
-version = "0.2.1"
+version = "0.2.2"
 description = "ifURI desktop app — voice UI, urisys-node client, and URI flow runner for urisys-examples."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -28,6 +28,7 @@ dependencies = []
 
 [project.optional-dependencies]
 flows = ["pyyaml>=6.0"]
+packs = ["uricore>=0.1.8", "pyyaml>=6.0"]
 build = ["pyinstaller>=6.0", "pyyaml>=6.0"]
 dev = [
   "pytest>=8.0",

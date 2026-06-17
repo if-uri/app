@@ -1,4 +1,3 @@
-const STORAGE_KEY = "ifuri_chat_messages_v1";
 const U = () => window.IfuriUrlState;
 const T = () => window.IfuriTheme;
 
@@ -13,7 +12,11 @@ const I18N = {
     send: "Wyślij",
     scan: "Skan LAN…",
     scanFail: "Skan nieudany",
+    viewChat: "Czat",
+    viewScreen: "Ekran",
     you: "Ty",
+    loadingHistory: "Ładowanie historii…",
+    historyFail: "Nie udało się wczytać historii z urisys-node",
     speechMissing: "Web Speech API niedostępne — wpisz tekst ręcznie.",
   },
   en: {
@@ -26,7 +29,11 @@ const I18N = {
     send: "Send",
     scan: "Scanning LAN…",
     scanFail: "Scan failed",
+    viewChat: "Chat",
+    viewScreen: "Screen",
     you: "You",
+    loadingHistory: "Loading history…",
+    historyFail: "Could not load history from urisys-node",
     speechMissing: "Web Speech API unavailable — type manually.",
   },
 };
@@ -39,6 +46,7 @@ const btnSend = document.getElementById("btnSend");
 const btnListen = document.getElementById("btnListen");
 const btnRefresh = document.getElementById("btnRefresh");
 const btnScreen = document.getElementById("btnScreen");
+const btnViewToggle = document.getElementById("btnViewToggle");
 const dryRunEl = document.getElementById("dryRun");
 const chatKindEl = document.getElementById("chatKind");
 const chatTitleEl = document.getElementById("chatTitle");
@@ -52,9 +60,11 @@ const themeSelect = document.getElementById("themeSelect");
 
 let channels = [];
 let activeChannel = null;
-let messages = loadMessages();
+let messages = {};
+let channelPreviews = {};
 let screenTimer = null;
 let lang = "pl";
+let autoSendPending = false;
 
 const GROUP_LABELS = {
   pl: { node: "urisys-node :8790", mcp: "MCP", a2a: "A2A / agent", llm: "LLM", ifuri: "ifURI peer" },
@@ -69,16 +79,18 @@ function syncUrl(params, { replace = false } = {}) {
   U()?.patch(params, { replace });
 }
 
-function loadMessages() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-  } catch {
-    return {};
-  }
+let promptSyncTimer = null;
+
+function syncPromptToUrl({ replace = true } = {}) {
+  const prompt = inputEl.value;
+  syncUrl({ prompt: prompt || null }, { replace });
 }
 
-function saveMessages() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+function applyPromptFromUrl() {
+  const prompt = U()?.get("prompt");
+  if (prompt !== undefined && document.activeElement !== inputEl) {
+    inputEl.value = prompt;
+  }
 }
 
 function esc(text) {
@@ -101,6 +113,43 @@ function routerEndpoint() {
   return node?.endpoint || localStorage.getItem("ifuri_node") || "";
 }
 
+async function loadChannelHistory(channel) {
+  if (!channel?.id) return;
+  messages[channel.id] = [];
+  renderMessages();
+  messagesEl.innerHTML = `<p class="empty-hint">${esc(t("loadingHistory"))}</p>`;
+  const ep = routerEndpoint();
+  const qs = new URLSearchParams({ channel_id: channel.id });
+  if (ep) qs.set("endpoint", ep);
+  try {
+    const data = await api(`/api/chat/history?${qs.toString()}`);
+    messages[channel.id] = (data.messages || []).map((m) => ({
+      role: m.role,
+      text: m.text,
+      meta: m.meta || null,
+      at: m.at,
+    }));
+    if (messages[channel.id].length) {
+      const last = messages[channel.id][messages[channel.id].length - 1];
+      channelPreviews[channel.id] = { text: last.text, at: last.at };
+    }
+  } catch {
+    messages[channel.id] = [];
+    messagesEl.innerHTML = `<p class="empty-hint">${esc(t("historyFail"))}</p>`;
+  }
+  renderMessages();
+  maybeAutoSendFromUrl();
+}
+
+function maybeAutoSendFromUrl() {
+  const prompt = (U()?.get("prompt") || "").trim();
+  if (!prompt || !activeChannel || autoSendPending) return;
+  if (U()?.get("action") !== "send") return;
+  autoSendPending = true;
+  inputEl.value = prompt;
+  sendMessage();
+}
+
 function applyUiLanguage() {
   inputEl.placeholder = t("placeholder");
   btnSend.textContent = t("send");
@@ -112,7 +161,13 @@ function applyViewFromUrl() {
   const showScreen = view === "screen";
   if (activeChannel?.type === "urisys-node") {
     screenPanel.hidden = !showScreen;
+    btnViewToggle.hidden = false;
+    btnScreen.hidden = false;
+    screenAutoWrap.hidden = false;
+    updateViewToggleLabel();
     if (showScreen) refreshScreen();
+  } else {
+    btnViewToggle.hidden = true;
   }
   const dry = U()?.get("dry_run", "0") === "1";
   dryRunEl.checked = dry;
@@ -121,12 +176,26 @@ function applyViewFromUrl() {
   setScreenAuto(auto, { replace: true });
 }
 
-function appendMessage(channelId, role, text, meta) {
+function updateViewToggleLabel() {
+  if (!btnViewToggle) return;
+  const onScreen = U()?.get("view", "chat") === "screen";
+  btnViewToggle.textContent = onScreen ? t("viewChat") : t("viewScreen");
+  btnViewToggle.setAttribute("aria-pressed", onScreen ? "true" : "false");
+}
+
+function toggleView() {
+  if (!activeChannel || activeChannel.type !== "urisys-node") return;
+  const next = U()?.get("view", "chat") === "screen" ? "chat" : "screen";
+  syncUrl({ view: next }, { replace: false });
+  applyViewFromUrl();
+}
+
+function appendMessage(channelId, role, text, meta, { render = true } = {}) {
   if (!messages[channelId]) messages[channelId] = [];
   messages[channelId].push({ role, text, meta: meta || null, at: new Date().toISOString() });
   if (messages[channelId].length > 200) messages[channelId] = messages[channelId].slice(-200);
-  saveMessages();
-  if (activeChannel?.id === channelId) renderMessages();
+  channelPreviews[channelId] = { text, at: new Date().toISOString() };
+  if (render && activeChannel?.id === channelId) renderMessages();
 }
 
 function renderMessages() {
@@ -165,23 +234,26 @@ function selectChannel(ch, { replace = false } = {}) {
 
   const isNode = ch.type === "urisys-node";
   btnScreen.hidden = !isNode;
+  btnViewToggle.hidden = !isNode;
   screenAutoWrap.hidden = !isNode;
   if (isNode) {
     localStorage.setItem("ifuri_node", ch.endpoint);
     applyViewFromUrl();
   } else {
     screenPanel.hidden = true;
+    syncUrl({ view: "chat" }, { replace: true });
   }
 
   document.querySelectorAll(".chat-item").forEach((el) => {
     el.classList.toggle("active", el.dataset.id === ch.id);
   });
-  renderMessages();
+  loadChannelHistory(ch);
 }
 
 function renderChannelList(data) {
   chatListEl.innerHTML = "";
   const groups = data.groups || {};
+  const historyIndex = data.history_index || {};
   const order = ["node", "mcp", "a2a", "llm", "ifuri"];
   const labels = GROUP_LABELS[lang] || GROUP_LABELS.pl;
 
@@ -196,12 +268,13 @@ function renderChannelList(data) {
       btn.type = "button";
       btn.className = "chat-item";
       btn.dataset.id = ch.id;
-      const preview = (messages[ch.id] || []).slice(-1)[0];
+      const hist = historyIndex[ch.id] || channelPreviews[ch.id];
+      const preview = hist?.preview || (messages[ch.id] || []).slice(-1)[0]?.text;
       btn.innerHTML = `
         <span class="chat-item-kind">${esc(ch.kind)}</span>
         <strong>${esc(ch.title)}</strong>
         <span class="chat-item-sub">${esc(ch.subtitle || "")}</span>
-        ${preview ? `<span class="chat-item-preview">${esc(preview.text.slice(0, 60))}</span>` : ""}`;
+        ${preview ? `<span class="chat-item-preview">${esc(String(preview).slice(0, 60))}</span>` : ""}`;
       btn.onclick = () => selectChannel(ch);
       section.appendChild(btn);
     }
@@ -223,8 +296,12 @@ async function refreshChannels() {
   scanStatus.textContent = t("scan");
   syncUrl({ action: "scan" }, { replace: false });
   try {
-    const data = await api("/api/chat/channels?timeout=1.8");
+    const ep = routerEndpoint();
+    const qs = ep ? `?timeout=1.8&endpoint=${encodeURIComponent(ep)}` : "?timeout=1.8";
+    const data = await api(`/api/chat/channels${qs}`);
     channels = data.channels || [];
+    const node = channels.find((c) => c.type === "urisys-node");
+    if (node?.endpoint) localStorage.setItem("ifuri_node", node.endpoint);
     const c = data.counts || {};
     scanStatus.textContent = `${c.urisys_nodes ?? 0} node · ${c.mcp_agent ?? 0} MCP/A2A · ${c.ifuri_peers ?? 0} peer`;
     renderChannelList(data);
@@ -237,14 +314,16 @@ async function refreshChannels() {
 async function sendMessage() {
   const text = inputEl.value.trim();
   if (!text || !activeChannel) return;
-  syncUrl({ action: "send" }, { replace: false });
+  syncUrl({ action: "send", prompt: text }, { replace: false });
   appendMessage(activeChannel.id, "user", text);
   inputEl.value = "";
+  syncUrl({ prompt: null }, { replace: true });
   appendMessage(activeChannel.id, "assistant", "…", { pending: true });
 
   const payload = {
     channel: activeChannel,
     text,
+    prompt: text,
     dry_run: dryRunEl.checked,
     router_endpoint: routerEndpoint(),
   };
@@ -254,6 +333,7 @@ async function sendMessage() {
     const data = await api("/api/chat/send", payload);
     messages[activeChannel.id].pop();
     appendMessage(activeChannel.id, "assistant", data.text || data.error || JSON.stringify(data, null, 2), data);
+    await loadChannelHistory(activeChannel);
   } catch (err) {
     messages[activeChannel.id].pop();
     appendMessage(activeChannel.id, "assistant", `Błąd: ${err}`, { error: true });
@@ -318,6 +398,7 @@ function groupChannels(list) {
 btnRefresh.onclick = refreshChannels;
 btnSend.onclick = sendMessage;
 btnScreen.onclick = refreshScreen;
+btnViewToggle.onclick = toggleView;
 screenAutoEl.addEventListener("change", () => setScreenAuto(screenAutoEl.checked));
 dryRunEl.addEventListener("change", () => syncUrl({ dry_run: dryRunEl.checked ? "1" : "0" }));
 
@@ -326,6 +407,11 @@ inputEl.addEventListener("keydown", (ev) => {
     ev.preventDefault();
     sendMessage();
   }
+});
+
+inputEl.addEventListener("input", () => {
+  clearTimeout(promptSyncTimer);
+  promptSyncTimer = setTimeout(() => syncPromptToUrl({ replace: true }), 150);
 });
 
 btnListen.onclick = () => {
@@ -338,12 +424,14 @@ btnListen.onclick = () => {
   rec.lang = lang === "en" ? "en-US" : "pl-PL";
   rec.onresult = (ev) => {
     inputEl.value = ev.results[0][0].transcript;
+    syncPromptToUrl({ replace: true });
   };
   rec.start();
 };
 
 U()?.onPopState(() => {
   initSettingsFromUrl();
+  applyPromptFromUrl();
   const cid = U()?.get("channel");
   if (cid && channels.length) {
     const ch = channels.find((c) => c.id === cid);
@@ -353,11 +441,13 @@ U()?.onPopState(() => {
 });
 
 initSettingsFromUrl();
+applyPromptFromUrl();
 U()?.patch(
   {
     lang: U().get("lang", "pl"),
     theme: U().get("theme", "dark"),
     view: U().get("view", "chat"),
+    prompt: U().get("prompt") || null,
   },
   { replace: true }
 );

@@ -1,0 +1,26 @@
+# systemd user unit — ifURI voice UI + runtime API
+#
+# Install:
+#   cp systemd/ifuri-voice-user.service ~/.config/systemd/user/ifuri-voice.service
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now ifuri-voice.service
+#   loginctl enable-linger "$USER"
+#
+# Edit URISYS_NODE_ENDPOINT in ~/.config/ifuri/voice.env
+
+[Unit]
+Description=ifURI voice runtime (/voice)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=IFURI_HOME=%h/.ifuri
+Environment=URISYS_NODE_ENDPOINT=http://127.0.0.1:8790
+EnvironmentFile=-%h/.config/ifuri/voice.env
+ExecStart=%h/venv/bin/ifuri-app voice --host 0.0.0.0 --port 8766 --no-auto-port
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

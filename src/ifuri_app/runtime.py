@@ -7,6 +7,7 @@ import mimetypes
 import socket
 import subprocess
 import threading
+import traceback
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from socketserver import ThreadingMixIn
@@ -16,7 +17,14 @@ from urllib.parse import parse_qs, urlparse
 from . import __version__
 from .flow_engine import dry_run_flow, dry_run_uri, expand_flow
 from .flow_runner import examples_root, run_flow_file
-from .chat_channels import list_chat_channels, send_chat_message_routed
+from .chat_channels import (
+    fetch_chat_channel_index,
+    fetch_chat_history,
+    list_chat_channels,
+    migrate_local_chat_to_urisys,
+    send_chat_message_routed,
+    urisys_chat_available,
+)
 from .network_scan import scan_network
 from .storage import add_event, load_workspace, save_workspace, now_iso
 from .remote_screen import capture_remote_screen, probe_remote_control
@@ -100,8 +108,10 @@ class RuntimeState:
 
     def load(self) -> dict[str, Any]:
         data = load_workspace()
-        data["node"]["port"] = self.port
-        save_workspace(data)
+        node = data.setdefault("node", {})
+        if node.get("port") != self.port:
+            node["port"] = self.port
+            save_workspace(data)
         return data
 
     def health(self) -> dict[str, Any]:
@@ -203,11 +213,34 @@ def make_handler(state: RuntimeState):
             self.wfile.write(body)
 
         def do_GET(self) -> None:
+            try:
+                self._do_GET_impl(head_only=False)
+            except Exception as exc:
+                traceback.print_exc()
+                self._send(500, {"ok": False, "error": str(exc), "type": type(exc).__name__})
+
+        def do_HEAD(self) -> None:
+            try:
+                self._do_GET_impl(head_only=True)
+            except Exception as exc:
+                traceback.print_exc()
+                self._send(500, {"ok": False, "error": str(exc), "type": type(exc).__name__})
+
+        def _do_GET_impl(self, *, head_only: bool = False) -> None:
             path = urlparse(self.path).path
             data = state.load()
             if path in {"/voice", "/"}:
+                if head_only:
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.end_headers()
+                    return
                 self._serve_file("index.html")
             elif path.startswith("/web/"):
+                if head_only:
+                    self.send_response(200)
+                    self.end_headers()
+                    return
                 self._serve_file(path[len("/web/") :])
             elif path in {"/health", "/api/health"}:
                 self._send(200, state.health())
@@ -227,7 +260,41 @@ def make_handler(state: RuntimeState):
                     timeout = float((qs.get("timeout") or ["1.5"])[0])
                 except ValueError:
                     timeout = 1.5
-                self._send(200, list_chat_channels(timeout=min(max(timeout, 0.5), 5.0)))
+                payload = list_chat_channels(timeout=min(max(timeout, 0.5), 5.0))
+                router = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+                if router or payload.get("channels"):
+                    hist = fetch_chat_channel_index(router_endpoint=router or None)
+                    if hist.get("ok"):
+                        by_id = {c["channel_id"]: c for c in hist.get("channels") or []}
+                        payload["history_index"] = by_id
+                        for ch in payload.get("channels") or []:
+                            preview = by_id.get(ch.get("id") or "")
+                            if preview:
+                                ch["last_message_at"] = preview.get("last_at")
+                                ch["preview"] = preview.get("preview")
+                self._send(200, payload)
+            elif path == "/api/chat/history":
+                qs = parse_qs(urlparse(self.path).query)
+                channel_id = (qs.get("channel_id") or qs.get("channel") or [""])[0]
+                if not channel_id:
+                    self._send(400, {"ok": False, "error": "missing channel_id"})
+                    return
+                try:
+                    limit = int((qs.get("limit") or ["200"])[0])
+                except ValueError:
+                    limit = 200
+                router = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+                self._send(
+                    200,
+                    fetch_chat_history(
+                        channel_id,
+                        router_endpoint=router or None,
+                        limit=min(max(limit, 1), 500),
+                    ),
+                )
+            elif path == "/api/chat/status":
+                router = (parse_qs(urlparse(self.path).query).get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+                self._send(200, urisys_chat_available(router_endpoint=router or None))
             elif path == "/api/network/scan":
                 qs = parse_qs(urlparse(self.path).query)
                 try:
@@ -260,6 +327,13 @@ def make_handler(state: RuntimeState):
                 self._send(404, {"ok": False, "error": "not_found", "path": path})
 
         def do_POST(self) -> None:
+            try:
+                self._do_POST_impl()
+            except Exception as exc:
+                traceback.print_exc()
+                self._send(500, {"ok": False, "error": str(exc), "type": type(exc).__name__})
+
+        def _do_POST_impl(self) -> None:
             path = urlparse(self.path).path
             body = self._read_json()
             if body.get("_error"):
@@ -340,7 +414,7 @@ def make_handler(state: RuntimeState):
                 self._send(200, probe_remote_control(UrisysNodeClient(ep or None), node_id=node_id))
             elif path == "/api/chat/send":
                 channel = body.get("channel") or {}
-                text = str(body.get("text") or "").strip()
+                text = str(body.get("text") or body.get("prompt") or "").strip()
                 router = str(body.get("router_endpoint") or body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
                 self._send(
                     200,
@@ -349,6 +423,16 @@ def make_handler(state: RuntimeState):
                         text,
                         router_endpoint=router or None,
                         dry_run=bool(body.get("dry_run", False)),
+                    ),
+                )
+            elif path == "/api/chat/migrate":
+                router = str(body.get("router_endpoint") or body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+                self._send(
+                    200,
+                    migrate_local_chat_to_urisys(
+                        router_endpoint=router or None,
+                        dry_run=bool(body.get("dry_run", False)),
+                        force=bool(body.get("force", False)),
                     ),
                 )
             elif path == "/api/chat/channels":

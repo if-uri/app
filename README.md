@@ -3,138 +3,116 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.2.1-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.10-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.0h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.2.2-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.62-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.8h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $0.0956 (1 commits)
-- 👤 **Human dev:** ~$200 (2.0h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $0.6192 (2 commits)
+- 👤 **Human dev:** ~$281 (2.8h @ $100/h, 30min dedup)
 
 Generated on 2026-06-17 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
 ---
 
-Desktop and browser-shell client for **[urisys](https://github.com/tellmesh/urisys)** — voice commands, flow execution, and LAN pairing.
+Desktop and browser-shell client for **[urisys](https://github.com/tellmesh/urisys)** — voice commands, multi-endpoint chat, flow execution, and LAN pairing.
 
-Published at [github.com/if-uri/app](https://github.com/if-uri/app).
+Published at [github.com/if-uri/app](https://github.com/if-uri/app) · [ifuri.com](https://ifuri.com)
 
 ## What it does
 
 **ifURI** (`ifuri-app`) lets users:
 
-- speak or type commands in a **browser UI** (`/voice`),
-- convert speech → text → **URI flows** from [urisys-examples](https://github.com/tellmesh/urisys-examples),
-- execute steps via **urisys-node** on local or remote hosts (`POST /uri/call`),
-- use **`stt://`** and **`tts://`** on the node for full voice loop,
-- run two instances on **two devices** and forward transcripts peer-to-peer.
+- chat with each **urisys-node :8790**, MCP, A2A, LLM and ifURI peer in **`/voice`**,
+- keep **URL state** (`lang`, `theme`, `view`, `channel`, `prompt`) in shareable links,
+- store chat history on **urisys-node** (`/app/chat/*`) or locally as fallback,
+- run **URI flows** from [urisys-examples](https://github.com/tellmesh/urisys-examples),
+- use the **Tkinter desktop** app (flows + LAN + czaty).
 
-The Tkinter desktop app (flow editor) and LAN discovery remain; v0.2 adds the urisys voice path.
-
-## Install
-
-Wheel **nie** nazywa się `ifuri_app-0.1.0` — pakiet PyPI to **`ifuri`**, aktualna wersja **0.2.0**.
+## Makefile (recommended)
 
 ```bash
 cd ~/github/if-uri/app
-python -m pip wheel -w dist .
-python -m pip install dist/ifuri-0.2.0-py3-none-any.whl
-ifuri-app --version    # → ifuri-app 0.2.0
+make help              # lista komend
+make install-dev       # editable + pytest
+make test              # pytest (unit + API)
+make run-voice         # http://127.0.0.1:8766/voice
+make run-gui           # desktop Tkinter
+make api-smoke         # curl health + chat endpoints
+make chat-status URISYS=http://192.168.188.201:8790
+make chat-migrate-dry URISYS=http://192.168.188.201:8790   # po upgrade node
 ```
 
-Z kodu (dev):
+Zmienne: `PORT=8766`, `URISYS=http://192.168.188.201:8790`, `PYTHON=python3`
+
+Tło:
 
 ```bash
-python -m pip install -e ".[flows]"
+make run-voice-bg URISYS=http://192.168.188.201:8790
+make health PORT=8766
+make stop
 ```
 
-Jeśli `ifuri-app: command not found` — ten sam interpreter co `pip`:
+## Install
+
+Pakiet PyPI: **`ifuri`** (aktualnie **0.2.3**).
 
 ```bash
-python -m ifuri_app voice
-python -m pip show ifuri   # ścieżka do bin/
+cd ~/github/if-uri/app
+make install-dev
+# lub: python -m pip install -e ".[flows]"
+ifuri-app --version
 ```
 
 ## Quick start
 
 ```bash
-# On the machine with urisys-node (e.g. lenovo slave)
-urisys node serve --host 0.0.0.0 --port 8790
+# Na maszynie z urisys-node (np. lenovo)
+urisys-node serve --host 0.0.0.0 --port 8790
 
-# On operator machine
-pip install -e ".[flows]"
-export URISYS_EXAMPLES_ROOT=~/github/tellmesh/urisys-examples
+# Operator
 export URISYS_NODE_ENDPOINT=http://192.168.188.201:8790
-
-ifuri-app voice --host 0.0.0.0 --port 8765
-# → http://localhost:8765/voice
+make run-voice URISYS=http://192.168.188.201:8790
+# → http://127.0.0.1:8766/voice?lang=pl&theme=dark
 ```
 
 ## CLI
 
 ```bash
-ifuri-app app                         # Tkinter desktop (flow editor)
-ifuri-app voice                       # HTTP runtime + voice UI
-ifuri-app serve --host 0.0.0.0        # runtime API only
-ifuri-app node-health                 # urisys-node /health
-ifuri-app node-call "kv://local/runtime/query/health"
+ifuri-app app                         # Tkinter desktop
+ifuri-app voice --prompt "health"     # voice UI + URL z prompt=
+ifuri-app chat-channels
+ifuri-app chat-send "status" --endpoint http://192.168.188.201:8790
+ifuri-app chat-status --endpoint http://192.168.188.201:8790
+ifuri-app chat-migrate --endpoint http://192.168.188.201:8790
 ifuri-app voice-plan "sprawdź health"
-ifuri-app voice-run "otwórz linkedin"
-ifuri-app flow-run lenovo-remote/01-health-probe.uri.flow.yaml --dry-run
-ifuri-app discover                    # LAN ifURI peers
+ifuri-app discover
 ```
-
-## Voice → flow
-
-| You say (PL/EN) | Flow |
-|-----------------|------|
-| health, status node | `lenovo-remote/01-health-probe.uri.flow.yaml` |
-| linkedin, post, kvm | `lenovo-remote/08-kvm-linkedin.uri.flow.yaml` |
-| playwright | `lenovo-remote/07-playwright-linkedin.uri.flow.yaml` |
-| other | `voice://command/from-text` on node |
-
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full diagram.
 
 ## Runtime API
 
+Pełna dokumentacja: **[docs/API.md](docs/API.md)** · diagram: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**
+
 | Method | Path | Purpose |
 |--------|------|---------|
-| GET | `/voice` | Browser voice UI |
+| GET | `/voice` | Browser chat UI |
 | GET | `/api/health` | ifURI + urisys health |
-| POST | `/api/voice/plan` | Text → flow plan |
-| POST | `/api/voice/run` | Full voice pipeline |
-| POST | `/api/urisys/call` | Proxy to node `/uri/call` |
-| POST | `/api/flow/run-file` | Run urisys-examples YAML |
-
-## Install wheel (users)
-
-```bash
-python -m pip install ifuri-0.2.0-py3-none-any.whl
-ifuri-app voice
-```
-
-## Native app (per platform)
-
-Build locally:
-
-```bash
-python scripts/build-platform.py    # → dist/ifuri-VERSION-{linux|macos|windows}-ARCH.tar.gz|zip
-python -m pip wheel -w dist .       # → dist/ifuri-VERSION-py3-none-any.whl
-```
-
-Local CD → GitHub Release:
-
-```bash
-./scripts/cd-github.sh              # test + wheel + native app → gh release vVERSION
-```
-
-CI builds **linux / windows / macos** on tag `v*` (`.github/workflows/build-release.yml`).
+| GET | `/api/chat/channels` | LAN endpoints as chats |
+| GET | `/api/chat/history?channel_id=` | Thread history |
+| POST | `/api/chat/send` | Send message (`text` or `prompt`) |
+| POST | `/api/voice/run` | Voice pipeline |
+| POST | `/api/urisys/call` | Proxy to node |
 
 ## Data
 
 ```text
-~/.ifuri/workspace.json
+~/.ifuri/workspace.json      # flows, services, urisys endpoint
+~/.ifuri/app-chat.jsonl      # chat fallback (gdy node bez /app/chat)
 ```
 
-Override: `IFURI_HOME=/path/to/dir`
+Override: `IFURI_HOME`, `IFURI_CHAT_STORE`
+
+## Backlog
+
+[TODO.md](TODO.md) · [CHANGELOG.md](CHANGELOG.md)
 
 ## License
 

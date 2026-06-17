@@ -1,0 +1,17 @@
+id: ifuri-voice-pack
+version: 1
+scheme: voice
+description: Local voice planning helpers (phrase → flow ref). Production TTS/STT stays on urisys-node.
+
+uri_patterns:
+  - pattern: voice://local/query/plan
+    kind: query
+    operation: plan
+    query_type: voice.v1.PlanQuery
+    result_type: voice.v1.PlanResult
+    side_effects: false
+    approval: not_required
+
+handlers:
+  python:
+    plan: python://handlers.plan:plan

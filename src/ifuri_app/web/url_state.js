@@ -47,7 +47,7 @@
   function withParams(href, extra) {
     const base = new URL(href, global.location.href);
     const cur = read();
-    for (const k of ["lang", "theme"]) {
+    for (const k of ["lang", "theme", "view", "channel", "prompt", "dry_run", "screen_auto"]) {
       if (cur[k] && !base.searchParams.has(k)) base.searchParams.set(k, cur[k]);
     }
     if (extra) {

@@ -2,77 +2,98 @@
 
 ifURI is a **desktop + browser-shell client** for the [urisys](https://github.com/tellmesh/urisys) ecosystem. It does not replace `urisys-node`; it talks to it over HTTP and runs flows from [urisys-examples](https://github.com/tellmesh/urisys-examples).
 
-Repo: [github.com/if-uri/app](https://github.com/if-uri/app)
+Repo: [github.com/if-uri/app](https://github.com/if-uri/app) · Site: [ifuri.com](https://ifuri.com)
 
 ## Roles on two devices
 
 ```text
  Device A (operator)                    Device B (slave / lenovo)
  ┌─────────────────────────┐           ┌─────────────────────────┐
- │ ifuri-app voice :8765   │           │ ifuri-app voice :8765   │
- │  Web Speech → text      │  LAN      │  Web Speech → text      │
- │  plan → flow            │◄─────────►│  plan → flow            │
+ │ ifuri-app voice :8766   │           │ urisys-node :8790       │
+ │  /voice chat UI         │  LAN      │  screen/kvm/him/shell   │
+ │  URL state + history    │◄─────────►│  stt:// tts:// voice:// │
  └───────────┬─────────────┘           └───────────┬─────────────┘
              │ POST /uri/call                      │
              ▼                                     ▼
  ┌─────────────────────────┐           ┌─────────────────────────┐
- │ urisys-node :8790       │           │ urisys-node :8790       │
- │ screen/kvm/him/shell/…  │           │ screen/kvm/him/shell/…  │
- │ stt:// tts:// voice://  │           │ stt:// tts:// voice://  │
+ │ urisys-node (optional)  │           │ app:// chat history *   │
  └─────────────────────────┘           └─────────────────────────┘
+  * /app/chat/* on node — fallback ~/.ifuri/app-chat.jsonl locally
 ```
 
 Each device can be **client** (ifURI) or **host** (urisys-node), or both on one machine.
 
-## Voice pipeline
+## Voice & chat pipeline
 
-1. **Browser** — Web Speech API (or manual text) → transcript.
-2. **ifURI** — `POST /api/voice/plan` maps phrases to `urisys-examples` flows (e.g. “linkedin” → `lenovo-remote/08-kvm-linkedin.uri.flow.yaml`).
-3. **Optional STT** — `stt://…/query/transcript` on node normalizes text ([uri2voice](https://github.com/tellmesh/uri2voice), [urisys-automation-lab](https://github.com/tellmesh/urisys-automation-lab)).
-4. **Execute** — each step of the flow → `POST /uri/call` on urisys-node (same as `lenovo_remote_session.py`).
-5. **Optional TTS** — `tts://…/command/speak` reads the summary back.
+1. **Browser** — Web Speech API (or manual text) → transcript; URL `prompt=` synced live.
+2. **ifURI** — `POST /api/voice/plan` maps phrases to `urisys-examples` flows.
+3. **Chat** — each endpoint (node, MCP, A2A, peer) is a channel; history from urisys `GET /app/chat/messages` or local JSONL.
+4. **Execute** — flow steps → `POST /uri/call` on urisys-node.
+5. **Optional TTS** — `tts://…/command/speak` on node.
 
-Fallback when no phrase matches: `voice://command/from-text` on the node (NL → compact flow).
+See [API.md](API.md) for all HTTP routes and URL parameters.
 
-## Packages
+## Packages (uricore / uri2flow / uricore-js)
 
 | Component | Repo | Role |
 |-----------|------|------|
-| ifURI app | `if-uri/app` | UI, planning, flow runner client |
-| urisys-node | `tellmesh/urisys-node` | URI server on host |
-| urisys-examples | `tellmesh/urisys-examples` | `*.uri.flow.yaml` suites |
-| uri2voice | `tellmesh/uri2voice` | `stt://`, `tts://`, `voice://` handlers |
+| **uricore** | tellmesh/uricore | Python URI control plane — local handlers in `packages/*/handlers/` |
+| **uricore-js** | tellmesh/uricore-js | Browser `page://` — `packages/ifuri-page/` |
+| **uri2flow** | tellmesh/uri2flow | Compile compact YAML → workflow graph (replace `flow_engine.py`) |
+| ifURI app | [if-uri/app](https://github.com/if-uri/app) | UI, planning, chat, flow client |
+| urisys-node | [tellmesh/urisys-node](https://github.com/tellmesh/urisys-node) | URI server on host |
+| urisys-examples | [tellmesh/urisys-examples](https://github.com/tellmesh/urisys-examples) | `*.uri.flow.yaml` suites |
+| ifuri.com | [if-uri/ifuri-com](https://github.com/if-uri/ifuri-com) | Product site + downloads |
+
+App-specific URI handlers live under [`packages/`](../packages/README.md). Loader: `ifuri_app.packs.loader`.
+
+## External packages (ecosystem)
 
 ## Environment
 
 | Variable | Default | Meaning |
 |----------|---------|---------|
 | `IFURI_HOME` | `~/.ifuri` | Workspace JSON |
+| `IFURI_CHAT_STORE` | `~/.ifuri/app-chat.jsonl` | Local chat fallback |
 | `URISYS_NODE_ENDPOINT` | `http://127.0.0.1:8790` | Target node |
 | `URISYS_EXAMPLES_ROOT` | `../tellmesh/urisys-examples` | Flow YAML root |
-| `IFURI_STT_URI` | `stt://local/session/main/query/transcript` | STT route on node |
-| `IFURI_TTS_URI` | `tts://local/session/main/command/speak` | TTS route on node |
 
-## Distribution
-
-Build wheel for download:
+## systemd (operator machine)
 
 ```bash
-python -m pip wheel -w dist .
+mkdir -p ~/.config/ifuri
+cp systemd/ifuri-voice.env.example ~/.config/ifuri/voice.env
+# edit URISYS_NODE_ENDPOINT
+cp systemd/ifuri-voice-user.service ~/.config/systemd/user/ifuri-voice.service
+systemctl --user daemon-reload && systemctl --user enable --now ifuri-voice.service
 ```
 
-Users install and run:
+urisys-node: see [tellmesh/urisys-node/systemd](https://github.com/tellmesh/urisys-node/tree/main/systemd).
+
+## Chat migration
+
+When lenovo runs urisys-node >= 0.1.15:
 
 ```bash
-pip install ifuri-0.2.0-py3-none-any.whl
-ifuri-app voice --host 0.0.0.0 --urisys-endpoint http://192.168.188.201:8790
-# open http://localhost:8765/voice
+make chat-status URISYS=http://192.168.188.201:8790
+make chat-migrate-dry URISYS=http://192.168.188.201:8790
+make chat-migrate URISYS=http://192.168.188.201:8790
+```
+
+## Development
+
+```bash
+make install-dev
+make test
+make run-voice URISYS=http://192.168.188.201:8790
+make run-gui
 ```
 
 ## Roadmap
 
-- [ ] Pack `stt`/`tts` on node via `install-pack` at first voice session
+See [TODO.md](../TODO.md).
+
+- [ ] Deploy `app://` chat routes on production urisys-node builds
 - [ ] `llm://` planner instead of keyword triggers
-- [ ] WebRTC peer channel for duplex voice between two ifURI instances
-- [ ] Tauri/Electron shell wrapping `/voice` for store builds
-- [ ] systemd user unit for `ifuri-app voice` + `urisys-node serve`
+- [ ] WebRTC peer channel for duplex voice
+- [ ] Tauri/Electron shell wrapping `/voice`

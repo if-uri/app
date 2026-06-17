@@ -22,3 +22,12 @@ def web_dir() -> Path:
 
 def assets_dir() -> Path:
     return app_package_dir() / "assets"
+
+
+def repo_root() -> Path:
+    """Repository root (parent of src/)."""
+    return app_package_dir().parent.parent
+
+
+def packages_dir() -> Path:
+    return repo_root() / "packages"

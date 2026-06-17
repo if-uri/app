@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import urllib.error
+import urllib.parse
 import urllib.request
 from typing import Any
 
@@ -74,6 +75,27 @@ class UrisysNodeClient:
             },
         }
         return self._post("/uri/call", body)
+
+    def app_chat_messages(self, channel_id: str, *, limit: int = 200) -> dict[str, Any]:
+        qs = urllib.parse.urlencode({"channel_id": channel_id, "limit": limit})
+        return self._get(f"/app/chat/messages?{qs}")
+
+    def app_chat_channels(self, *, limit: int = 100) -> dict[str, Any]:
+        qs = urllib.parse.urlencode({"limit": limit})
+        return self._get(f"/app/chat/channels?{qs}")
+
+    def app_chat_append(
+        self,
+        channel_id: str,
+        role: str,
+        text: str,
+        *,
+        meta: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        return self._post(
+            "/app/chat/messages",
+            {"channel_id": channel_id, "role": role, "text": text, "meta": meta or {}},
+        )
 
     def _get(self, path: str) -> dict[str, Any]:
         url = f"{self.endpoint}{path}"

@@ -1,0 +1,26 @@
+id: ifuri-bridge-pack
+version: 1
+scheme: app
+description: Bridge ifURI operator UI to urisys-node.
+
+uri_patterns:
+  - pattern: app://{target}/command/urisys_call
+    kind: command
+    operation: urisys_call
+    command_type: app.v1.UrisysCallCommand
+    success_event_type: app.v1.UrisysCallCompletedEvent
+    side_effects: true
+    approval: required
+
+  - pattern: app://{target}/query/health
+    kind: query
+    operation: node_health
+    query_type: app.v1.NodeHealthQuery
+    result_type: app.v1.NodeHealthResult
+    side_effects: false
+    approval: not_required
+
+handlers:
+  python:
+    urisys_call: python://handlers.urisys_call:urisys_call
+    node_health: python://handlers.urisys_call:node_health

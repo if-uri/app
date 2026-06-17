@@ -5,8 +5,9 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from .chat_store import LocalChatStore
 from .network_scan import scan_network
-from .urisys_client import UrisysNodeClient
+from .urisys_client import UrisysNodeClient, default_node_endpoint
 from .voice_pipeline import plan_voice_command, run_voice_command
 
 A2A_SCHEMES = frozenset({"agent", "a2a"})
@@ -113,6 +114,229 @@ def list_chat_channels(*, timeout: float = 1.5, scan_subnet: bool = True) -> dic
     }
 
 
+def resolve_data_endpoint(
+    *,
+    router_endpoint: str | None = None,
+    channel: dict[str, Any] | None = None,
+) -> str | None:
+    """urisys-node that stores app chat history for ifURI."""
+    if router_endpoint:
+        return router_endpoint.rstrip("/")
+    if channel and str(channel.get("type") or "") == "urisys-node":
+        ep = str(channel.get("endpoint") or "").strip()
+        if ep:
+            return ep.rstrip("/")
+    try:
+        from .storage import load_workspace
+
+        ep = (load_workspace().get("urisys") or {}).get("endpoint")
+        if ep:
+            return str(ep).rstrip("/")
+    except Exception:
+        pass
+    return default_node_endpoint().rstrip("/")
+
+
+def _urisys_chat_unavailable(data: dict[str, Any]) -> bool:
+    if data.get("ok"):
+        return False
+    err = str(data.get("error") or "").lower()
+    typ = str(data.get("type") or "").lower()
+    return "404" in err or "not found" in err or typ == "route_not_found"
+
+
+def _local_chat_store() -> LocalChatStore:
+    return LocalChatStore()
+
+
+def fetch_chat_history(
+    channel_id: str,
+    *,
+    router_endpoint: str | None = None,
+    channel: dict[str, Any] | None = None,
+    limit: int = 200,
+) -> dict[str, Any]:
+    ep = resolve_data_endpoint(router_endpoint=router_endpoint, channel=channel)
+    store = _local_chat_store()
+    if ep:
+        client = UrisysNodeClient(ep)
+        data = client.app_chat_messages(channel_id, limit=limit)
+        if data.get("ok"):
+            data.setdefault("endpoint", ep)
+            data["via"] = "urisys"
+            return data
+        if not _urisys_chat_unavailable(data):
+            uri_data = client.call_uri(
+                "app://local/chat/query/messages",
+                {"channel_id": channel_id, "limit": limit},
+                approved=True,
+                dry_run=False,
+            )
+            result = uri_data.get("result") if isinstance(uri_data.get("result"), dict) else uri_data
+            if isinstance(result, dict) and result.get("messages") is not None:
+                return {
+                    "ok": True,
+                    "endpoint": ep,
+                    "channel_id": channel_id,
+                    "messages": result.get("messages") or [],
+                    "count": len(result.get("messages") or []),
+                    "via": "urisys-uri",
+                }
+    messages = store.list_messages(channel_id, limit=limit)
+    return {
+        "ok": True,
+        "channel_id": channel_id,
+        "messages": messages,
+        "count": len(messages),
+        "via": "local",
+        "endpoint": ep,
+        "note": "urisys-node bez /app/chat — historia lokalna (~/.ifuri/app-chat.jsonl)",
+    }
+
+
+def fetch_chat_channel_index(
+    *,
+    router_endpoint: str | None = None,
+    limit: int = 100,
+) -> dict[str, Any]:
+    ep = resolve_data_endpoint(router_endpoint=router_endpoint)
+    store = _local_chat_store()
+    local_channels = store.list_channels(limit=limit)
+    if ep:
+        client = UrisysNodeClient(ep)
+        data = client.app_chat_channels(limit=limit)
+        if data.get("ok"):
+            data.setdefault("endpoint", ep)
+            data["via"] = "urisys"
+            return data
+    return {
+        "ok": True,
+        "channels": local_channels,
+        "count": len(local_channels),
+        "via": "local",
+        "endpoint": ep,
+    }
+
+
+def persist_chat_turn(
+    channel_id: str,
+    user_text: str,
+    assistant_text: str,
+    *,
+    router_endpoint: str | None = None,
+    channel: dict[str, Any] | None = None,
+    reply_meta: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    ep = resolve_data_endpoint(router_endpoint=router_endpoint, channel=channel)
+    store = _local_chat_store()
+    if ep:
+        client = UrisysNodeClient(ep)
+        user_row = client.app_chat_append(channel_id, "user", user_text)
+        asst_row = client.app_chat_append(
+            channel_id,
+            "assistant",
+            assistant_text,
+            meta=reply_meta or {},
+        )
+        if user_row.get("ok") and asst_row.get("ok"):
+            return {"ok": True, "endpoint": ep, "saved": 2, "via": "urisys"}
+        if not (_urisys_chat_unavailable(user_row) or _urisys_chat_unavailable(asst_row)):
+            uri_user = client.call_uri(
+                "app://local/chat/command/append",
+                {"channel_id": channel_id, "role": "user", "text": user_text},
+                approved=True,
+                dry_run=False,
+            )
+            uri_asst = client.call_uri(
+                "app://local/chat/command/append",
+                {
+                    "channel_id": channel_id,
+                    "role": "assistant",
+                    "text": assistant_text,
+                    "meta": reply_meta or {},
+                },
+                approved=True,
+                dry_run=False,
+            )
+            if uri_user.get("ok") and uri_asst.get("ok"):
+                return {"ok": True, "endpoint": ep, "saved": 2, "via": "urisys-uri"}
+    store.append(channel_id, "user", user_text)
+    store.append(channel_id, "assistant", assistant_text, meta=reply_meta or {})
+    return {"ok": True, "saved": 2, "via": "local", "endpoint": ep}
+
+
+def urisys_chat_available(*, router_endpoint: str | None = None) -> dict[str, Any]:
+    ep = resolve_data_endpoint(router_endpoint=router_endpoint)
+    if not ep:
+        return {"ok": False, "available": False, "error": "no urisys endpoint"}
+    client = UrisysNodeClient(ep)
+    probe = client.app_chat_messages("__ifuri_probe__", limit=1)
+    available = bool(probe.get("ok")) and not _urisys_chat_unavailable(probe)
+    return {"ok": True, "available": available, "endpoint": ep}
+
+
+def migrate_local_chat_to_urisys(
+    *,
+    router_endpoint: str | None = None,
+    dry_run: bool = False,
+    force: bool = False,
+) -> dict[str, Any]:
+    """Upload ~/.ifuri/app-chat.jsonl to urisys-node when /app/chat is available."""
+    check = urisys_chat_available(router_endpoint=router_endpoint)
+    if not check.get("available"):
+        return {
+            **check,
+            "ok": False,
+            "error": "urisys-node lacks /app/chat/* — upgrade to urisys-node >= 0.1.15",
+        }
+    ep = check["endpoint"]
+    client = UrisysNodeClient(ep)
+    store = _local_chat_store()
+    channels = store.list_channels()
+    uploaded = 0
+    skipped = 0
+    details: list[dict[str, Any]] = []
+
+    for ch in channels:
+        cid = str(ch.get("channel_id") or "")
+        if not cid:
+            continue
+        local_msgs = store.list_messages(cid, limit=500)
+        if not local_msgs:
+            continue
+        if not force:
+            remote = client.app_chat_messages(cid, limit=500)
+            if remote.get("ok") and (remote.get("messages") or []):
+                skipped += len(local_msgs)
+                details.append({"channel_id": cid, "action": "skip", "remote_count": len(remote.get("messages") or [])})
+                continue
+        count = 0
+        if not dry_run:
+            for msg in local_msgs:
+                client.app_chat_append(
+                    cid,
+                    str(msg.get("role") or "user"),
+                    str(msg.get("text") or ""),
+                    meta=msg.get("meta") if isinstance(msg.get("meta"), dict) else {},
+                )
+                count += 1
+        else:
+            count = len(local_msgs)
+        uploaded += count
+        details.append({"channel_id": cid, "action": "upload", "messages": count})
+
+    return {
+        "ok": True,
+        "endpoint": ep,
+        "dry_run": dry_run,
+        "force": force,
+        "channels": len(channels),
+        "messages_uploaded": uploaded,
+        "messages_skipped": skipped,
+        "details": details,
+    }
+
+
 def send_chat_message(
     channel: dict[str, Any],
     text: str,
@@ -196,6 +420,7 @@ def send_chat_message_routed(
     *,
     router_endpoint: str | None = None,
     dry_run: bool = False,
+    persist: bool = True,
 ) -> dict[str, Any]:
     """Send message; MCP/A2A/LLM routed through urisys-node when endpoint available."""
     ctype = str(channel.get("type") or channel.get("kind") or "")
@@ -212,7 +437,7 @@ def send_chat_message_routed(
         payload = _payload_for_scheme(ctype, text)
         client = UrisysNodeClient(router_endpoint)
         result = client.call_uri(uri, payload, approved=True, allow_real=not dry_run, dry_run=dry_run)
-        return {
+        out = {
             "ok": bool(result.get("ok", True)),
             "channel": channel,
             "user_text": text,
@@ -220,7 +445,22 @@ def send_chat_message_routed(
             "text": _format_json_reply(result),
             "router": router_endpoint,
         }
-    return send_chat_message(channel, text, dry_run=dry_run)
+    else:
+        out = send_chat_message(channel, text, dry_run=dry_run)
+
+    if persist and out.get("ok"):
+        channel_id = str(channel.get("id") or "")
+        assistant_text = str(out.get("text") or out.get("error") or "")
+        if channel_id and assistant_text:
+            out["history"] = persist_chat_turn(
+                channel_id,
+                text,
+                assistant_text,
+                router_endpoint=router_endpoint,
+                channel=channel,
+                reply_meta={"reply": out.get("reply")},
+            )
+    return out
 
 
 def _payload_for_scheme(kind: str, text: str) -> dict[str, Any]:

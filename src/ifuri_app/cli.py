@@ -14,8 +14,9 @@ from .flow_runner import run_flow_file
 from .gui import launch_gui
 from .runtime import PortInUseError, RuntimeServer, _port_available, find_free_port
 from .storage import load_workspace, save_workspace, workspace_path
-from .chat_channels import list_chat_channels, send_chat_message_routed
+from .chat_channels import list_chat_channels, migrate_local_chat_to_urisys, send_chat_message_routed, urisys_chat_available
 from .urisys_client import UrisysNodeClient
+from .url_params import voice_url
 from .voice_pipeline import plan_voice_command, run_voice_command
 
 
@@ -106,7 +107,7 @@ def cmd_voice(args) -> int:
     except PortInUseError as exc:
         print(str(exc), file=sys.stderr)
         return 1
-    print(f"ifURI voice UI: {server.url}/voice")
+    print(f"ifURI voice UI: {voice_url(server.url, lang=args.lang, theme=args.theme, view=args.view, channel=args.channel, prompt=args.prompt)}")
     print(f"urisys-node: {args.urisys_endpoint}")
     data = load_workspace()
     data.setdefault("urisys", {})["endpoint"] = args.urisys_endpoint
@@ -207,6 +208,10 @@ def cmd_chat_channels(args) -> int:
 
 
 def cmd_chat_send(args) -> int:
+    text = (args.prompt or args.text or "").strip()
+    if not text:
+        print_json({"ok": False, "error": "missing text — pass message or --prompt"})
+        return 1
     data = list_chat_channels(timeout=min(args.timeout, 2.0), scan_subnet=not args.no_scan)
     channels = data.get("channels") or []
     match = None
@@ -221,12 +226,27 @@ def cmd_chat_send(args) -> int:
         return 1
     result = send_chat_message_routed(
         match,
-        args.text,
+        text,
         router_endpoint=args.router or args.endpoint,
         dry_run=args.dry_run,
     )
     print_json(result)
     return 0 if result.get("ok", True) and not result.get("error") else 1
+
+
+def cmd_chat_migrate(args) -> int:
+    result = migrate_local_chat_to_urisys(
+        router_endpoint=args.endpoint,
+        dry_run=args.dry_run,
+        force=args.force,
+    )
+    print_json(result)
+    return 0 if result.get("ok") else 1
+
+
+def cmd_chat_status(args) -> int:
+    print_json(urisys_chat_available(router_endpoint=args.endpoint))
+    return 0
 
 
 def cmd_run(args) -> int:
@@ -277,6 +297,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_voice.add_argument("--auto-port", action="store_true", default=True, help="pick next free port if --port is busy (default: on)")
     p_voice.add_argument("--no-auto-port", dest="auto_port", action="store_false")
     p_voice.add_argument("--urisys-endpoint", default=UrisysNodeClient().endpoint)
+    p_voice.add_argument("--lang", default=None, help="URL param lang=pl|en")
+    p_voice.add_argument("--theme", default=None, help="URL param theme=dark|light|ifuri")
+    p_voice.add_argument("--view", default=None, help="URL param view=chat|screen")
+    p_voice.add_argument("--channel", default=None, help="URL param channel=<id>")
+    p_voice.add_argument("--prompt", default=None, help="URL param prompt=<message>")
     p_voice.add_argument("--no-discovery", dest="discovery", action="store_false")
     p_voice.set_defaults(func=cmd_voice, discovery=True)
 
@@ -327,7 +352,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_cc.set_defaults(func=cmd_chat_channels)
 
     p_cs = sub.add_parser("chat-send", help="send message to a chat channel")
-    p_cs.add_argument("text")
+    p_cs.add_argument("text", nargs="?", default=None)
+    p_cs.add_argument("--prompt", help="message text (alias for positional text)")
     p_cs.add_argument("--channel-id", help="channel id from chat-channels")
     p_cs.add_argument("--endpoint", help="urisys-node endpoint channel")
     p_cs.add_argument("--uri", help="MCP/A2A/LLM uri channel")
@@ -336,6 +362,16 @@ def build_parser() -> argparse.ArgumentParser:
     p_cs.add_argument("--no-scan", action="store_true")
     p_cs.add_argument("--dry-run", action="store_true")
     p_cs.set_defaults(func=cmd_chat_send)
+
+    p_cm = sub.add_parser("chat-migrate", help="upload local ~/.ifuri/app-chat.jsonl to urisys-node /app/chat")
+    p_cm.add_argument("--endpoint", default=UrisysNodeClient().endpoint, help="urisys-node with /app/chat/*")
+    p_cm.add_argument("--dry-run", action="store_true")
+    p_cm.add_argument("--force", action="store_true", help="upload even when remote channel has messages")
+    p_cm.set_defaults(func=cmd_chat_migrate)
+
+    p_cst = sub.add_parser("chat-status", help="check if urisys-node exposes /app/chat/*")
+    p_cst.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_cst.set_defaults(func=cmd_chat_status)
 
     p_disc = sub.add_parser("discover", help="discover ifuri:// apps in local network")
     p_disc.add_argument("--timeout", type=float, default=1.2)

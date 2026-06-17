@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import sys
 import tkinter as tk
+import webbrowser
 from tkinter import messagebox, simpledialog, ttk
 from typing import Any
 
@@ -13,6 +14,7 @@ from .network_scan import scan_network
 from .runtime import PortInUseError, RuntimeServer
 from .storage import add_event, load_workspace, save_workspace, workspace_path
 from .gui_chat import ChatTabMixin
+from .url_params import voice_url
 
 
 class IfuriDesktop(ChatTabMixin, tk.Tk):
@@ -29,7 +31,6 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         self._build_style()
         self._build_ui()
         self._load_groups()
-        self.after(300, self._refresh_chat_channels)
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
     def _build_style(self) -> None:
@@ -135,6 +136,7 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         ttk.Entry(top, textvariable=self.port_var, width=8).pack(side="left", padx=8)
         ttk.Button(top, text="Start runtime", command=self.start_runtime).pack(side="left")
         ttk.Button(top, text="Stop", command=self.stop_runtime).pack(side="left", padx=6)
+        ttk.Button(top, text="Otwórz /voice", command=self.open_voice_ui).pack(side="left", padx=6)
         ttk.Button(top, text="Skanuj LAN", command=self.discover_peers).pack(side="left")
         self.runtime_status = tk.StringVar(value="Runtime stopped")
         self.scan_status = tk.StringVar(value="")
@@ -302,8 +304,27 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
             self.runtime = None
             messagebox.showerror("Runtime error", str(exc))
             return
-        self.runtime_status.set(f"Runtime running: http://127.0.0.1:{port} · discovery UDP enabled")
+        self.runtime_status.set(f"Runtime running: http://127.0.0.1:{port}/voice · discovery UDP enabled")
+        self.workspace.setdefault("node", {})["port"] = port
+        save_workspace(self.workspace)
+        if hasattr(self, "_sync_chat_prompt_url"):
+            self._sync_chat_prompt_url()
         self.append_log(f"Runtime started on port {port}")
+
+    def open_voice_ui(self) -> None:
+        port = int(self.port_var.get())
+        base = self.runtime.url if self.runtime else f"http://127.0.0.1:{port}"
+        prompt = self._chat_prompt_text() if hasattr(self, "_chat_prompt_text") else ""
+        url = voice_url(
+            base,
+            view="chat",
+            channel=(self._chat_active or {}).get("id"),
+            prompt=prompt or None,
+            lang="pl",
+            theme="dark",
+        )
+        webbrowser.open(url)
+        self.append_log(f"Opened {url}")
 
     def stop_runtime(self) -> None:
         if self.discovery_responder:

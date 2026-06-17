@@ -148,10 +148,13 @@ def scan_urisys_nodes(
     with ThreadPoolExecutor(max_workers=48) as pool:
         futures = {pool.submit(probe_urisys_node, h, port, timeout=per_host_timeout): h for h in hosts}
         deadline = timeout
-        for fut in as_completed(futures, timeout=deadline):
-            hit = fut.result()
-            if hit:
-                found[hit["endpoint"]] = hit
+        try:
+            for fut in as_completed(futures, timeout=deadline):
+                hit = fut.result()
+                if hit:
+                    found[hit["endpoint"]] = hit
+        except TimeoutError:
+            pass
     return list(found.values())
 
 
