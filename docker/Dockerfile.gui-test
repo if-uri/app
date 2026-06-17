@@ -1,0 +1,29 @@
+# ifURI desktop GUI smoke test — Tkinter + Xvfb on multiple Linux bases.
+# Build: docker build -f docker/Dockerfile.gui-test --build-arg BASE_IMAGE=ubuntu:22.04 .
+ARG BASE_IMAGE=debian:bookworm-slim
+FROM ${BASE_IMAGE}
+
+ENV PYTHONUNBUFFERED=1 \
+    DISPLAY=:99 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+COPY docker/install-gui-deps.sh /tmp/install-gui-deps.sh
+RUN chmod +x /tmp/install-gui-deps.sh && /tmp/install-gui-deps.sh
+
+WORKDIR /app
+COPY pyproject.toml README.md /app/
+COPY src /app/src
+COPY scripts/gui_smoke.py /app/scripts/gui_smoke.py
+COPY docker/entrypoint-gui-test.sh /usr/local/bin/ifuri-gui-test-entrypoint
+
+RUN python3 -m venv /opt/ifuri-venv \
+    && /opt/ifuri-venv/bin/pip install -U pip \
+    && /opt/ifuri-venv/bin/pip install -e "/app[flows]" \
+    && /opt/ifuri-venv/bin/python -c "import tkinter" \
+    && /opt/ifuri-venv/bin/ifuri-app --help >/dev/null
+
+ENV PATH="/opt/ifuri-venv/bin:${PATH}"
+
+RUN chmod +x /usr/local/bin/ifuri-gui-test-entrypoint
+
+ENTRYPOINT ["/usr/local/bin/ifuri-gui-test-entrypoint"]

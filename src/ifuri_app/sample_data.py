@@ -28,6 +28,11 @@ DEFAULT_WORKSPACE = {
         "port": 8765,
         "public": False,
     },
+    "urisys": {
+        "endpoint": "http://127.0.0.1:8790",
+        "role": "client",
+        "examples_root": "",
+    },
     "groups": [
         {
             "id": "dev-ops",

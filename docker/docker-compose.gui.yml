@@ -1,0 +1,44 @@
+# Multi-distro headless GUI smoke tests for ifURI desktop (Tkinter + Xvfb).
+#
+#   bash scripts/test-gui-docker.sh
+#   URISYS_ENDPOINT=http://host.docker.internal:8790 bash scripts/test-gui-docker.sh
+#
+services:
+  ifuri-gui-debian:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.gui-test
+      args:
+        BASE_IMAGE: debian:bookworm-slim
+    image: ifuri-gui-test:debian
+    environment:
+      DISPLAY: ":99"
+      URISYS_ENDPOINT: ${URISYS_ENDPOINT:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  ifuri-gui-ubuntu:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.gui-test
+      args:
+        BASE_IMAGE: ubuntu:22.04
+    image: ifuri-gui-test:ubuntu
+    environment:
+      DISPLAY: ":99"
+      URISYS_ENDPOINT: ${URISYS_ENDPOINT:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  ifuri-gui-fedora:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.gui-test
+      args:
+        BASE_IMAGE: fedora:40
+    image: ifuri-gui-test:fedora
+    environment:
+      DISPLAY: ":99"
+      URISYS_ENDPOINT: ${URISYS_ENDPOINT:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

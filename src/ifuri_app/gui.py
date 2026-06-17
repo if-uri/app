@@ -9,11 +9,13 @@ from typing import Any
 from . import DEFAULT_PORT
 from .discovery import DiscoveryResponder, discover
 from .flow_engine import as_pretty_json, dry_run_flow
-from .runtime import RuntimeServer
+from .network_scan import scan_network
+from .runtime import PortInUseError, RuntimeServer
 from .storage import add_event, load_workspace, save_workspace, workspace_path
+from .gui_chat import ChatTabMixin
 
 
-class IfuriDesktop(tk.Tk):
+class IfuriDesktop(ChatTabMixin, tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("ifURI — URI Flow Runtime")
@@ -27,6 +29,7 @@ class IfuriDesktop(tk.Tk):
         self._build_style()
         self._build_ui()
         self._load_groups()
+        self.after(300, self._refresh_chat_channels)
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
     def _build_style(self) -> None:
@@ -48,9 +51,10 @@ class IfuriDesktop(tk.Tk):
 
         self.notebook = ttk.Notebook(self)
         self.notebook.pack(fill="both", expand=True, padx=12, pady=(0, 12))
+        self._build_chat_tab()
+        self._build_network_tab()
         self._build_flows_tab()
         self._build_services_tab()
-        self._build_network_tab()
         self._build_events_tab()
 
     def _build_flows_tab(self) -> None:
@@ -121,9 +125,9 @@ class IfuriDesktop(tk.Tk):
 
     def _build_network_tab(self) -> None:
         tab = ttk.Frame(self.notebook, padding=10)
-        self.notebook.add(tab, text="ifuri:// network")
+        self.notebook.add(tab, text="Sieć lokalna")
         tab.columnconfigure(0, weight=1)
-        tab.rowconfigure(2, weight=1)
+        tab.rowconfigure(4, weight=1)
         self.port_var = tk.IntVar(value=int(self.workspace.get("node", {}).get("port", DEFAULT_PORT)))
         top = ttk.Frame(tab)
         top.grid(row=0, column=0, sticky="ew")
@@ -131,15 +135,36 @@ class IfuriDesktop(tk.Tk):
         ttk.Entry(top, textvariable=self.port_var, width=8).pack(side="left", padx=8)
         ttk.Button(top, text="Start runtime", command=self.start_runtime).pack(side="left")
         ttk.Button(top, text="Stop", command=self.stop_runtime).pack(side="left", padx=6)
-        ttk.Button(top, text="Discover peers", command=self.discover_peers).pack(side="left")
+        ttk.Button(top, text="Skanuj LAN", command=self.discover_peers).pack(side="left")
         self.runtime_status = tk.StringVar(value="Runtime stopped")
-        ttk.Label(tab, textvariable=self.runtime_status).grid(row=1, column=0, sticky="w", pady=8)
-        cols = ("name", "address", "api_port", "schemes", "services")
-        self.peer_tree = ttk.Treeview(tab, columns=cols, show="headings")
-        for col in cols:
+        self.scan_status = tk.StringVar(value="")
+        ttk.Label(tab, textvariable=self.runtime_status).grid(row=1, column=0, sticky="w", pady=(8, 0))
+        ttk.Label(tab, textvariable=self.scan_status).grid(row=2, column=0, sticky="w")
+
+        ttk.Label(tab, text="Urządzenia (ifURI / urisys-node)").grid(row=3, column=0, sticky="w", pady=(8, 0))
+        dev_cols = ("kind", "name", "endpoint", "detail")
+        self.device_tree = ttk.Treeview(tab, columns=dev_cols, show="headings", height=6)
+        for col, w in zip(dev_cols, (90, 140, 220, 160)):
+            self.device_tree.heading(col, text=col)
+            self.device_tree.column(col, width=w)
+        self.device_tree.grid(row=4, column=0, sticky="nsew", pady=4)
+        self.device_tree.bind("<<TreeviewSelect>>", self._on_device_select)
+
+        ttk.Label(tab, text="MCP · agent · LLM").grid(row=5, column=0, sticky="w", pady=(8, 0))
+        svc_cols = ("scheme", "name", "uri", "source")
+        self.lan_services_tree = ttk.Treeview(tab, columns=svc_cols, show="headings", height=5)
+        for col in svc_cols:
+            self.lan_services_tree.heading(col, text=col)
+            self.lan_services_tree.column(col, width=150)
+        self.lan_services_tree.grid(row=6, column=0, sticky="nsew", pady=4)
+
+        peer_cols = ("name", "address", "api_port", "schemes")
+        self.peer_tree = ttk.Treeview(tab, columns=peer_cols, show="headings", height=4)
+        for col in peer_cols:
             self.peer_tree.heading(col, text=col)
-            self.peer_tree.column(col, width=160)
-        self.peer_tree.grid(row=2, column=0, sticky="nsew")
+            self.peer_tree.column(col, width=140)
+        self.peer_tree.grid(row=7, column=0, sticky="nsew", pady=4)
+        self._last_scan: dict[str, Any] = {}
         self._refresh_peers()
 
     def _build_events_tab(self) -> None:
@@ -240,7 +265,7 @@ class IfuriDesktop(tk.Tk):
         add_event(self.workspace, "flow.dry_run", steps=len(result.get("steps", [])))
         save_workspace(self.workspace)
         self.append_log(as_pretty_json(result))
-        self.notebook.select(3)
+        self.notebook.select(self.notebook.index(self.notebook.tabs()[-1]))
 
     def _refresh_services(self) -> None:
         if not hasattr(self, "services_tree"):
@@ -269,6 +294,10 @@ class IfuriDesktop(tk.Tk):
         try:
             self.runtime = RuntimeServer("0.0.0.0", port).start()
             self.discovery_responder = DiscoveryResponder(api_port=port).start()
+        except PortInUseError as exc:
+            self.runtime = None
+            messagebox.showerror("Runtime error", str(exc))
+            return
         except OSError as exc:
             self.runtime = None
             messagebox.showerror("Runtime error", str(exc))
@@ -287,17 +316,75 @@ class IfuriDesktop(tk.Tk):
         self.append_log("Runtime stopped")
 
     def discover_peers(self) -> None:
-        peers = discover(api_port=int(self.port_var.get()))
+        self.scan_status.set("Skanowanie LAN…")
+        self.update_idletasks()
+        result = scan_network(timeout=1.5, scan_subnet=True)
+        self._last_scan = result
         self.workspace = load_workspace()
+        counts = result.get("counts") or {}
+        self.scan_status.set(
+            f"ifURI: {counts.get('ifuri_peers', 0)} · urisys-node: {counts.get('urisys_nodes', 0)} · MCP/agent: {counts.get('mcp_agent', 0)}"
+        )
+        self._refresh_network_views(result)
+        self.append_log(as_pretty_json({"scan": counts}))
+
+    def _refresh_network_views(self, scan: dict[str, Any] | None = None) -> None:
+        scan = scan or self._last_scan
+        if hasattr(self, "device_tree"):
+            self.device_tree.delete(*self.device_tree.get_children())
+            for node in scan.get("urisys_nodes") or []:
+                self.device_tree.insert(
+                    "",
+                    tk.END,
+                    values=(
+                        "urisys-node",
+                        node.get("node_id") or node.get("host"),
+                        node.get("endpoint"),
+                        f"routes={node.get('routes_count', '?')}",
+                    ),
+                )
+            for peer in scan.get("ifuri_peers") or []:
+                url = peer.get("api_url") or f"http://{peer.get('address')}:{peer.get('api_port', 8765)}"
+                self.device_tree.insert(
+                    "",
+                    tk.END,
+                    values=("ifuri", peer.get("name") or peer.get("id"), url, ",".join(peer.get("schemes") or [])),
+                )
+        if hasattr(self, "lan_services_tree"):
+            self.lan_services_tree.delete(*self.lan_services_tree.get_children())
+            for svc in (scan.get("mcp_agent_services") or []) + (scan.get("llm_services") or []):
+                self.lan_services_tree.insert(
+                    "",
+                    tk.END,
+                    values=(svc.get("scheme"), svc.get("name"), svc.get("uri"), svc.get("source")),
+                )
         self._refresh_peers()
-        self.append_log(f"Discovered {len(peers)} peer(s)")
+
+    def _on_device_select(self, _event=None) -> None:
+        sel = self.device_tree.selection()
+        if not sel:
+            return
+        vals = self.device_tree.item(sel[0], "values")
+        if len(vals) >= 3 and vals[0] == "urisys-node":
+            self.workspace.setdefault("urisys", {})["endpoint"] = vals[2]
+            save_workspace(self.workspace)
 
     def _refresh_peers(self) -> None:
         if not hasattr(self, "peer_tree"):
             return
         self.peer_tree.delete(*self.peer_tree.get_children())
-        for peer in self.workspace.get("peers", []):
-            self.peer_tree.insert("", tk.END, values=(peer.get("name"), peer.get("address"), peer.get("api_port"), ", ".join(peer.get("schemes", [])), len(peer.get("services", []))))
+        peers = (self._last_scan.get("ifuri_peers") if self._last_scan else None) or self.workspace.get("peers", [])
+        for peer in peers:
+            self.peer_tree.insert(
+                "",
+                tk.END,
+                values=(
+                    peer.get("name"),
+                    peer.get("address"),
+                    peer.get("api_port"),
+                    ", ".join(peer.get("schemes", [])),
+                ),
+            )
 
     def refresh_log(self) -> None:
         self.workspace = load_workspace()

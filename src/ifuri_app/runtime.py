@@ -1,15 +1,92 @@
 from __future__ import annotations
 
+import errno
+import base64
 import json
+import mimetypes
+import socket
+import subprocess
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from pathlib import Path
 from socketserver import ThreadingMixIn
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 from . import __version__
 from .flow_engine import dry_run_flow, dry_run_uri, expand_flow
+from .flow_runner import examples_root, run_flow_file
+from .chat_channels import list_chat_channels, send_chat_message_routed
+from .network_scan import scan_network
 from .storage import add_event, load_workspace, save_workspace, now_iso
+from .remote_screen import capture_remote_screen, probe_remote_control
+from .paths import web_dir
+from .urisys_client import UrisysNodeClient
+from .voice_pipeline import plan_voice_command, run_voice_command
+
+WEB_DIR = web_dir()
+
+
+class PortInUseError(OSError):
+    """HTTP bind failed because the port is already taken."""
+
+
+def _port_listeners(port: int) -> list[str]:
+    try:
+        out = subprocess.check_output(
+            ["ss", "-tlnp"],
+            stderr=subprocess.DEVNULL,
+            text=True,
+            timeout=1.0,
+        )
+    except (FileNotFoundError, subprocess.SubprocessError):
+        return []
+    hits: list[str] = []
+    needle = f":{port}"
+    for line in out.splitlines():
+        if needle not in line:
+            continue
+        hits.append(line.strip())
+    return hits
+
+
+def format_port_in_use_error(host: str, port: int) -> str:
+    listeners = _port_listeners(port)
+    lines = [
+        f"Port {port} on {host} is already in use.",
+        "Another ifURI instance may already be running — open the existing UI or stop it first.",
+        f"Try: ifuri-app voice --port {port + 1}",
+    ]
+    if listeners:
+        lines.append("Listeners:")
+        lines.extend(f"  {row}" for row in listeners[:4])
+    return "\n".join(lines)
+
+
+def _port_available(host: str, port: int) -> bool:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            sock.bind((host, port))
+            return True
+        except OSError:
+            return False
+
+
+def find_free_port(host: str, start: int, *, attempts: int = 10) -> int:
+    for port in range(start, start + attempts):
+        if _port_available(host, port):
+            return port
+    raise PortInUseError(format_port_in_use_error(host, start))
+
+
+def bind_runtime_server(host: str, port: int, handler) -> ThreadingHTTPServer:
+    try:
+        return ThreadingHTTPServer((host, port), handler)
+    except OSError as exc:
+        if exc.errno in {errno.EADDRINUSE, getattr(errno, "WSAEADDRINUSE", errno.EADDRINUSE)}:
+            raise PortInUseError(format_port_in_use_error(host, port)) from exc
+        raise
 
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
@@ -29,11 +106,15 @@ class RuntimeState:
 
     def health(self) -> dict[str, Any]:
         data = self.load()
+        node_ep = data.get("urisys", {}).get("endpoint") or UrisysNodeClient().endpoint
+        urisys = UrisysNodeClient(node_ep).health()
         return {
             "ok": True,
             "name": "ifURI runtime",
             "version": __version__,
             "node": data.get("node", {}),
+            "urisys": {"endpoint": node_ep, "health": urisys},
+            "examples_root": str(examples_root()),
             "services": len(data.get("services", [])),
             "groups": len(data.get("groups", [])),
             "time": now_iso(),
@@ -85,6 +166,15 @@ def make_handler(state: RuntimeState):
             self.end_headers()
             self.wfile.write(body)
 
+        def _send_bytes(self, status: int, body: bytes, content_type: str) -> None:
+            self.send_response(status)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(body)
+
         def _read_json(self) -> dict[str, Any]:
             length = int(self.headers.get("Content-Length", "0") or "0")
             if length <= 0:
@@ -98,10 +188,28 @@ def make_handler(state: RuntimeState):
         def do_OPTIONS(self) -> None:
             self._send(200, {"ok": True})
 
+        def _serve_file(self, rel_path: str) -> None:
+            path = (WEB_DIR / rel_path).resolve()
+            if not str(path).startswith(str(WEB_DIR.resolve())) or not path.is_file():
+                self._send(404, {"ok": False, "error": "not_found"})
+                return
+            ctype, _ = mimetypes.guess_type(str(path))
+            body = path.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", ctype or "application/octet-stream")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(body)
+
         def do_GET(self) -> None:
             path = urlparse(self.path).path
             data = state.load()
-            if path in {"/", "/health", "/api/health"}:
+            if path in {"/voice", "/"}:
+                self._serve_file("index.html")
+            elif path.startswith("/web/"):
+                self._serve_file(path[len("/web/") :])
+            elif path in {"/health", "/api/health"}:
                 self._send(200, state.health())
             elif path == "/api/services":
                 self._send(200, {"ok": True, "services": data.get("services", [])})
@@ -111,6 +219,43 @@ def make_handler(state: RuntimeState):
                 self._send(200, {"ok": True, "peers": data.get("peers", [])})
             elif path == "/api/routes":
                 self._send(200, {"ok": True, "schemes": sorted({s.get("scheme", "unknown") for s in data.get("services", [])})})
+            elif path == "/api/examples":
+                self._send(200, {"ok": True, "root": str(examples_root())})
+            elif path == "/api/chat/channels":
+                qs = parse_qs(urlparse(self.path).query)
+                try:
+                    timeout = float((qs.get("timeout") or ["1.5"])[0])
+                except ValueError:
+                    timeout = 1.5
+                self._send(200, list_chat_channels(timeout=min(max(timeout, 0.5), 5.0)))
+            elif path == "/api/network/scan":
+                qs = parse_qs(urlparse(self.path).query)
+                try:
+                    timeout = float((qs.get("timeout") or ["1.5"])[0])
+                except ValueError:
+                    timeout = 1.5
+                self._send(200, scan_network(timeout=min(max(timeout, 0.5), 5.0)))
+            elif path == "/api/urisys/screen.png":
+                qs = parse_qs(urlparse(self.path).query)
+                ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+                node_id = (qs.get("node_id") or ["lenovo"])[0]
+                monitor = int((qs.get("monitor") or ["1"])[0])
+                source = (qs.get("source") or ["screen"])[0]
+                shot = capture_remote_screen(
+                    UrisysNodeClient(ep or None),
+                    node_id=node_id,
+                    monitor=monitor,
+                    source=source,
+                )
+                if not shot.get("ok"):
+                    self._send(502, shot)
+                    return
+                self._send_bytes(200, shot["png"], shot.get("mime") or "image/png")
+            elif path == "/api/urisys/control-test":
+                qs = parse_qs(urlparse(self.path).query)
+                ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+                node_id = (qs.get("node_id") or ["lenovo"])[0]
+                self._send(200, probe_remote_control(UrisysNodeClient(ep or None), node_id=node_id))
             else:
                 self._send(404, {"ok": False, "error": "not_found", "path": path})
 
@@ -153,6 +298,106 @@ def make_handler(state: RuntimeState):
                 add_event(data, "peer.added", peer=peer.get("id"))
                 save_workspace(data)
                 self._send(200, {"ok": True, "peer": peer})
+            elif path == "/api/urisys/health":
+                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+                client = UrisysNodeClient(ep or None)
+                self._send(200, {"ok": True, "endpoint": client.endpoint, "health": client.health()})
+            elif path == "/api/urisys/call":
+                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+                uri = str(body.get("uri", "")).strip()
+                if not uri:
+                    self._send(400, {"ok": False, "error": "missing uri"})
+                    return
+                client = UrisysNodeClient(ep or None)
+                self._send(
+                    200,
+                    client.call_uri(
+                        uri,
+                        body.get("payload") or {},
+                        approved=bool(body.get("approved", True)),
+                        allow_real=bool(body.get("allow_real", True)),
+                        dry_run=bool(body.get("dry_run", False)),
+                    ),
+                )
+            elif path == "/api/urisys/screen":
+                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+                node_id = str(body.get("node_id") or "lenovo")
+                monitor = int(body.get("monitor") or 1)
+                source = str(body.get("source") or "screen")
+                shot = capture_remote_screen(
+                    UrisysNodeClient(ep or None),
+                    node_id=node_id,
+                    monitor=monitor,
+                    source=source,
+                )
+                if shot.get("ok") and shot.get("png"):
+                    shot = dict(shot)
+                    shot["png_b64"] = base64.b64encode(shot.pop("png")).decode("ascii")
+                self._send(200, shot)
+            elif path == "/api/urisys/control-test":
+                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+                node_id = str(body.get("node_id") or "lenovo")
+                self._send(200, probe_remote_control(UrisysNodeClient(ep or None), node_id=node_id))
+            elif path == "/api/chat/send":
+                channel = body.get("channel") or {}
+                text = str(body.get("text") or "").strip()
+                router = str(body.get("router_endpoint") or body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+                self._send(
+                    200,
+                    send_chat_message_routed(
+                        channel,
+                        text,
+                        router_endpoint=router or None,
+                        dry_run=bool(body.get("dry_run", False)),
+                    ),
+                )
+            elif path == "/api/chat/channels":
+                self._send(
+                    200,
+                    list_chat_channels(
+                        timeout=min(max(float(body.get("timeout", 1.5)), 0.5), 5.0),
+                        scan_subnet=bool(body.get("scan_subnet", True)),
+                    ),
+                )
+            elif path == "/api/network/scan":
+                self._send(
+                    200,
+                    scan_network(
+                        timeout=min(max(float(body.get("timeout", 1.5)), 0.5), 5.0),
+                        scan_subnet=bool(body.get("scan_subnet", True)),
+                    ),
+                )
+            elif path == "/api/voice/plan":
+                text = str(body.get("text", "")).strip()
+                self._send(200, plan_voice_command(text))
+            elif path == "/api/voice/run":
+                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+                text = str(body.get("text", "")).strip()
+                client = UrisysNodeClient(ep or None) if ep else None
+                self._send(
+                    200,
+                    run_voice_command(
+                        text,
+                        client=client,
+                        dry_run=bool(body.get("dry_run", False)),
+                        speak=bool(body.get("speak", True)),
+                    ),
+                )
+            elif path == "/api/flow/run-file":
+                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+                flow_ref = str(body.get("flow") or body.get("flow_ref") or "").strip()
+                if not flow_ref:
+                    self._send(400, {"ok": False, "error": "missing flow"})
+                    return
+                client = UrisysNodeClient(ep or None) if ep else None
+                self._send(
+                    200,
+                    run_flow_file(
+                        flow_ref,
+                        client=client,
+                        dry_run=bool(body.get("dry_run", False)),
+                    ),
+                )
             else:
                 self._send(404, {"ok": False, "error": "not_found", "path": path})
 
@@ -164,7 +409,7 @@ class RuntimeServer:
         self.host = host
         self.port = int(port)
         self.state = RuntimeState(host, self.port)
-        self.httpd = ThreadingHTTPServer((host, self.port), make_handler(self.state))
+        self.httpd = bind_runtime_server(host, self.port, make_handler(self.state))
         self.thread: threading.Thread | None = None
 
     @property

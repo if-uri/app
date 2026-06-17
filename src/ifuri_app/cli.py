@@ -10,20 +10,44 @@ from pathlib import Path
 from . import DEFAULT_PORT, __version__
 from .discovery import DiscoveryResponder, discover
 from .flow_engine import dry_run_flow, dry_run_uri, expand_flow
+from .flow_runner import run_flow_file
 from .gui import launch_gui
-from .runtime import RuntimeServer
+from .runtime import PortInUseError, RuntimeServer, _port_available, find_free_port
 from .storage import load_workspace, save_workspace, workspace_path
+from .chat_channels import list_chat_channels, send_chat_message_routed
+from .urisys_client import UrisysNodeClient
+from .voice_pipeline import plan_voice_command, run_voice_command
 
 
 def print_json(data) -> None:
     print(json.dumps(data, indent=2, ensure_ascii=False))
 
 
-def cmd_init(_args) -> int:
+def cmd_init(args) -> int:
     data = load_workspace()
+    if args.endpoint:
+        data.setdefault("urisys", {})["endpoint"] = args.endpoint.rstrip("/")
+    elif args.scan_lan:
+        from .network_scan import scan_urisys_nodes
+
+        nodes = scan_urisys_nodes(timeout=min(max(args.timeout, 0.5), 5.0))
+        if not nodes:
+            print("No urisys-node found on LAN", file=sys.stderr)
+            return 1
+        preferred = next((n for n in nodes if n.get("node_id") == "lenovo"), nodes[0])
+        data.setdefault("urisys", {})["endpoint"] = preferred["endpoint"]
     save_workspace(data)
-    print(f"workspace: {workspace_path()}")
-    return 0
+    client = UrisysNodeClient()
+    health = client.health()
+    print_json(
+        {
+            "ok": bool(health.get("ok")),
+            "workspace": str(workspace_path()),
+            "endpoint": client.endpoint,
+            "health": health,
+        }
+    )
+    return 0 if health.get("ok") else 1
 
 
 def cmd_app(_args) -> int:
@@ -32,8 +56,19 @@ def cmd_app(_args) -> int:
 
 
 def cmd_serve(args) -> int:
-    server = RuntimeServer(args.host, args.port).start()
-    responder = DiscoveryResponder(api_port=args.port).start() if args.discovery else None
+    data = load_workspace()
+    data.setdefault("urisys", {})["endpoint"] = args.urisys_endpoint
+    save_workspace(data)
+    port = args.port
+    if args.auto_port and not _port_available(args.host, port):
+        port = find_free_port(args.host, port)
+        print(f"auto-port: using {port}", file=sys.stderr)
+    try:
+        server = RuntimeServer(args.host, port).start()
+    except PortInUseError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    responder = DiscoveryResponder(api_port=port).start() if args.discovery else None
     print(f"ifURI runtime listening on {server.url}")
     if args.discovery:
         print(f"LAN discovery enabled on UDP")
@@ -61,6 +96,139 @@ def cmd_discover(args) -> int:
     return 0
 
 
+def cmd_voice(args) -> int:
+    port = args.port
+    if args.auto_port and not _port_available(args.host, port):
+        port = find_free_port(args.host, port)
+        print(f"auto-port: using {port}", file=sys.stderr)
+    try:
+        server = RuntimeServer(args.host, port).start()
+    except PortInUseError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print(f"ifURI voice UI: {server.url}/voice")
+    print(f"urisys-node: {args.urisys_endpoint}")
+    data = load_workspace()
+    data.setdefault("urisys", {})["endpoint"] = args.urisys_endpoint
+    save_workspace(data)
+    if args.discovery:
+        DiscoveryResponder(api_port=port).start()
+    stop = False
+
+    def _stop(_sig, _frame):
+        nonlocal stop
+        stop = True
+
+    signal.signal(signal.SIGINT, _stop)
+    signal.signal(signal.SIGTERM, _stop)
+    try:
+        while not stop:
+            time.sleep(0.2)
+    finally:
+        server.stop()
+    return 0
+
+
+def cmd_node_health(args) -> int:
+    client = UrisysNodeClient(args.endpoint)
+    print_json({"endpoint": client.endpoint, "health": client.health()})
+    return 0
+
+
+def cmd_node_call(args) -> int:
+    client = UrisysNodeClient(args.endpoint)
+    payload = json.loads(args.payload or "{}")
+    print_json(client.call_uri(args.uri, payload, dry_run=args.dry_run))
+    return 0
+
+
+def cmd_node_control_test(args) -> int:
+    client = UrisysNodeClient(args.endpoint)
+    result = probe_remote_control(client, node_id=args.node_id)
+    print_json(result)
+    return 0 if result.get("ok") else 1
+
+
+def cmd_node_screen(args) -> int:
+    client = UrisysNodeClient(args.endpoint)
+    result = capture_remote_screen(
+        client,
+        node_id=args.node_id,
+        monitor=args.monitor,
+        source=args.source,
+    )
+    if result.get("ok") and result.get("png") and args.out:
+        Path(args.out).write_bytes(result["png"])
+        result = dict(result)
+        result.pop("png")
+        result["saved"] = args.out
+    elif result.get("ok") and result.get("png"):
+        import base64
+
+        result = dict(result)
+        result["png_b64"] = base64.b64encode(result.pop("png")).decode("ascii")
+    print_json(result)
+    return 0 if result.get("ok") else 1
+
+
+def cmd_flow_run(args) -> int:
+    client = UrisysNodeClient(args.endpoint) if args.endpoint else None
+    print_json(
+        run_flow_file(
+            args.flow,
+            client=client,
+            dry_run=args.dry_run,
+        )
+    )
+    return 0
+
+
+def cmd_voice_plan(args) -> int:
+    print_json(plan_voice_command(args.text))
+    return 0
+
+
+def cmd_voice_run(args) -> int:
+    client = UrisysNodeClient(args.endpoint) if args.endpoint else None
+    result = run_voice_command(
+        args.text,
+        client=client,
+        dry_run=args.dry_run,
+        speak=not args.no_speak,
+    )
+    print_json(result)
+    return 0 if result.get("ok") else 1
+
+
+def cmd_chat_channels(args) -> int:
+    data = list_chat_channels(timeout=args.timeout, scan_subnet=not args.no_scan)
+    print_json(data)
+    return 0 if data.get("ok") else 1
+
+
+def cmd_chat_send(args) -> int:
+    data = list_chat_channels(timeout=min(args.timeout, 2.0), scan_subnet=not args.no_scan)
+    channels = data.get("channels") or []
+    match = None
+    if args.channel_id:
+        match = next((c for c in channels if c.get("id") == args.channel_id), None)
+    elif args.endpoint:
+        match = next((c for c in channels if c.get("endpoint") == args.endpoint.rstrip("/")), None)
+    elif args.uri:
+        match = next((c for c in channels if c.get("uri") == args.uri), None)
+    if not match:
+        print_json({"ok": False, "error": "channel not found", "channels": [c.get("id") for c in channels]})
+        return 1
+    result = send_chat_message_routed(
+        match,
+        args.text,
+        router_endpoint=args.router or args.endpoint,
+        dry_run=args.dry_run,
+    )
+    print_json(result)
+    return 0 if result.get("ok", True) and not result.get("error") else 1
+
+
 def cmd_run(args) -> int:
     target = args.target
     if Path(target).exists():
@@ -83,20 +251,91 @@ def cmd_expand(args) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="ifuri-app", description="ifURI desktop app and local URI runtime")
-    parser.add_argument("--version", action="version", version=f"ifuri-app {__version__}")
+    parser.add_argument("--version", action="version", version=f"ifuri {__version__}")
     sub = parser.add_subparsers(dest="command")
 
     p_app = sub.add_parser("app", help="open desktop app")
     p_app.set_defaults(func=cmd_app)
 
-    p_init = sub.add_parser("init", help="create default workspace")
+    p_init = sub.add_parser("init", help="create workspace and configure urisys-node endpoint")
+    p_init.add_argument("--endpoint", help="urisys-node base URL, e.g. http://192.168.188.201:8790")
+    p_init.add_argument("--scan-lan", action="store_true", help="discover urisys-node on /24 and save first hit")
+    p_init.add_argument("--timeout", type=float, default=2.0, help="LAN scan timeout when using --scan-lan")
     p_init.set_defaults(func=cmd_init)
 
     p_serve = sub.add_parser("serve", help="start local runtime HTTP API")
     p_serve.add_argument("--host", default="127.0.0.1")
     p_serve.add_argument("--port", type=int, default=DEFAULT_PORT)
+    p_serve.add_argument("--auto-port", action="store_true", help="pick next free port if --port is busy")
     p_serve.add_argument("--no-discovery", dest="discovery", action="store_false")
+    p_serve.add_argument("--urisys-endpoint", default=UrisysNodeClient().endpoint)
     p_serve.set_defaults(func=cmd_serve, discovery=True)
+
+    p_voice = sub.add_parser("voice", help="voice UI + runtime (stt/tts → urisys flows)")
+    p_voice.add_argument("--host", default="127.0.0.1")
+    p_voice.add_argument("--port", type=int, default=DEFAULT_PORT)
+    p_voice.add_argument("--auto-port", action="store_true", default=True, help="pick next free port if --port is busy (default: on)")
+    p_voice.add_argument("--no-auto-port", dest="auto_port", action="store_false")
+    p_voice.add_argument("--urisys-endpoint", default=UrisysNodeClient().endpoint)
+    p_voice.add_argument("--no-discovery", dest="discovery", action="store_false")
+    p_voice.set_defaults(func=cmd_voice, discovery=True)
+
+    p_nh = sub.add_parser("node-health", help="GET urisys-node /health")
+    p_nh.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_nh.set_defaults(func=cmd_node_health)
+
+    p_nc = sub.add_parser("node-call", help="POST urisys-node /uri/call")
+    p_nc.add_argument("uri")
+    p_nc.add_argument("--payload", default="{}")
+    p_nc.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_nc.add_argument("--dry-run", action="store_true")
+    p_nc.set_defaults(func=cmd_node_call)
+
+    p_nct = sub.add_parser("node-control-test", help="probe remote node control (health + screen)")
+    p_nct.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_nct.add_argument("--node-id", default="lenovo")
+    p_nct.set_defaults(func=cmd_node_control_test)
+
+    p_ns = sub.add_parser("node-screen", help="capture remote screen PNG via screen:// or kvm://")
+    p_ns.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_ns.add_argument("--node-id", default="lenovo")
+    p_ns.add_argument("--monitor", type=int, default=1)
+    p_ns.add_argument("--source", choices=["screen", "kvm"], default="screen")
+    p_ns.add_argument("--out", help="save PNG to file")
+    p_ns.set_defaults(func=cmd_node_screen)
+
+    p_fr = sub.add_parser("flow-run", help="run urisys-examples *.uri.flow.yaml via node")
+    p_fr.add_argument("flow", help="e.g. lenovo-remote/08-kvm-linkedin.uri.flow.yaml")
+    p_fr.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_fr.add_argument("--dry-run", action="store_true")
+    p_fr.set_defaults(func=cmd_flow_run)
+
+    p_vp = sub.add_parser("voice-plan", help="plan voice text → flow")
+    p_vp.add_argument("text")
+    p_vp.set_defaults(func=cmd_voice_plan)
+
+    p_vr = sub.add_parser("voice-run", help="run voice command pipeline")
+    p_vr.add_argument("text")
+    p_vr.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_vr.add_argument("--dry-run", action="store_true")
+    p_vr.add_argument("--no-speak", action="store_true")
+    p_vr.set_defaults(func=cmd_voice_run)
+
+    p_cc = sub.add_parser("chat-channels", help="list LAN endpoints as chat channels")
+    p_cc.add_argument("--timeout", type=float, default=1.8)
+    p_cc.add_argument("--no-scan", action="store_true", help="only configured hosts, skip /24 scan")
+    p_cc.set_defaults(func=cmd_chat_channels)
+
+    p_cs = sub.add_parser("chat-send", help="send message to a chat channel")
+    p_cs.add_argument("text")
+    p_cs.add_argument("--channel-id", help="channel id from chat-channels")
+    p_cs.add_argument("--endpoint", help="urisys-node endpoint channel")
+    p_cs.add_argument("--uri", help="MCP/A2A/LLM uri channel")
+    p_cs.add_argument("--router", help="urisys-node router for MCP/A2A calls")
+    p_cs.add_argument("--timeout", type=float, default=1.8)
+    p_cs.add_argument("--no-scan", action="store_true")
+    p_cs.add_argument("--dry-run", action="store_true")
+    p_cs.set_defaults(func=cmd_chat_send)
 
     p_disc = sub.add_parser("discover", help="discover ifuri:// apps in local network")
     p_disc.add_argument("--timeout", type=float, default=1.2)

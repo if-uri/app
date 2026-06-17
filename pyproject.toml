@@ -3,11 +3,11 @@ requires = ["setuptools>=67", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ifuri-app"
-version = "0.1.1"
-description = "Cross-platform desktop app and local URI runtime for ifURI flows, services and LAN nodes."
+name = "ifuri"
+version = "0.2.1"
+description = "ifURI desktop app — voice UI, urisys-node client, and URI flow runner for urisys-examples."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "Apache-2.0"
 authors = [{name = "ifURI"}, {name = "Tom Sapletta",email = "tom@sapletta.com"}]
 keywords = ["uri", "workflow", "mcp", "agents", "llm", "automation", "desktop", "runtime"]
@@ -18,7 +18,6 @@ classifiers = [
   "Environment :: X11 Applications",
   "Intended Audience :: Developers",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -26,6 +25,17 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Application Frameworks",
 ]
 dependencies = []
+
+[project.optional-dependencies]
+flows = ["pyyaml>=6.0"]
+build = ["pyinstaller>=6.0", "pyyaml>=6.0"]
+dev = [
+  "pytest>=8.0",
+  "pyyaml>=6.0",
+  "goal>=2.1.0",
+  "costs>=0.1.20",
+  "pfix>=0.1.60",
+]
 
 [project.urls]
 Homepage = "https://ifuri.com"
@@ -41,7 +51,7 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-ifuri_app = ["assets/*.svg"]
+ifuri_app = ["assets/*.svg", "web/*"]
 
 [tool.pfix]
 # Self-healing Python configuration

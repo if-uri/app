@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-06-17
+
+### Docs
+- Update README.md
+- Update docs/ARCHITECTURE.md
+
+### Test
+- Update tests/test_chat_channels.py
+- Update tests/test_gui_smoke.py
+- Update tests/test_ifuri_app.py
+
+### Other
+- Update .goal_test_report.xml
+- Update VERSION
+- Update docker/Dockerfile.gui-test
+- Update docker/docker-compose.gui.yml
+- Update docker/entrypoint-gui-test.sh
+- Update docker/install-gui-deps.sh
+- Update scripts/bootstrap-lenovo-packs.py
+- Update scripts/build-platform.py
+- Update scripts/cd-github.sh
+- Update scripts/gui_smoke.py
+- ... and 8 more files
+
 ## [0.1.1] - 2026-06-17
 
 ### Docs

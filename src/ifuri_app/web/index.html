@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ifURI — chat</title>
+  <link rel="stylesheet" href="/web/voice.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <header class="sidebar-head">
+        <h1>ifURI</h1>
+        <button id="btnRefresh" type="button" title="Odśwież czaty z LAN">↻</button>
+      </header>
+      <p id="scanStatus" class="scan-status">Skanowanie…</p>
+      <nav id="chatList" class="chat-list" aria-label="Endpointy jako czaty"></nav>
+    </aside>
+
+    <main class="chat-main">
+      <header class="chat-head">
+        <div>
+          <span id="chatKind" class="chat-kind">—</span>
+          <h2 id="chatTitle">Wybierz czat</h2>
+          <p id="chatSubtitle" class="chat-sub"></p>
+        </div>
+        <div class="chat-head-actions">
+          <select id="langSelect" aria-label="Język">
+            <option value="pl">PL</option>
+            <option value="en">EN</option>
+          </select>
+          <select id="themeSelect" aria-label="Motyw">
+            <option value="dark">dark</option>
+            <option value="light">light</option>
+            <option value="ifuri">ifuri</option>
+          </select>
+          <button id="btnScreen" type="button" class="ghost" hidden>Screenshot</button>
+          <label class="chk" id="screenAutoWrap" hidden><input id="screenAuto" type="checkbox" /> auto</label>
+        </div>
+      </header>
+
+      <div id="screenPanel" class="screen-panel" hidden>
+        <img id="remoteScreen" alt="Zrzut ekranu" />
+      </div>
+
+      <div id="messages" class="messages" aria-live="polite">
+        <p class="empty-hint">Każdy urisys-node :8790, MCP, A2A i peer ifURI to osobny czat. Wybierz z listy po lewej.</p>
+      </div>
+
+      <footer class="composer">
+        <textarea id="input" rows="2" placeholder="Wiadomość do endpointu…" disabled></textarea>
+        <div class="composer-bar">
+          <button id="btnListen" type="button" class="ghost" disabled>🎤</button>
+          <label class="chk"><input id="dryRun" type="checkbox" /> dry-run</label>
+          <button id="btnSend" type="button" disabled>Wyślij</button>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="/web/url_state.js"></script>
+  <script src="/web/theme.js"></script>
+  <script src="/web/voice.js"></script>
+</body>
+</html>

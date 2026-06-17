@@ -1,0 +1,54 @@
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test-and-wheel:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest pyyaml
+          python -m pip install -e .
+
+      - name: Run tests
+        run: python -m pytest tests/ -v
+
+      - name: Build wheel
+        if: matrix.python-version == '3.13'
+        run: |
+          python -m pip wheel -w dist .
+          ls -la dist/ifuri-*.whl
+
+      - name: Upload wheel artifact
+        if: matrix.python-version == '3.13'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ifuri-wheel
+          path: dist/ifuri-*.whl
+
+  gui-docker-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: GUI smoke (Debian / Ubuntu / Fedora via Docker + Xvfb)
+        env:
+          IFURI_GUI_DISTROS: debian,ubuntu,fedora
+        run: bash scripts/test-gui-docker.sh
