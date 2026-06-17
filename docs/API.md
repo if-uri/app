@@ -26,7 +26,8 @@ Repo: [github.com/if-uri/app](https://github.com/if-uri/app)
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/api/voice/catalog?refresh=0` | Flow catalog for voice planner |
+| POST | `/api/voice/install-packs` | Body: `{ endpoint?, dry_run? }` — flow 02b stt/tts |
+| GET | `/api/voice/capabilities?endpoint=` | stt/tts/llm + install hint |
 | POST | `/api/voice/plan` | `{ text, endpoint?, planner? }` → flow/uri plan |
 | POST | `/api/voice/run` | Full voice pipeline |
 | POST | `/api/urisys/call` | Proxy to node `POST /uri/call` |

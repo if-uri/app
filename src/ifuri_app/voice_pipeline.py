@@ -13,10 +13,16 @@ from .voice_planner import (
     voice_planner_mode,
 )
 
+VOICE_PACKS_FLOW = "lenovo-remote/02b-install-voice-packs.uri.flow.yaml"
+
 __all__ = [
+    "VOICE_PACKS_FLOW",
+    "install_voice_packs",
     "load_flow_catalog",
     "plan_voice_command",
     "run_voice_command",
+    "voice_capabilities",
+    "voice_pack_install_hint",
     "voice_planner_mode",
 ]
 
@@ -72,6 +78,7 @@ def run_voice_command(
             out["plan"] = plan
     elif stt_uri and not dry_run:
         out["stt"] = {"ok": False, "skipped": True, "reason": "stt pack not loaded on node"}
+        out["voice_pack_hint"] = voice_pack_install_hint(node)
 
     if plan.get("plan") == "flow":
         flow_result = run_flow_file(
@@ -97,6 +104,7 @@ def run_voice_command(
         out["tts"] = tts
     elif speak and not dry_run:
         out["tts"] = {"ok": False, "skipped": True, "reason": "tts pack not loaded on node"}
+        out.setdefault("voice_pack_hint", voice_pack_install_hint(node))
 
     out["summary"] = summary
     if not out["ok"]:
@@ -104,6 +112,55 @@ def run_voice_command(
         if hint:
             out["hint"] = hint
     return out
+
+
+def voice_capabilities(client: UrisysNodeClient | None = None) -> dict[str, Any]:
+    node = client or UrisysNodeClient()
+    caps = node_voice_capabilities(node)
+    hint = voice_pack_install_hint(node)
+    return {
+        "ok": True,
+        "endpoint": node.endpoint,
+        "capabilities": caps,
+        "planner": voice_planner_mode(),
+        "voice_pack_hint": hint,
+    }
+
+
+def install_voice_packs(
+    *,
+    client: UrisysNodeClient | None = None,
+    dry_run: bool = False,
+) -> dict[str, Any]:
+    node = client or UrisysNodeClient()
+    hint = voice_pack_install_hint(node)
+    if not hint.get("needed"):
+        return {"ok": True, "skipped": True, "message": "stt/tts already available", "capabilities": node_voice_capabilities(node)}
+    result = run_flow_file(VOICE_PACKS_FLOW, client=node, dry_run=dry_run, approved=True, allow_real=not dry_run)
+    caps = node_voice_capabilities(node)
+    return {
+        "ok": bool(result.get("ok")),
+        "dry_run": dry_run,
+        "flow": VOICE_PACKS_FLOW,
+        "endpoint": node.endpoint,
+        "result": result,
+        "capabilities": caps,
+        "voice_pack_hint": voice_pack_install_hint(node),
+    }
+
+
+def voice_pack_install_hint(client: UrisysNodeClient) -> dict[str, Any]:
+    """Suggest urisys-examples flow when stt/tts packs missing on node."""
+    caps = node_voice_capabilities(client)
+    if caps.get("stt") and caps.get("tts"):
+        return {"needed": False}
+    return {
+        "needed": True,
+        "endpoint": client.endpoint,
+        "flow_ref": VOICE_PACKS_FLOW,
+        "cli": f"ifuri-app voice-install-packs --endpoint {client.endpoint}",
+        "message": "Install stt/tts packs on urisys-node (flow 02b-install-voice-packs)",
+    }
 
 
 def _connection_hint(result: dict[str, Any], endpoint: str) -> str | None:

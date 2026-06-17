@@ -5,28 +5,30 @@
 - [ ] Wdrożyć urisys-node **>= 0.1.15** na lenovo (SSH obecnie zamknięty — użyj `make upgrade-node` gdy dostępny)
 - [ ] Po upgrade node: `make chat-migrate URISYS=http://192.168.188.201:8790`
 - [x] Voice planner: regex + catalog + llm:// (zamiast samych keyword triggers)
-- [ ] `llm` pack na lenovo (obecnie brak — planner używa catalog offline)
+- [x] Packi `stt`/`tts` na lenovo (voice-capabilities: stt+tts OK; brak tylko `llm`)
+- [ ] `llm` pack na lenovo (planner używa regex + catalog offline)
 - [ ] WebRTC / duplex voice między dwoma instancjami ifURI
 
 ## UI / UX
 
 - [x] Przełącznik widoku chat ↔ screen w `/voice` (przycisk + URL `view=`)
 - [x] `@uricore/js` page:// w `/voice` (toggle view via `page_runtime.js`)
-- [ ] Pełne i18n w `/voice` (EN poza placeholderami)
+- [x] Pełne i18n w `/voice` (PL/EN — `web/i18n.js`)
+- [x] E2E Playwright dla `/voice` + URL state (`make test-e2e`)
 - [ ] Tauri/Electron shell na `/voice` (store builds)
 
 ## Ops
 
 - [x] systemd user unit: `systemd/ifuri-voice-user.service`
-- [ ] Auto-install packów `stt`/`tts` przy pierwszej sesji voice
-- [ ] E2E test Playwright dla `/voice` + URL state
+- [x] Auto-install packów `stt`/`tts` — banner UI + `POST /api/voice/install-packs`
+- [x] Legacy `extract_steps` — deprecation warning bez uri2flow
 
 ## Architektura (uricore / uri2flow)
 
 - [x] `packages/` — URI handlery (bridge, voice, chat, page)
 - [x] uri2flow — expand/validate flow
 - [x] uricore-local runtime — `/api/uri/call`, `/api/packs`
-- [ ] Pełne wycofanie legacy `extract_steps` gdy uri2flow wymagany
+- [ ] Pełne wycofanie legacy `extract_steps` (wymaga uri2flow jako hard dep w dev)
 
 ## Zrobione (patrz [CHANGELOG.md](CHANGELOG.md))
 

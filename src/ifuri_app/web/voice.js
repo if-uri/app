@@ -1,42 +1,6 @@
 const U = () => window.IfuriUrlState;
 const T = () => window.IfuriTheme;
-
-const I18N = {
-  pl: {
-    pickChat: "Wybierz czat",
-    emptyList: "Brak endpointów — uruchom urisys-node :8790 lub ifuri-app serve w LAN.",
-    emptyThread: "Każdy urisys-node :8790, MCP, A2A i peer ifURI to osobny czat.",
-    newThread: "Nowy czat z",
-    sendHint: "Wyślij polecenie lub pytanie.",
-    placeholder: "Wiadomość do endpointu…",
-    send: "Wyślij",
-    scan: "Skan LAN…",
-    scanFail: "Skan nieudany",
-    viewChat: "Czat",
-    viewScreen: "Ekran",
-    you: "Ty",
-    loadingHistory: "Ładowanie historii…",
-    historyFail: "Nie udało się wczytać historii z urisys-node",
-    speechMissing: "Web Speech API niedostępne — wpisz tekst ręcznie.",
-  },
-  en: {
-    pickChat: "Pick a chat",
-    emptyList: "No endpoints — start urisys-node :8790 or ifuri-app serve on LAN.",
-    emptyThread: "Each urisys-node :8790, MCP, A2A and ifURI peer is its own chat.",
-    newThread: "New chat with",
-    sendHint: "Send a command or question.",
-    placeholder: "Message to endpoint…",
-    send: "Send",
-    scan: "Scanning LAN…",
-    scanFail: "Scan failed",
-    viewChat: "Chat",
-    viewScreen: "Screen",
-    you: "You",
-    loadingHistory: "Loading history…",
-    historyFail: "Could not load history from urisys-node",
-    speechMissing: "Web Speech API unavailable — type manually.",
-  },
-};
+const I = () => window.IfuriI18n;
 
 const chatListEl = document.getElementById("chatList");
 const scanStatus = document.getElementById("scanStatus");
@@ -57,6 +21,11 @@ const screenAutoEl = document.getElementById("screenAuto");
 const screenAutoWrap = document.getElementById("screenAutoWrap");
 const langSelect = document.getElementById("langSelect");
 const themeSelect = document.getElementById("themeSelect");
+const dryRunLabel = document.getElementById("dryRunLabel");
+const screenAutoLabel = document.getElementById("screenAutoLabel");
+const voicePackBanner = document.getElementById("voicePackBanner");
+const voicePackText = document.getElementById("voicePackText");
+const btnInstallVoicePacks = document.getElementById("btnInstallVoicePacks");
 
 let channels = [];
 let activeChannel = null;
@@ -65,14 +34,14 @@ let channelPreviews = {};
 let screenTimer = null;
 let lang = "pl";
 let autoSendPending = false;
+let lastChannelData = null;
 
-const GROUP_LABELS = {
-  pl: { node: "urisys-node :8790", mcp: "MCP", a2a: "A2A / agent", llm: "LLM", ifuri: "ifURI peer" },
-  en: { node: "urisys-node :8790", mcp: "MCP", a2a: "A2A / agent", llm: "LLM", ifuri: "ifURI peer" },
-};
+function t(key, ...args) {
+  return I()?.t(lang, key, ...args) ?? key;
+}
 
-function t(key) {
-  return (I18N[lang] || I18N.pl)[key] || key;
+function groupLabels() {
+  return I()?.groupLabels(lang) || {};
 }
 
 function syncUrl(params, { replace = false } = {}) {
@@ -151,9 +120,25 @@ function maybeAutoSendFromUrl() {
 }
 
 function applyUiLanguage() {
+  document.documentElement.lang = lang === "en" ? "en" : "pl";
+  document.title = t("title");
+  btnRefresh.title = t("refreshTitle");
+  chatListEl.setAttribute("aria-label", t("sidebarAria"));
+  langSelect.setAttribute("aria-label", t("langAria"));
+  themeSelect.setAttribute("aria-label", t("themeAria"));
+  btnListen.title = t("listenTitle");
   inputEl.placeholder = t("placeholder");
   btnSend.textContent = t("send");
+  btnScreen.textContent = t("screenshot");
+  if (dryRunLabel) dryRunLabel.textContent = t("dryRun");
+  if (screenAutoLabel) screenAutoLabel.textContent = t("screenAuto");
+  remoteScreenEl.alt = t("screenAlt");
+  if (btnInstallVoicePacks) btnInstallVoicePacks.textContent = t("voicePackInstall");
   chatTitleEl.textContent = activeChannel ? activeChannel.title : t("pickChat");
+  if (!activeChannel && messagesEl) {
+    messagesEl.innerHTML = `<p class="empty-hint">${esc(t("emptyThread"))}</p>`;
+  }
+  updateViewToggleLabel();
 }
 
 function applyViewFromUrl() {
@@ -249,6 +234,7 @@ function selectChannel(ch, { replace = false } = {}) {
   if (isNode) {
     localStorage.setItem("ifuri_node", ch.endpoint);
     applyViewFromUrl();
+    refreshVoiceCapabilities(ch.endpoint);
   } else {
     screenPanel.hidden = true;
     syncUrl({ view: "chat" }, { replace: true });
@@ -265,7 +251,7 @@ function renderChannelList(data) {
   const groups = data.groups || {};
   const historyIndex = data.history_index || {};
   const order = ["node", "mcp", "a2a", "llm", "ifuri"];
-  const labels = GROUP_LABELS[lang] || GROUP_LABELS.pl;
+  const labels = groupLabels();
 
   for (const key of order) {
     const items = groups[key] || [];
@@ -302,6 +288,52 @@ function renderChannelList(data) {
   if (pick) selectChannel(pick, { replace: !urlChannel });
 }
 
+async function refreshVoiceCapabilities(endpoint) {
+  if (!endpoint || !voicePackBanner) return;
+  try {
+    const qs = new URLSearchParams({ endpoint });
+    const data = await api(`/api/voice/capabilities?${qs}`);
+    const hint = data.voice_pack_hint || {};
+    const caps = data.capabilities || {};
+    if (hint.needed) {
+      voicePackText.textContent = t("voicePackBanner");
+      voicePackBanner.hidden = false;
+      voicePackBanner.classList.remove("ok");
+      if (btnInstallVoicePacks) btnInstallVoicePacks.disabled = false;
+    } else {
+      voicePackBanner.hidden = true;
+    }
+  } catch {
+    voicePackBanner.hidden = true;
+  }
+}
+
+async function installVoicePacks() {
+  const ep = activeChannel?.endpoint || routerEndpoint();
+  if (!ep || !btnInstallVoicePacks) return;
+  btnInstallVoicePacks.disabled = true;
+  btnInstallVoicePacks.textContent = t("voicePackInstalling");
+  try {
+    const data = await api("/api/voice/install-packs", { endpoint: ep, dry_run: dryRunEl.checked });
+    if (data.ok && !(data.voice_pack_hint || {}).needed) {
+      voicePackText.textContent = t("voicePackDone");
+      voicePackBanner.classList.add("ok");
+      voicePackBanner.hidden = false;
+      setTimeout(() => { voicePackBanner.hidden = true; }, 4000);
+    } else {
+      voicePackText.textContent = t("voicePackFail");
+      voicePackBanner.hidden = false;
+    }
+    await refreshVoiceCapabilities(ep);
+  } catch (err) {
+    voicePackText.textContent = `${t("voicePackFail")} ${err}`;
+    voicePackBanner.hidden = false;
+  } finally {
+    btnInstallVoicePacks.textContent = t("voicePackInstall");
+    btnInstallVoicePacks.disabled = false;
+  }
+}
+
 async function refreshChannels() {
   scanStatus.textContent = t("scan");
   syncUrl({ action: "scan" }, { replace: false });
@@ -311,9 +343,13 @@ async function refreshChannels() {
     const data = await api(`/api/chat/channels${qs}`);
     channels = data.channels || [];
     const node = channels.find((c) => c.type === "urisys-node");
-    if (node?.endpoint) localStorage.setItem("ifuri_node", node.endpoint);
+    if (node?.endpoint) {
+      localStorage.setItem("ifuri_node", node.endpoint);
+      await refreshVoiceCapabilities(node.endpoint);
+    }
     const c = data.counts || {};
-    scanStatus.textContent = `${c.urisys_nodes ?? 0} node · ${c.mcp_agent ?? 0} MCP/A2A · ${c.ifuri_peers ?? 0} peer`;
+    lastChannelData = data;
+    scanStatus.textContent = t("scanSummary", c.urisys_nodes ?? 0, c.mcp_agent ?? 0, c.ifuri_peers ?? 0);
     renderChannelList(data);
   } catch (err) {
     scanStatus.textContent = t("scanFail");
@@ -346,7 +382,7 @@ async function sendMessage() {
     await loadChannelHistory(activeChannel);
   } catch (err) {
     messages[activeChannel.id].pop();
-    appendMessage(activeChannel.id, "assistant", `Błąd: ${err}`, { error: true });
+    appendMessage(activeChannel.id, "assistant", `${t("errorPrefix")} ${err}`, { error: true });
   }
 }
 
@@ -390,8 +426,10 @@ function initSettingsFromUrl() {
 langSelect.addEventListener("change", () => {
   lang = langSelect.value;
   T()?.setLang(lang);
+  syncUrl({ lang }, { replace: false });
   applyUiLanguage();
-  renderChannelList({ groups: groupChannels(channels) });
+  if (lastChannelData) renderChannelList(lastChannelData);
+  else renderChannelList({ groups: groupChannels(channels) });
   renderMessages();
 });
 
@@ -409,6 +447,7 @@ btnRefresh.onclick = refreshChannels;
 btnSend.onclick = sendMessage;
 btnScreen.onclick = refreshScreen;
 btnViewToggle.onclick = toggleView;
+if (btnInstallVoicePacks) btnInstallVoicePacks.onclick = installVoicePacks;
 screenAutoEl.addEventListener("change", () => setScreenAuto(screenAutoEl.checked));
 dryRunEl.addEventListener("change", () => syncUrl({ dry_run: dryRunEl.checked ? "1" : "0" }));
 
@@ -452,6 +491,7 @@ U()?.onPopState(() => {
 
 initSettingsFromUrl();
 applyPromptFromUrl();
+applyUiLanguage();
 U()?.patch(
   {
     lang: U().get("lang", "pl"),

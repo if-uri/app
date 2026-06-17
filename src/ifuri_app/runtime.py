@@ -34,7 +34,12 @@ from .storage import add_event, load_workspace, save_workspace, now_iso
 from .remote_screen import capture_remote_screen, probe_remote_control
 from .paths import web_dir
 from .urisys_client import UrisysNodeClient
-from .voice_pipeline import plan_voice_command, run_voice_command
+from .voice_pipeline import (
+    install_voice_packs,
+    plan_voice_command,
+    run_voice_command,
+    voice_capabilities,
+)
 from .voice_planner import load_flow_catalog, voice_planner_mode
 
 WEB_DIR = web_dir()
@@ -342,6 +347,11 @@ def make_handler(state: RuntimeState):
                         "flows": load_flow_catalog(refresh=refresh),
                     },
                 )
+            elif path == "/api/voice/capabilities":
+                qs = parse_qs(urlparse(self.path).query)
+                ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+                client = UrisysNodeClient(ep or None) if ep else UrisysNodeClient()
+                self._send(200, voice_capabilities(client))
             elif path == "/api/chat/channels":
                 qs = parse_qs(urlparse(self.path).query)
                 try:
@@ -593,6 +603,16 @@ def make_handler(state: RuntimeState):
                         client=client,
                         dry_run=bool(body.get("dry_run", False)),
                         speak=bool(body.get("speak", True)),
+                    ),
+                )
+            elif path == "/api/voice/install-packs":
+                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+                client = UrisysNodeClient(ep or None) if ep else None
+                self._send(
+                    200,
+                    install_voice_packs(
+                        client=client,
+                        dry_run=bool(body.get("dry_run", False)),
                     ),
                 )
             elif path == "/api/flow/run-file":

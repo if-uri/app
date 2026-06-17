@@ -13,6 +13,12 @@ def expand_flow(flow_text: str, flow_id: str | None = None) -> dict[str, Any]:
 
 
 def _legacy_expand_flow(flow_text: str, flow_id: str | None = None) -> dict[str, Any]:
+    import warnings
+
+    warnings.warn(
+        "uri2flow not installed — using legacy regex expand. pip install -e '.[tellmesh]' or uv sync --group tellmesh",
+        stacklevel=3,
+    )
     fid = flow_id or flow_id_from_text(flow_text)
     steps = extract_steps(flow_text)
     nodes = [

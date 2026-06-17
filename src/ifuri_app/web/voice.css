@@ -324,6 +324,30 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   gap: 0.35rem;
 }
 
+.voice-pack-banner {
+  margin: 0.5rem 1rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid var(--a2a);
+  background: color-mix(in srgb, var(--a2a) 12%, var(--panel));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.voice-pack-banner p {
+  margin: 0;
+  flex: 1 1 12rem;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.voice-pack-banner.ok {
+  border-color: var(--node);
+  background: color-mix(in srgb, var(--node) 10%, var(--panel));
+}
+
 @media (max-width: 768px) {
   .app { grid-template-columns: 1fr; }
   .sidebar { max-height: 38vh; }

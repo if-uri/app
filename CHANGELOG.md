@@ -1,11 +1,47 @@
 # Changelog
 
+## [Unreleased]
+
+## [0.2.9] - 2026-06-17
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update TODO.md
+- Update docs/API.md
+
+### Test
+- Update tests/e2e/test_voice_playwright.py
+- Update tests/test_api_runtime.py
+- Update tests/test_voice_capabilities.py
+- Update tests/test_voice_pack_hint.py
+
+### Other
+- Update Makefile
+- Update VERSION
+- Update src/ifuri_app/web/i18n.js
+- Update src/ifuri_app/web/index.html
+- Update src/ifuri_app/web/voice.css
+- Update src/ifuri_app/web/voice.js
+- Update uv.lock
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.8] - 2026-06-16
+
+### Added
+- `GET /api/voice/capabilities`, `POST /api/voice/install-packs`
+- Banner w `/voice` gdy brak stt/tts + przycisk instalacji packów
+- CLI: `voice-capabilities`, `voice-install-packs`
+- Pełne i18n PL/EN (`web/i18n.js`) + E2E Playwright (`make test-e2e`)
+- Deprecation warning dla legacy `expand_flow` bez uri2flow
+
+### Fixed
+- CLI `chat-status` / `chat-migrate` — brakujące importy z `chat_channels`
 
 ## [0.2.7] - 2026-06-17
 

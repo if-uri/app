@@ -8,6 +8,11 @@ import time
 from pathlib import Path
 
 from . import DEFAULT_PORT, __version__
+from .chat_channels import (
+    list_chat_channels,
+    migrate_local_chat_to_urisys,
+    urisys_chat_available,
+)
 from .discovery import DiscoveryResponder, discover
 from .flow_engine import dry_run_flow, dry_run_uri, expand_flow
 from .flow_runner import run_flow_file
@@ -18,8 +23,13 @@ from .packs.loader import pack_summary
 from .packs.runtime import local_runtime_info
 from .urisys_client import UrisysNodeClient
 from .url_params import voice_url
-from .voice_pipeline import plan_voice_command, run_voice_command
-from .voice_planner import load_flow_catalog, voice_planner_mode
+from .voice_pipeline import (
+    install_voice_packs,
+    plan_voice_command,
+    run_voice_command,
+    voice_capabilities,
+    voice_planner_mode,
+)
 
 
 def print_json(data) -> None:
@@ -199,8 +209,23 @@ def cmd_voice_plan(args) -> int:
 
 
 def cmd_voice_catalog(_args) -> int:
+    from .voice_planner import load_flow_catalog
+
     print_json({"planner": voice_planner_mode(), "flows": load_flow_catalog(refresh=True)})
     return 0
+
+
+def cmd_voice_capabilities(args) -> int:
+    client = UrisysNodeClient(args.endpoint) if args.endpoint else None
+    print_json(voice_capabilities(client))
+    return 0
+
+
+def cmd_voice_install_packs(args) -> int:
+    client = UrisysNodeClient(args.endpoint) if args.endpoint else None
+    result = install_voice_packs(client=client, dry_run=args.dry_run)
+    print_json(result)
+    return 0 if result.get("ok") else 1
 
 
 def cmd_voice_run(args) -> int:
@@ -370,6 +395,15 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_vc = sub.add_parser("voice-catalog", help="list urisys-examples flows for voice planner")
     p_vc.set_defaults(func=cmd_voice_catalog)
+
+    p_vcap = sub.add_parser("voice-capabilities", help="stt/tts/llm availability on urisys-node")
+    p_vcap.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_vcap.set_defaults(func=cmd_voice_capabilities)
+
+    p_vip = sub.add_parser("voice-install-packs", help="run 02b-install-voice-packs on node")
+    p_vip.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_vip.add_argument("--dry-run", action="store_true")
+    p_vip.set_defaults(func=cmd_voice_install_packs)
 
     p_vr = sub.add_parser("voice-run", help="run voice command pipeline")
     p_vr.add_argument("text")

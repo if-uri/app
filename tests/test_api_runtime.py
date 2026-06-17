@@ -55,7 +55,7 @@ def test_voice_page(server):
 
 
 def test_static_assets(server):
-    for asset in ("url_state.js", "voice.js", "voice.css", "page_runtime.js"):
+    for asset in ("url_state.js", "i18n.js", "voice.js", "voice.css", "page_runtime.js"):
         with urllib.request.urlopen(f"{server.url}/web/{asset}", timeout=10) as resp:
             assert resp.status == 200
             assert resp.read()

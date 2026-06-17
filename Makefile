@@ -9,7 +9,7 @@ PORT ?= 8766
 URISYS ?= http://192.168.188.201:8790
 VENV ?= .venv
 
-.PHONY: help install install-dev test test-api test-gui test-gui-docker \
+.PHONY: help install install-dev test test-api test-e2e test-gui test-gui-docker \
 	run-gui run-voice run-voice-bg stop health api-smoke chat-status chat-migrate \
 	vendor-uricore-js wheel build clean
 
@@ -20,7 +20,7 @@ help:
 	@echo "  install-dev      editable install + flows extra + pytest"
 	@echo "  test             run pytest (unit + API)"
 	@echo "  test-api         API smoke tests only"
-	@echo "  test-gui         GUI import smoke (no display)"
+	@echo "  test-e2e         Playwright /voice UI (requires: uv sync --group e2e && playwright install chromium)"
 	@echo "  test-gui-docker  Docker GUI smoke (debian/ubuntu/fedora)"
 	@echo ""
 	@echo "  run-gui          Tkinter desktop (flows + czaty + LAN)"
@@ -53,10 +53,13 @@ vendor-uricore-js:
 	bash scripts/vendor-uricore-js.sh
 
 test:
-	PYTHONPATH=src $(PYTHON) -m pytest -q
+	PYTHONPATH=src $(PYTHON) -m pytest -q --ignore=tests/e2e
 
 test-api:
 	PYTHONPATH=src $(PYTHON) -m pytest tests/test_api_runtime.py -q
+
+test-e2e:
+	PYTHONPATH=src $(PYTHON) -m pytest tests/e2e -q
 
 test-gui:
 	PYTHONPATH=src $(PYTHON) -m pytest tests/test_gui_smoke.py -q
@@ -109,6 +112,12 @@ chat-migrate:
 
 chat-migrate-dry:
 	PYTHONPATH=src $(PYTHON) -m ifuri_app chat-migrate --endpoint $(URISYS) --dry-run
+
+voice-capabilities:
+	PYTHONPATH=src $(PYTHON) -m ifuri_app voice-capabilities --endpoint $(URISYS)
+
+voice-install-packs:
+	PYTHONPATH=src $(PYTHON) -m ifuri_app voice-install-packs --endpoint $(URISYS)
 
 upgrade-node:
 	bash scripts/upgrade-lenovo-node.sh

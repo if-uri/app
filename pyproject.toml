@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ifuri"
-version = "0.2.7"
+version = "0.2.9"
 description = "ifURI desktop app — voice UI, urisys-node client, and URI flow runner for urisys-examples."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -49,6 +49,10 @@ dev = [
 tellmesh = [
   "uri2flow",
   "uricore",
+]
+e2e = [
+  "pytest-playwright>=0.5",
+  "playwright>=1.40",
 ]
 
 [project.urls]
@@ -105,3 +109,8 @@ max_commits = 500
 
 # Cost thresholds for badge colors (USD)
 badge_color_thresholds = { low = 1.0, medium = 5.0, high = 10.0, critical = 50.0 }
+
+[tool.pytest.ini_options]
+markers = [
+  "e2e: browser E2E tests (Playwright)",
+]

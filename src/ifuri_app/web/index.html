@@ -11,9 +11,9 @@
     <aside class="sidebar">
       <header class="sidebar-head">
         <h1>ifURI</h1>
-        <button id="btnRefresh" type="button" title="Odśwież czaty z LAN">↻</button>
+        <button id="btnRefresh" type="button" title="">↻</button>
       </header>
-      <p id="scanStatus" class="scan-status">Skanowanie…</p>
+      <p id="scanStatus" class="scan-status"></p>
       <nav id="chatList" class="chat-list" aria-label="Endpointy jako czaty"></nav>
     </aside>
 
@@ -21,7 +21,7 @@
       <header class="chat-head">
         <div>
           <span id="chatKind" class="chat-kind">—</span>
-          <h2 id="chatTitle">Wybierz czat</h2>
+          <h2 id="chatTitle"></h2>
           <p id="chatSubtitle" class="chat-sub"></p>
         </div>
         <div class="chat-head-actions">
@@ -35,31 +35,35 @@
             <option value="ifuri">ifuri</option>
           </select>
           <button id="btnViewToggle" type="button" class="ghost" hidden>Czat</button>
-          <button id="btnScreen" type="button" class="ghost" hidden>Screenshot</button>
-          <label class="chk" id="screenAutoWrap" hidden><input id="screenAuto" type="checkbox" /> auto</label>
+          <button id="btnScreen" type="button" class="ghost" hidden></button>
+          <label class="chk" id="screenAutoWrap" hidden><input id="screenAuto" type="checkbox" /> <span id="screenAutoLabel"></span></label>
         </div>
       </header>
 
       <div id="screenPanel" class="screen-panel" hidden>
-        <img id="remoteScreen" alt="Zrzut ekranu" />
+        <img id="remoteScreen" alt="" />
       </div>
 
-      <div id="messages" class="messages" aria-live="polite">
-        <p class="empty-hint">Każdy urisys-node :8790, MCP, A2A i peer ifURI to osobny czat. Wybierz z listy po lewej.</p>
+      <div id="voicePackBanner" class="voice-pack-banner" hidden>
+        <p id="voicePackText"></p>
+        <button id="btnInstallVoicePacks" type="button" class="ghost"></button>
       </div>
+
+      <div id="messages" class="messages" aria-live="polite"></div>
 
       <footer class="composer">
-        <textarea id="input" rows="2" placeholder="Wiadomość do endpointu…" disabled></textarea>
+        <textarea id="input" rows="2" placeholder="" disabled></textarea>
         <div class="composer-bar">
-          <button id="btnListen" type="button" class="ghost" disabled>🎤</button>
-          <label class="chk"><input id="dryRun" type="checkbox" /> dry-run</label>
-          <button id="btnSend" type="button" disabled>Wyślij</button>
+          <button id="btnListen" type="button" class="ghost" disabled title="">🎤</button>
+          <label class="chk"><input id="dryRun" type="checkbox" /> <span id="dryRunLabel"></span></label>
+          <button id="btnSend" type="button" disabled></button>
         </div>
       </footer>
     </main>
   </div>
 
   <script src="/web/url_state.js"></script>
+  <script src="/web/i18n.js"></script>
   <script src="/web/theme.js"></script>
   <script type="module" src="/web/page_runtime.js"></script>
   <script src="/web/voice.js"></script>
