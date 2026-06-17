@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ifuri"
-version = "0.2.2"
+version = "0.2.6"
 description = "ifURI desktop app — voice UI, urisys-node client, and URI flow runner for urisys-examples."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -38,6 +38,19 @@ dev = [
   "pfix>=0.1.60",
 ]
 
+[dependency-groups]
+dev = [
+  "pytest>=8.0",
+  "pyyaml>=6.0",
+  "goal>=2.1.0",
+  "costs>=0.1.20",
+  "pfix>=0.1.60",
+]
+tellmesh = [
+  "uri2flow",
+  "uricore",
+]
+
 [project.urls]
 Homepage = "https://ifuri.com"
 
@@ -52,7 +65,17 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-ifuri_app = ["assets/*.svg", "web/*"]
+ifuri_app = ["assets/*.svg", "web/*", "web/**/*"]
+
+[tool.uv]
+default-groups = ["dev", "tellmesh"]
+
+[tool.uv.sources]
+uri2flow = { path = "../../tellmesh/uri2flow", editable = true }
+uri2ops = { path = "../../tellmesh/uri2ops", editable = true }
+uri3 = { path = "../../tellmesh/uri3", editable = true }
+uri2pact = { path = "../../tellmesh/uri2pact", editable = true }
+uricore = { path = "../../tellmesh/uricore", editable = true }
 
 [tool.pfix]
 # Self-healing Python configuration

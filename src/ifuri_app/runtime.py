@@ -15,7 +15,11 @@ from typing import Any
 from urllib.parse import parse_qs, urlparse
 
 from . import __version__
+from .flow_compile import uri2flow_available, validate_flow_compiled
 from .flow_engine import dry_run_flow, dry_run_uri, expand_flow
+from .packs.loader import pack_summary
+from .packs.runtime import dispatch_local_uri, get_local_uri_runtime, local_runtime_info
+from .urisys_client import UrisysNodeClient
 from .flow_runner import examples_root, run_flow_file
 from .chat_channels import (
     fetch_chat_channel_index,
@@ -31,6 +35,7 @@ from .remote_screen import capture_remote_screen, probe_remote_control
 from .paths import web_dir
 from .urisys_client import UrisysNodeClient
 from .voice_pipeline import plan_voice_command, run_voice_command
+from .voice_planner import load_flow_catalog, voice_planner_mode
 
 WEB_DIR = web_dir()
 
@@ -127,28 +132,88 @@ class RuntimeState:
             "examples_root": str(examples_root()),
             "services": len(data.get("services", [])),
             "groups": len(data.get("groups", [])),
+            "packs": local_runtime_info(),
+            "uri2flow": uri2flow_available(),
             "time": now_iso(),
         }
 
-    def call_uri(self, uri: str, payload: dict[str, Any] | None = None, dry_run: bool = True) -> dict[str, Any]:
+    def call_uri(
+        self,
+        uri: str,
+        payload: dict[str, Any] | None = None,
+        dry_run: bool = True,
+        *,
+        approved: bool = True,
+    ) -> dict[str, Any]:
         data = self.load()
+        node_ep = data.get("urisys", {}).get("endpoint") or UrisysNodeClient().endpoint
+        ctx = {
+            "endpoint": node_ep,
+            "approved": approved,
+            "dry_run": dry_run,
+        }
+        if not dry_run:
+            local = dispatch_local_uri(uri, payload, context=ctx)
+            if local is not None:
+                add_event(data, "uri.call", uri=uri, dry_run=False, ok=local.get("ok"), via="uricore-local")
+                save_workspace(data)
+                return local
+        else:
+            runtime = get_local_uri_runtime()
+            if runtime is not None:
+                try:
+                    matched = runtime.registry.match(uri)
+                    preview = dry_run_uri(uri, payload)
+                    preview["via"] = "local-pack-preview"
+                    preview["operation"] = matched.route.operation
+                    preview["manifest_id"] = matched.route.manifest_id
+                    add_event(data, "uri.call", uri=uri, dry_run=True, ok=True, via="local-pack-preview")
+                    save_workspace(data)
+                    return preview
+                except Exception:
+                    pass
         result = dry_run_uri(uri, payload)
         result["dry_run"] = dry_run
         if not dry_run:
             result["ok"] = False
-            result["message"] = "non-dry execution is intentionally not implemented in the prototype runtime"
+            result["message"] = "no local pack route — use /api/urisys/call or install matching handler"
         add_event(data, "uri.call", uri=uri, dry_run=dry_run, ok=result.get("ok"))
         save_workspace(data)
         return result
 
-    def run_flow(self, flow_text: str, dry_run: bool = True) -> dict[str, Any]:
+    def run_flow(self, flow_text: str, dry_run: bool = True, *, approved: bool = True) -> dict[str, Any]:
         data = self.load()
-        result = dry_run_flow(flow_text)
-        result["dry_run"] = dry_run
-        if not dry_run:
-            result["ok"] = False
-            result["message"] = "non-dry flow execution is intentionally not implemented in the prototype runtime"
-        add_event(data, "flow.run", dry_run=dry_run, steps=len(result.get("steps", [])))
+        if dry_run:
+            result = dry_run_flow(flow_text)
+            result["dry_run"] = True
+            add_event(data, "flow.run", dry_run=True, steps=len(result.get("steps", [])))
+            save_workspace(data)
+            return result
+
+        expanded = expand_flow(flow_text)
+        nodes = (expanded.get("workflow_graph") or {}).get("nodes") or []
+        node_ep = data.get("urisys", {}).get("endpoint") or UrisysNodeClient().endpoint
+        client = UrisysNodeClient(node_ep)
+        steps_out: list[dict[str, Any]] = []
+        ok = True
+        for node in nodes:
+            uri = str(node.get("uri") or "")
+            if not uri:
+                continue
+            payload = node.get("payload") if isinstance(node.get("payload"), dict) else {}
+            local = dispatch_local_uri(uri, payload, context={"endpoint": node_ep, "approved": approved, "dry_run": False})
+            if local is not None:
+                step_ok = bool(local.get("ok"))
+                steps_out.append({"id": node.get("id"), "uri": uri, "ok": step_ok, "via": "uricore-local", "response": local})
+            else:
+                resp = client.call_uri(uri, payload, approved=approved, allow_real=True)
+                step_ok = bool(resp.get("ok", True)) and not resp.get("error")
+                steps_out.append({"id": node.get("id"), "uri": uri, "ok": step_ok, "via": "urisys-node", "response": resp})
+            ok = ok and step_ok
+            if not step_ok:
+                break
+        result = {"ok": ok, "dry_run": False, "graph": expanded, "steps": steps_out, "endpoint": node_ep}
+        add_event(data, "flow.run", dry_run=False, steps=len(steps_out))
         save_workspace(data)
         return result
 
@@ -254,6 +319,29 @@ def make_handler(state: RuntimeState):
                 self._send(200, {"ok": True, "schemes": sorted({s.get("scheme", "unknown") for s in data.get("services", [])})})
             elif path == "/api/examples":
                 self._send(200, {"ok": True, "root": str(examples_root())})
+            elif path == "/api/packs":
+                info = local_runtime_info()
+                self._send(
+                    200,
+                    {
+                        "ok": True,
+                        "packs": pack_summary(),
+                        "loaded": info.get("packs") or [],
+                        "runtime": info,
+                        "uri2flow": uri2flow_available(),
+                    },
+                )
+            elif path == "/api/voice/catalog":
+                qs = parse_qs(urlparse(self.path).query)
+                refresh = (qs.get("refresh") or ["0"])[0] == "1"
+                self._send(
+                    200,
+                    {
+                        "ok": True,
+                        "planner": voice_planner_mode(),
+                        "flows": load_flow_catalog(refresh=refresh),
+                    },
+                )
             elif path == "/api/chat/channels":
                 qs = parse_qs(urlparse(self.path).query)
                 try:
@@ -345,13 +433,47 @@ def make_handler(state: RuntimeState):
                 if not uri:
                     self._send(400, {"ok": False, "error": "missing uri"})
                     return
-                self._send(200, state.call_uri(uri, body.get("payload") or {}, bool(body.get("dry_run", True))))
+                self._send(
+                    200,
+                    state.call_uri(
+                        uri,
+                        body.get("payload") or {},
+                        bool(body.get("dry_run", True)),
+                        approved=bool(body.get("approved", True)),
+                    ),
+                )
             elif path == "/api/flow/run":
                 flow_text = str(body.get("flow_text", ""))
-                self._send(200, state.run_flow(flow_text, bool(body.get("dry_run", True))))
+                self._send(
+                    200,
+                    state.run_flow(
+                        flow_text,
+                        bool(body.get("dry_run", True)),
+                        approved=bool(body.get("approved", True)),
+                    ),
+                )
             elif path == "/api/flow/expand":
                 flow_text = str(body.get("flow_text", ""))
-                self._send(200, {"ok": True, **expand_flow(flow_text)})
+                if not flow_text.strip():
+                    self._send(400, {"ok": False, "error": "missing flow_text"})
+                    return
+                try:
+                    result = expand_flow(flow_text)
+                    self._send(200, {"ok": True, **result})
+                except ImportError as exc:
+                    self._send(501, {"ok": False, "error": str(exc), "hint": "pip install -e '.[packs]'"})
+                except Exception as exc:
+                    self._send(400, {"ok": False, "error": str(exc), "type": type(exc).__name__})
+            elif path == "/api/flow/validate":
+                flow_text = str(body.get("flow_text", ""))
+                if not flow_text.strip():
+                    self._send(400, {"ok": False, "error": "missing flow_text"})
+                    return
+                try:
+                    result = validate_flow_compiled(flow_text)
+                    self._send(200, result)
+                except ImportError as exc:
+                    self._send(501, {"ok": False, "error": str(exc), "hint": "pip install -e '.[packs]'"})
             elif path == "/api/services":
                 service = body.get("service") or body
                 if not service.get("uri"):
@@ -453,7 +575,13 @@ def make_handler(state: RuntimeState):
                 )
             elif path == "/api/voice/plan":
                 text = str(body.get("text", "")).strip()
-                self._send(200, plan_voice_command(text))
+                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+                client = UrisysNodeClient(ep or None) if ep else UrisysNodeClient()
+                planner = body.get("planner")
+                self._send(
+                    200,
+                    plan_voice_command(text, client=client, planner=str(planner) if planner else None),
+                )
             elif path == "/api/voice/run":
                 ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
                 text = str(body.get("text", "")).strip()

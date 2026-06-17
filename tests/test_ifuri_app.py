@@ -35,9 +35,12 @@ def test_plan_voice_fallback():
 def test_expand_flow_extracts_uris():
     text = "do:\n  - kv://session/key/x/query/get\n  - screen://local/monitor/1/query/frame"
     graph = expand_flow(text)
-    uris = [n["uri"] for n in graph["workflow_graph"]["nodes"]]
+    nodes = graph["workflow_graph"]["nodes"]
+    uris = [n["uri"] for n in nodes]
     assert any(u.startswith("kv://") for u in uris)
     assert any(u.startswith("screen://") for u in uris)
+    if graph.get("compiler") == "uri2flow":
+        assert graph.get("graph")
 
 
 def test_scan_network_structure():

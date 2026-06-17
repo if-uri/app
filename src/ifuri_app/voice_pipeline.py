@@ -3,43 +3,22 @@
 from __future__ import annotations
 
 import os
-import re
 from typing import Any
 
 from .flow_runner import run_flow_file
 from .urisys_client import UrisysNodeClient, node_voice_capabilities
+from .voice_planner import (
+    load_flow_catalog,
+    plan_voice_command,
+    voice_planner_mode,
+)
 
-# Simple phrase → urisys-examples flow (extend or replace with llm:// / voice:// on node).
-VOICE_FLOW_TRIGGERS: list[tuple[re.Pattern[str], str]] = [
-    (re.compile(r"\b(health|zdrow|status node|sprawd[źz] health)\b", re.I), "lenovo-remote/01-health-probe.uri.flow.yaml"),
-    (re.compile(r"\b(linkedin|post|kvm|compose)\b", re.I), "lenovo-remote/08-kvm-linkedin.uri.flow.yaml"),
-    (re.compile(r"\b(playwright|browser test)\b", re.I), "lenovo-remote/07-playwright-linkedin.uri.flow.yaml"),
-    (re.compile(r"\b(install pack|packi|hot.?load|voice pack|głos)\b", re.I), "lenovo-remote/02b-install-voice-packs.uri.flow.yaml"),
-    (re.compile(r"\b(introspect|screen|discover)\b", re.I), "lenovo-remote/03-system-introspect.uri.flow.yaml"),
+__all__ = [
+    "load_flow_catalog",
+    "plan_voice_command",
+    "run_voice_command",
+    "voice_planner_mode",
 ]
-
-
-def plan_voice_command(text: str) -> dict[str, Any]:
-    text = (text or "").strip()
-    if not text:
-        return {"ok": False, "error": "empty transcript"}
-    for pattern, flow_ref in VOICE_FLOW_TRIGGERS:
-        if pattern.search(text):
-            return {
-                "ok": True,
-                "transcript": text,
-                "plan": "flow",
-                "flow_ref": flow_ref,
-                "message": f"Matched flow {flow_ref}",
-            }
-    return {
-        "ok": True,
-        "transcript": text,
-        "plan": "uri",
-        "uri": "voice://command/from-text",
-        "payload": {"text": text},
-        "message": "No local flow match — delegate to voice:// on urisys-node",
-    }
 
 
 def _extract_stt_text(stt: dict[str, Any]) -> str | None:
@@ -67,7 +46,7 @@ def run_voice_command(
     speak: bool = True,
 ) -> dict[str, Any]:
     node = client or UrisysNodeClient()
-    plan = plan_voice_command(text)
+    plan = plan_voice_command(text, client=node)
     if not plan.get("ok"):
         return plan
 
@@ -81,7 +60,6 @@ def run_voice_command(
         "tts": None,
     }
 
-    # Optional: normalize via stt:// on node (browser may already provide text).
     stt_uri = os.environ.get("IFURI_STT_URI", "stt://local/session/main/query/transcript")
     voice_caps = node_voice_capabilities(node)
     if stt_uri and not dry_run and voice_caps.get("stt"):
@@ -90,7 +68,7 @@ def run_voice_command(
         normalized = _extract_stt_text(stt)
         if normalized:
             text = normalized
-            plan = plan_voice_command(text)
+            plan = plan_voice_command(text, client=node)
             out["plan"] = plan
     elif stt_uri and not dry_run:
         out["stt"] = {"ok": False, "skipped": True, "reason": "stt pack not loaded on node"}

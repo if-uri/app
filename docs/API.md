@@ -26,7 +26,8 @@ Repo: [github.com/if-uri/app](https://github.com/if-uri/app)
 
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/api/voice/plan` | `{ text }` → flow plan |
+| GET | `/api/voice/catalog?refresh=0` | Flow catalog for voice planner |
+| POST | `/api/voice/plan` | `{ text, endpoint?, planner? }` → flow/uri plan |
 | POST | `/api/voice/run` | Full voice pipeline |
 | POST | `/api/urisys/call` | Proxy to node `POST /uri/call` |
 | POST | `/api/urisys/health` | Node health |
@@ -39,6 +40,9 @@ Repo: [github.com/if-uri/app](https://github.com/if-uri/app)
 |--------|------|-------------|
 | GET | `/api/network/scan?timeout=1.5` | Full LAN scan |
 | GET | `/api/services`, `/api/flows`, `/api/peers` | Workspace data |
+| GET | `/api/packs` | Local URI packs (`packages/`) + `uri2flow` flag |
+| POST | `/api/flow/expand` | Body: `{ flow_text }` — compile via uri2flow |
+| POST | `/api/flow/validate` | Body: `{ flow_text }` — uri2flow validation |
 | POST | `/api/flow/run-file` | Run urisys-examples YAML |
 
 ## URL state (`/voice`)

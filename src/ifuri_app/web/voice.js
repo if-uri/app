@@ -185,6 +185,16 @@ function updateViewToggleLabel() {
 
 function toggleView() {
   if (!activeChannel || activeChannel.type !== "urisys-node") return;
+  if (window.IfuriPageRuntime) {
+    window.IfuriPageRuntime.call("page://voice/view/command/toggle", {}, { approved: true }).catch(() => {
+      _toggleViewDirect();
+    });
+    return;
+  }
+  _toggleViewDirect();
+}
+
+function _toggleViewDirect() {
   const next = U()?.get("view", "chat") === "screen" ? "chat" : "screen";
   syncUrl({ view: next }, { replace: false });
   applyViewFromUrl();
@@ -452,3 +462,4 @@ U()?.patch(
   { replace: true }
 );
 refreshChannels();
+window.ifuriApplyView = applyViewFromUrl;

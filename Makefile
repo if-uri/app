@@ -10,7 +10,8 @@ URISYS ?= http://192.168.188.201:8790
 VENV ?= .venv
 
 .PHONY: help install install-dev test test-api test-gui test-gui-docker \
-	run-gui run-voice run-voice-bg stop health api-smoke chat-status chat-migrate wheel build clean
+	run-gui run-voice run-voice-bg stop health api-smoke chat-status chat-migrate \
+	vendor-uricore-js wheel build clean
 
 help:
 	@echo "ifURI app — make targets"
@@ -31,6 +32,7 @@ help:
 	@echo "  chat-status      check urisys /app/chat on URISYS"
 	@echo "  chat-migrate     upload local chat history to urisys-node"
 	@echo "  upgrade-node     hint/script for lenovo urisys-node >= 0.1.15"
+	@echo "  vendor-uricore-js  copy @uricore/js + ifuri-page into web/"
 	@echo ""
 	@echo "  wheel            build wheel to dist/"
 	@echo "  build            native platform tarball/zip"
@@ -40,8 +42,15 @@ install:
 	$(PYTHON) -m pip install -e .
 
 install-dev:
-	$(PYTHON) -m pip install -e ".[flows]"
-	$(PYTHON) -m pip install pytest
+	@if command -v uv >/dev/null 2>&1; then \
+		uv sync --group dev --group tellmesh; \
+	else \
+		$(PYTHON) -m pip install -e ".[flows,dev,packs]"; \
+		$(PYTHON) -m pip install -e ../../tellmesh/uri2flow ../../tellmesh/uricore 2>/dev/null || true; \
+	fi
+
+vendor-uricore-js:
+	bash scripts/vendor-uricore-js.sh
 
 test:
 	PYTHONPATH=src $(PYTHON) -m pytest -q
@@ -85,6 +94,8 @@ health:
 api-smoke: health
 	@echo "== /voice =="
 	@curl -fsS "http://127.0.0.1:$(PORT)/voice" | head -c 120; echo
+	@echo "== /api/packs =="
+	@curl -fsS "http://127.0.0.1:$(PORT)/api/packs" | $(PYTHON) -m json.tool | head -12
 	@echo "== /api/chat/channels =="
 	@curl -fsS "http://127.0.0.1:$(PORT)/api/chat/channels?timeout=0.5" | $(PYTHON) -m json.tool | head -15
 	@echo "== /api/chat/history =="

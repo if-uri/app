@@ -1,9 +1,44 @@
 from __future__ import annotations
 
+from typing import Any
+
+from .flow_compile import expand_flow_compiled, flow_steps_from_document, uri2flow_available
+
+
+def expand_flow(flow_text: str, flow_id: str | None = None) -> dict[str, Any]:
+    """Expand compact flow YAML — uri2flow when installed."""
+    if uri2flow_available():
+        return expand_flow_compiled(flow_text, flow_id=flow_id)
+    return _legacy_expand_flow(flow_text, flow_id=flow_id)
+
+
+def _legacy_expand_flow(flow_text: str, flow_id: str | None = None) -> dict[str, Any]:
+    fid = flow_id or flow_id_from_text(flow_text)
+    steps = extract_steps(flow_text)
+    nodes = [
+        {
+            "id": step["id"],
+            "uri": step["uri"],
+            "scheme": step["scheme"],
+            "line": step["line"],
+        }
+        for step in steps
+    ]
+    edges = []
+    for left, right in zip(nodes, nodes[1:]):
+        edges.append({"from": left["id"], "to": right["id"], "type": "sequence"})
+    return {
+        "compiler": "legacy",
+        "workflow_graph": {"id": fid, "nodes": nodes, "edges": edges},
+        "graph": {"id": fid, "nodes": nodes, "edges": edges},
+    }
+
+
+# --- kept for dry-run routing and regex fallback when uri2flow absent ---
+
 import json
 import re
 import time
-from typing import Any
 from urllib.parse import urlparse
 
 URI_RE = re.compile(r"([a-zA-Z][a-zA-Z0-9+.-]*://[^\s,\]\)}'\"]+)")
@@ -43,24 +78,6 @@ def flow_id_from_text(flow_text: str, default: str = "flow") -> str:
     return default
 
 
-def expand_flow(flow_text: str, flow_id: str | None = None) -> dict[str, Any]:
-    fid = flow_id or flow_id_from_text(flow_text)
-    steps = extract_steps(flow_text)
-    nodes = [
-        {
-            "id": step["id"],
-            "uri": step["uri"],
-            "scheme": step["scheme"],
-            "line": step["line"],
-        }
-        for step in steps
-    ]
-    edges = []
-    for left, right in zip(nodes, nodes[1:]):
-        edges.append({"from": left["id"], "to": right["id"], "type": "sequence"})
-    return {"workflow_graph": {"id": fid, "nodes": nodes, "edges": edges}}
-
-
 def classify_route(uri: str) -> dict[str, Any]:
     scheme = uri_scheme(uri)
     parsed = urlparse(uri)
@@ -91,9 +108,12 @@ def dry_run_uri(uri: str, payload: dict[str, Any] | None = None) -> dict[str, An
 
 def dry_run_flow(flow_text: str) -> dict[str, Any]:
     graph = expand_flow(flow_text)
+    nodes = graph.get("workflow_graph", {}).get("nodes") or graph.get("graph", {}).get("nodes") or []
     results = []
-    for node in graph["workflow_graph"]["nodes"]:
-        results.append(dry_run_uri(node["uri"]))
+    for node in nodes:
+        uri = node.get("uri")
+        if uri:
+            results.append(dry_run_uri(uri))
     return {"ok": True, "dry_run": True, "graph": graph, "steps": results}
 
 

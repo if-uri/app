@@ -16,7 +16,7 @@ ifURI /voice       ──►  UI + chat + proxy (this repo)
 |-------|------|----------------|
 | **uricore** | tellmesh/uricore | Python control plane — local handlers in `packages/*/handlers/` |
 | **uricore-js** | tellmesh/uricore-js | Browser `page://` handlers — `ifuri-page/` |
-| **uri2flow** | tellmesh/uri2flow | Replace `flow_engine.py` expand/validate (planned) |
+| **uri2flow** | tellmesh/uri2flow | Replace `flow_engine.py` expand/validate (integrated in 0.2.4+) |
 | **urisys-node** | tellmesh/urisys-node | Real execution on lenovo / host |
 
 ## Pack layout
@@ -43,7 +43,7 @@ ifuri-bridge/
 Handler refs in manifest use `python://handlers.<module>:<fn>` — the loader adds the pack
 directory to `sys.path` before registering with uricore.
 
-JavaScript pack (`ifuri-page/`): loaded by `@uricore/js` in `web/voice.js` (integration TBD).
+JavaScript pack (`ifuri-page/`): loaded by `@uricore/js` in `web/page_runtime.js` (run `make vendor-uricore-js` after uricore-js updates).
 
 ## Loader
 

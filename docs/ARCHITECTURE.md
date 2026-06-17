@@ -39,7 +39,7 @@ See [API.md](API.md) for all HTTP routes and URL parameters.
 |-----------|------|------|
 | **uricore** | tellmesh/uricore | Python URI control plane — local handlers in `packages/*/handlers/` |
 | **uricore-js** | tellmesh/uricore-js | Browser `page://` — `packages/ifuri-page/` |
-| **uri2flow** | tellmesh/uri2flow | Compile compact YAML → workflow graph (replace `flow_engine.py`) |
+| **uri2flow** | tellmesh/uri2flow | Compile compact YAML → workflow graph (used by `/api/flow/expand`) |
 | ifURI app | [if-uri/app](https://github.com/if-uri/app) | UI, planning, chat, flow client |
 | urisys-node | [tellmesh/urisys-node](https://github.com/tellmesh/urisys-node) | URI server on host |
 | urisys-examples | [tellmesh/urisys-examples](https://github.com/tellmesh/urisys-examples) | `*.uri.flow.yaml` suites |

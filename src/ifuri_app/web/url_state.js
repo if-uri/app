@@ -59,5 +59,9 @@
     return base.pathname + base.search + base.hash;
   }
 
-  global.IfuriUrlState = { read, write, patch, get, onPopState, withParams, RESERVED };
+  function set(key, value) {
+    return patch({ [key]: value });
+  }
+
+  global.IfuriUrlState = { read, write, patch, set, get, onPopState, withParams, RESERVED };
 })(window);

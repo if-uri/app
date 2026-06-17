@@ -55,10 +55,61 @@ def test_voice_page(server):
 
 
 def test_static_assets(server):
-    for asset in ("url_state.js", "voice.js", "voice.css"):
+    for asset in ("url_state.js", "voice.js", "voice.css", "page_runtime.js"):
         with urllib.request.urlopen(f"{server.url}/web/{asset}", timeout=10) as resp:
             assert resp.status == 200
             assert resp.read()
+
+
+def test_api_packs(server):
+    status, data = _get(f"{server.url}/api/packs")
+    assert status == 200
+    assert data.get("ok") is True
+    assert isinstance(data.get("packs"), list)
+    assert len(data.get("packs") or []) >= 3
+    assert "runtime" in data
+
+
+def test_uri_call_voice_plan(server):
+    status, data = _post(
+        f"{server.url}/api/uri/call",
+        {
+            "uri": "voice://local/query/plan",
+            "payload": {"text": "health"},
+            "dry_run": False,
+            "approved": True,
+        },
+    )
+    if status != 200:
+        return
+    if data.get("via") == "uricore-local":
+        assert data.get("ok") is True
+
+
+def test_flow_validate(server):
+    flow_text = "do:\n  - screen://local/monitor/1/query/frame"
+    status, data = _post(f"{server.url}/api/flow/validate", {"flow_text": flow_text})
+    assert status == 200
+    assert data.get("ok") is True
+
+
+def test_flow_expand(server):
+    flow_text = "do:\n  - kv://session/key/x/query/get\n  - screen://local/monitor/1/query/frame"
+    status, data = _post(f"{server.url}/api/flow/expand", {"flow_text": flow_text})
+    assert status == 200
+    assert data.get("ok") is True
+    nodes = (data.get("workflow_graph") or {}).get("nodes") or []
+    assert len(nodes) >= 2
+
+
+def test_flow_expand_missing_text(server):
+    try:
+        _post(f"{server.url}/api/flow/expand", {"flow_text": "  "})
+        assert False, "expected 400"
+    except urllib.error.HTTPError as exc:
+        assert exc.code == 400
+        body = json.loads(exc.read().decode("utf-8"))
+        assert body.get("ok") is False
 
 
 def test_chat_channels(server):

@@ -3,11 +3,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.2.2-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.62-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.8h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.2.6-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.72-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-3.3h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $0.6192 (2 commits)
-- 👤 **Human dev:** ~$281 (2.8h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $0.7231 (3 commits)
+- 👤 **Human dev:** ~$327 (3.3h @ $100/h, 30min dedup)
 
 Generated on 2026-06-17 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -53,7 +53,7 @@ make stop
 
 ## Install
 
-Pakiet PyPI: **`ifuri`** (aktualnie **0.2.3**).
+Pakiet PyPI: **`ifuri`** (aktualnie **0.2.5**).
 
 ```bash
 cd ~/github/if-uri/app
@@ -83,6 +83,8 @@ ifuri-app chat-channels
 ifuri-app chat-send "status" --endpoint http://192.168.188.201:8790
 ifuri-app chat-status --endpoint http://192.168.188.201:8790
 ifuri-app chat-migrate --endpoint http://192.168.188.201:8790
+ifuri-app packs
+ifuri-app flow-validate lenovo-remote/01-health-probe.uri.flow.yaml
 ifuri-app voice-plan "sprawdź health"
 ifuri-app discover
 ```

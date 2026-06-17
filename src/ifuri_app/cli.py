@@ -14,10 +14,12 @@ from .flow_runner import run_flow_file
 from .gui import launch_gui
 from .runtime import PortInUseError, RuntimeServer, _port_available, find_free_port
 from .storage import load_workspace, save_workspace, workspace_path
-from .chat_channels import list_chat_channels, migrate_local_chat_to_urisys, send_chat_message_routed, urisys_chat_available
+from .packs.loader import pack_summary
+from .packs.runtime import local_runtime_info
 from .urisys_client import UrisysNodeClient
 from .url_params import voice_url
 from .voice_pipeline import plan_voice_command, run_voice_command
+from .voice_planner import load_flow_catalog, voice_planner_mode
 
 
 def print_json(data) -> None:
@@ -185,7 +187,19 @@ def cmd_flow_run(args) -> int:
 
 
 def cmd_voice_plan(args) -> int:
-    print_json(plan_voice_command(args.text))
+    client = UrisysNodeClient(args.endpoint) if args.endpoint else None
+    print_json(
+        plan_voice_command(
+            args.text,
+            client=client,
+            planner=args.planner,
+        )
+    )
+    return 0
+
+
+def cmd_voice_catalog(_args) -> int:
+    print_json({"planner": voice_planner_mode(), "flows": load_flow_catalog(refresh=True)})
     return 0
 
 
@@ -246,6 +260,19 @@ def cmd_chat_migrate(args) -> int:
 
 def cmd_chat_status(args) -> int:
     print_json(urisys_chat_available(router_endpoint=args.endpoint))
+    return 0
+
+
+def cmd_packs(_args) -> int:
+    print_json({"summary": pack_summary(), "runtime": local_runtime_info()})
+    return 0
+
+
+def cmd_flow_validate(args) -> int:
+    from .flow_compile import validate_flow_compiled
+
+    text = Path(args.flow_file).read_text(encoding="utf-8")
+    print_json(validate_flow_compiled(text))
     return 0
 
 
@@ -337,7 +364,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_vp = sub.add_parser("voice-plan", help="plan voice text → flow")
     p_vp.add_argument("text")
+    p_vp.add_argument("--endpoint", default=UrisysNodeClient().endpoint, help="urisys-node for llm:// planner")
+    p_vp.add_argument("--planner", choices=["auto", "regex", "catalog", "llm"], default=None)
     p_vp.set_defaults(func=cmd_voice_plan)
+
+    p_vc = sub.add_parser("voice-catalog", help="list urisys-examples flows for voice planner")
+    p_vc.set_defaults(func=cmd_voice_catalog)
 
     p_vr = sub.add_parser("voice-run", help="run voice command pipeline")
     p_vr.add_argument("text")
@@ -372,6 +404,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_cst = sub.add_parser("chat-status", help="check if urisys-node exposes /app/chat/*")
     p_cst.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
     p_cst.set_defaults(func=cmd_chat_status)
+
+    p_packs = sub.add_parser("packs", help="list local URI packs (packages/)")
+    p_packs.set_defaults(func=cmd_packs)
+
+    p_fv = sub.add_parser("flow-validate", help="validate compact URI flow YAML")
+    p_fv.add_argument("flow_file")
+    p_fv.set_defaults(func=cmd_flow_validate)
 
     p_disc = sub.add_parser("discover", help="discover ifuri:// apps in local network")
     p_disc.add_argument("--timeout", type=float, default=1.2)

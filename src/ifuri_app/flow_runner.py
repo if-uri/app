@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from .flow_engine import extract_steps
+from .flow_compile import flow_steps_from_document
 from .urisys_client import UrisysNodeClient
 
 _URI_STEP = re.compile(
@@ -41,36 +41,13 @@ def resolve_flow_path(ref: str) -> Path:
 
 
 def load_flow_steps(flow_path: Path) -> list[dict[str, Any]]:
-    text = flow_path.read_text(encoding="utf-8")
-    steps: list[dict[str, Any]] = []
     try:
-        import yaml  # type: ignore
+        return flow_steps_from_document(flow_path)
+    except Exception:
+        text = flow_path.read_text(encoding="utf-8")
+        from .flow_engine import extract_steps
 
-        data = yaml.safe_load(text) or {}
-        for raw in data.get("do") or []:
-            if isinstance(raw, str):
-                steps.append({"id": raw.split("://", 1)[0], "uri": raw, "payload": {}})
-            elif isinstance(raw, dict):
-                if raw.get("uri"):
-                    step = dict(raw)
-                    step.setdefault("id", str(step.get("id") or step["uri"].split("://", 1)[0]))
-                    steps.append(step)
-                elif len(raw) == 1:
-                    uri, payload = next(iter(raw.items()))
-                    steps.append(
-                        {
-                            "id": uri.replace("://", "-").replace("/", "-")[:40],
-                            "uri": uri,
-                            "payload": payload if isinstance(payload, dict) else {},
-                        }
-                    )
-    except ImportError:
-        pass
-    if steps:
-        return steps
-    for item in extract_steps(text):
-        steps.append({"id": item["id"], "uri": item["uri"], "payload": {}})
-    return steps
+        return [{"id": item["id"], "uri": item["uri"], "payload": {}} for item in extract_steps(text)]
 
 
 def run_flow_file(

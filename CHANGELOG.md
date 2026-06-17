@@ -7,6 +7,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.6] - 2026-06-17
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update TODO.md
+- Update docs/API.md
+- Update docs/ARCHITECTURE.md
+- Update packages/README.md
+
+### Test
+- Update tests/test_api_runtime.py
+- Update tests/test_flow_compile.py
+- Update tests/test_ifuri_app.py
+- Update tests/test_packs_runtime.py
+- Update tests/test_voice_planner.py
+
+### Other
+- Update .goal_test_report.xml
+- Update Makefile
+- Update VERSION
+- Update packages/ifuri-page/handlers.js
+- Update packages/ifuri-voice/handlers/plan.py
+- Update packages/ifuri-voice/manifest.yaml
+- Update scripts/vendor-uricore-js.sh
+- Update src/ifuri_app/web/index.html
+- Update src/ifuri_app/web/page/handlers.js
+- Update src/ifuri_app/web/page/manifest.js
+- ... and 4 more files
+
+## [0.2.5] - 2026-06-17
+
+### Added
+- **Voice planner** (`voice_planner.py`) — łańcuch: regex → catalog → `llm://` → fallback
+- Katalog flow z `urisys-examples` (`load_flow_catalog`)
+- `GET /api/voice/catalog`, `IFURI_VOICE_PLANNER=auto|regex|catalog|llm`
+- CLI: `voice-catalog`, `voice-plan --planner --endpoint`
+- `node_voice_capabilities.llm` — wykrywanie packa urillm na node
+
+### Changed
+- `voice_pipeline` deleguje planowanie do `voice_planner`
+- `/api/voice/plan` używa node + opcjonalnego plannera
+
+## [0.2.4] - 2026-06-17
+
+### Added
+- **uri2flow** — `/api/flow/expand`, `/api/flow/validate`, `flow-validate` CLI
+- **packages/** — ifuri-bridge, ifuri-voice, ifuri-chat, ifuri-page (uricore + uricore-js)
+- `GET /api/packs` — lista packów + status runtime uricore
+- `@uricore/js` vendored w `/web` — `page_runtime.js`, `make vendor-uricore-js`
+- Lokalny dispatch URI przez uricore (`/api/uri/call` z `dry_run=false` dla packów)
+- Wykonanie flow (`/api/flow/run` `dry_run=false`) — lokalne packi → urisys-node
+- CLI: `ifuri-app packs`
+
+### Changed
+- `flow_runner` / `flow_engine` — uri2flow zamiast duplikatu parsera YAML
+- `RuntimeState.call_uri` / `run_flow` — uricore-local z fallbackiem
+- `install-dev` — `[flows,packs,dev]`; Makefile: `vendor-uricore-js`
+
 ## [0.2.2] - 2026-06-17
 
 ### Docs
