@@ -9,7 +9,7 @@ PORT ?= 8766
 URISYS ?= http://192.168.188.201:8790
 VENV ?= .venv
 
-.PHONY: help install install-dev test test-api test-e2e test-gui test-gui-docker \
+.PHONY: help install install-dev test test-api test-e2e install-e2e test-gui test-gui-docker \
 	run-gui run-voice run-voice-bg stop health api-smoke chat-status chat-migrate \
 	vendor-uricore-js wheel build clean
 
@@ -20,7 +20,7 @@ help:
 	@echo "  install-dev      editable install + flows extra + pytest"
 	@echo "  test             run pytest (unit + API)"
 	@echo "  test-api         API smoke tests only"
-	@echo "  test-e2e         Playwright /voice UI (requires: uv sync --group e2e && playwright install chromium)"
+	@echo "  test-e2e         Playwright /voice UI (uv sync --group e2e && make install-e2e)"
 	@echo "  test-gui-docker  Docker GUI smoke (debian/ubuntu/fedora)"
 	@echo ""
 	@echo "  run-gui          Tkinter desktop (flows + czaty + LAN)"
@@ -59,7 +59,11 @@ test-api:
 	PYTHONPATH=src $(PYTHON) -m pytest tests/test_api_runtime.py -q
 
 test-e2e:
-	PYTHONPATH=src $(PYTHON) -m pytest tests/e2e -q
+	PYTHONPATH=src uv run --group e2e pytest tests/e2e -q
+
+install-e2e:
+	uv sync --group e2e
+	uv run --group e2e python -m playwright install chromium
 
 test-gui:
 	PYTHONPATH=src $(PYTHON) -m pytest tests/test_gui_smoke.py -q
@@ -120,7 +124,12 @@ voice-install-packs:
 	PYTHONPATH=src $(PYTHON) -m ifuri_app voice-install-packs --endpoint $(URISYS)
 
 upgrade-node:
-	bash scripts/upgrade-lenovo-node.sh
+	@if ssh -o ConnectTimeout=5 -o BatchMode=yes "$${URISYS_SSH_USER:-tom}@$${URISYS_HOST:-192.168.188.201}" 'echo ok' 2>/dev/null; then \
+		bash scripts/upgrade-lenovo-node.sh; \
+	else \
+		echo "SSH unavailable — upgrading via shell:// URI…"; \
+		$(PYTHON) scripts/upgrade-lenovo-remote.py; \
+	fi
 
 wheel:
 	$(PYTHON) -m pip wheel -w dist .

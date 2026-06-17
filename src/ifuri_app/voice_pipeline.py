@@ -14,6 +14,10 @@ from .voice_planner import (
 )
 
 VOICE_PACKS_FLOW = "lenovo-remote/02b-install-voice-packs.uri.flow.yaml"
+VOICE_STT_WHEEL = os.environ.get(
+    "URISYS_STT_WHEEL",
+    f"{os.environ.get('URISYS_WHEEL_HOST', 'http://192.168.188.212:8765')}/urisys_automation_lab-0.1.1-py3-none-any.whl",
+)
 
 __all__ = [
     "VOICE_PACKS_FLOW",
@@ -137,9 +141,18 @@ def install_voice_packs(
     if not hint.get("needed"):
         return {"ok": True, "skipped": True, "message": "stt/tts already available", "capabilities": node_voice_capabilities(node)}
     result = run_flow_file(VOICE_PACKS_FLOW, client=node, dry_run=dry_run, approved=True, allow_real=not dry_run)
+    if not dry_run and not result.get("ok"):
+        health = node.health()
+        target = str(health.get("node_id") or "local")
+        direct = node.call_uri(
+            f"node://{target}/command/install-pack",
+            {"pack": "stt", "install": True, "force": True, "specs": [VOICE_STT_WHEEL]},
+            dry_run=False,
+        )
+        result = {"ok": bool((direct.get("result") or direct).get("ok", direct.get("ok"))), "fallback": "direct-install-pack", "direct": direct, "flow": result}
     caps = node_voice_capabilities(node)
     return {
-        "ok": bool(result.get("ok")),
+        "ok": bool(result.get("ok")) and caps.get("stt") and caps.get("tts"),
         "dry_run": dry_run,
         "flow": VOICE_PACKS_FLOW,
         "endpoint": node.endpoint,

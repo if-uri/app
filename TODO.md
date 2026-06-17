@@ -2,11 +2,9 @@
 
 ## Priorytet
 
-- [ ] Wdrożyć urisys-node **>= 0.1.15** na lenovo (SSH obecnie zamknięty — użyj `make upgrade-node` gdy dostępny)
-- [ ] Po upgrade node: `make chat-migrate URISYS=http://192.168.188.201:8790`
-- [x] Voice planner: regex + catalog + llm:// (zamiast samych keyword triggers)
-- [x] Packi `stt`/`tts` na lenovo (voice-capabilities: stt+tts OK; brak tylko `llm`)
-- [ ] `llm` pack na lenovo (planner używa regex + catalog offline)
+- [x] Wdrożyć urisys-node **>= 0.1.15** na lenovo (`make upgrade-node` — zdalnie shell:// URI, bez SSH)
+- [x] Po upgrade node: `make chat-migrate` — `/app/chat/*` OK (0 lokalnych wiadomości do uploadu)
+- [x] Packi `stt`/`tts` + `llm` na lenovo
 - [ ] WebRTC / duplex voice między dwoma instancjami ifURI
 
 ## UI / UX

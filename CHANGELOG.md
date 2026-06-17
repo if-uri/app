@@ -42,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - CLI `chat-status` / `chat-migrate` — brakujące importy z `chat_channels`
+- `make upgrade-node` — fallback zdalny przez `shell://` URI gdy SSH niedostępny
+- `voice-install-packs` — fallback `node://…/install-pack` gdy flow 02b nie przejdzie
 
 ## [0.2.7] - 2026-06-17
 
