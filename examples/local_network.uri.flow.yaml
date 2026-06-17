@@ -1,0 +1,13 @@
+flow:
+  id: ifuri-local-network-demo
+  group: demo
+
+do:
+  - mcp://filesystem/list:
+      path: ./project
+  - llm://local/qwen/summarize:
+      input: file://project-tree.txt
+  - agent://code-reviewer/run:
+      profile: safe
+  - ifuri://office-node.local/services/browser/open:
+      url: https://ifuri.com

@@ -1,8 +1,23 @@
 # Byte-compiled / optimized / DLL files
+.code2llm_cache/
+packages/project/
+packages/.code2llm_cache/
+.idea/
+operator/
+workflows/
+!/.github/
+!/.github/workflows/
+!/.github/workflows/*.yml
+!/.github/workflows/*.yaml
+output/
+.env.example
 __pycache__/
 *.py[codz]
 *$py.class
-
+.nlp2dsl
+.urisys
+.urisys/
+data
 # C extensions
 *.so
 
@@ -151,6 +166,13 @@ activemq-data/
 .env
 .envrc
 .venv
+urienv-docker/vendor/uricore/
+# Local tellmesh sibling checkout placeholder (use ../uricore in workspace)
+uricore/
+# Release metadata — generated locally; CI commits to releases/ on version tags only
+releases/*
+!releases/.gitkeep
+local-lab/generated/
 env/
 venv/
 ENV/
@@ -195,9 +217,9 @@ cython_debug/
 .abstra/
 
 # Visual Studio Code
-#   Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
+#   Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore
 #   that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
-#   and can be added to the global gitignore or merged into this file. However, if you prefer, 
+#   and can be added to the global gitignore or merged into this file. However, if you prefer,
 #   you could uncomment the following to ignore the entire vscode folder
 # .vscode/
 # Temporary file for partial code execution
