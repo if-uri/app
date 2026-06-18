@@ -10,7 +10,7 @@ URISYS ?= http://192.168.188.201:8790
 VENV ?= .venv
 
 .PHONY: help install install-dev test test-api test-e2e install-e2e test-gui test-gui-docker \
-	run-gui run-voice run-voice-bg stop health api-smoke chat-status chat-migrate \
+	run-gui run-voice run-voice-bg run-tauri-dev stop health api-smoke chat-status chat-migrate \
 	voice-capabilities voice-install-packs webrtc-capabilities webrtc-install-pack webrtc-smoke \
 	vendor-uricore-js wheel build clean
 
@@ -27,6 +27,7 @@ help:
 	@echo "  run-gui          Tkinter desktop (flows + czaty + LAN)"
 	@echo "  run-voice        HTTP /voice UI (PORT=$(PORT), URISYS=$(URISYS))"
 	@echo "  run-voice-bg     voice server in background → /tmp/ifuri-voice.pid"
+	@echo "  run-tauri-dev    Tauri native window → /voice (needs Rust)"
 	@echo "  stop             stop background voice server"
 	@echo "  health           curl /api/health"
 	@echo "  api-smoke        quick curl checks for main endpoints"
@@ -86,6 +87,10 @@ run-voice-bg:
 		>/tmp/ifuri-voice.log 2>&1 & echo $$! > /tmp/ifuri-voice.pid
 	@sleep 0.8
 	@grep -m1 'voice UI:' /tmp/ifuri-voice.log || tail -3 /tmp/ifuri-voice.log
+
+run-tauri-dev:
+	PORT=$(PORT) URISYS=$(URISYS) PYTHON=$(PYTHON) bash desktop/dev-server.sh
+	cd desktop && cargo tauri dev
 
 stop:
 	@if test -f /tmp/ifuri-voice.pid; then \

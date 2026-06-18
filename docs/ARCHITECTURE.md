@@ -119,4 +119,4 @@ See [TODO.md](../TODO.md).
 - [ ] Deploy `app://` chat routes on production urisys-node builds
 - [ ] `llm://` planner instead of keyword triggers
 - [x] WebRTC peer channel for duplex voice — see [WEBRTC.md](WEBRTC.md)
-- [ ] Tauri/Electron shell wrapping `/voice`
+- [ ] Tauri shell wrapping `/voice` — scaffold in [desktop/README.md](../desktop/README.md); store builds TODO

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "ifURI Voice",
+  "version": "0.1.0",
+  "identifier": "com.ifuri.voice",
+  "build": {
+    "devUrl": "http://127.0.0.1:8766/voice",
+    "beforeDevCommand": "bash ../dev-server.sh",
+    "frontendDist": "../../src/ifuri_app/web"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "ifURI Voice",
+        "width": 1280,
+        "height": 860,
+        "minWidth": 640,
+        "minHeight": 480,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": false,
+    "targets": "all",
+    "icon": []
+  }
+}

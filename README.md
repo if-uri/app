@@ -77,10 +77,13 @@ ifuri-app --version
 # Na maszynie z urisys-node (np. lenovo)
 urisys-node serve --host 0.0.0.0 --port 8790
 
-# Operator
+# Operator — browser
 export URISYS_NODE_ENDPOINT=http://192.168.188.201:8790
 make run-voice URISYS=http://192.168.188.201:8790
 # → http://127.0.0.1:8766/voice?lang=pl&theme=dark
+
+# Operator — native shell (Rust + Tauri, dev)
+make run-tauri-dev URISYS=http://192.168.188.201:8790
 ```
 
 ## CLI

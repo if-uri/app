@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Tauri desktop scaffold (`desktop/`, `make run-tauri-dev`) — native WebView for `/voice`
+
 ## [0.2.10] - 2026-06-17
 
 ### Added

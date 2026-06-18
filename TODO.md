@@ -23,6 +23,8 @@
 - [x] Pełne i18n w `/voice` (PL/EN — `web/i18n.js`)
 - [x] E2E Playwright dla `/voice` + URL state (`make test-e2e`)
 - [ ] Tauri/Electron shell na `/voice` (store builds)
+  - [x] Scaffold: `desktop/` + `make run-tauri-dev` (dev WebView → :8766/voice)
+  - [ ] Sidecar `ifuri-app` + icons + release bundle
 
 ## Ops
 
