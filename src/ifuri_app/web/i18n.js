@@ -36,6 +36,15 @@
       voicePackInstalling: "Instalacja…",
       voicePackDone: "Packi głosowe zainstalowane.",
       voicePackFail: "Instalacja packów nie powiodła się.",
+      webrtcConnect: "Połącz WebRTC",
+      webrtcDisconnect: "Rozłącz",
+      webrtcStatusConnecting: "WebRTC: łączenie…",
+      webrtcStatusConnected: "WebRTC: połączono",
+      webrtcStatusError: "WebRTC: błąd",
+      webrtcStatusClosed: "WebRTC: rozłączono",
+      webrtcVoiceEmpty: "(brak odpowiedzi)",
+      webrtcVoiceViaDc: "Głos przez WebRTC data channel",
+      webrtcConnectFirst: "Najpierw kliknij „Połącz WebRTC”.",
     },
     en: {
       title: "ifURI — chat",
@@ -70,12 +79,21 @@
       voicePackInstalling: "Installing…",
       voicePackDone: "Voice packs installed.",
       voicePackFail: "Voice pack install failed.",
+      webrtcConnect: "Connect WebRTC",
+      webrtcDisconnect: "Disconnect",
+      webrtcStatusConnecting: "WebRTC: connecting…",
+      webrtcStatusConnected: "WebRTC: connected",
+      webrtcStatusError: "WebRTC: error",
+      webrtcStatusClosed: "WebRTC: disconnected",
+      webrtcVoiceEmpty: "(no reply)",
+      webrtcVoiceViaDc: "Voice over WebRTC data channel",
+      webrtcConnectFirst: "Click “Connect WebRTC” first.",
     },
   };
 
   const GROUP_LABELS = {
-    pl: { node: "urisys-node :8790", mcp: "MCP", a2a: "A2A / agent", llm: "LLM", ifuri: "ifURI peer" },
-    en: { node: "urisys-node :8790", mcp: "MCP", a2a: "A2A / agent", llm: "LLM", ifuri: "ifURI peer" },
+    pl: { node: "urisys-node :8790", mcp: "MCP", a2a: "A2A / agent", llm: "LLM", ifuri: "ifURI peer", webrtc: "WebRTC peer" },
+    en: { node: "urisys-node :8790", mcp: "MCP", a2a: "A2A / agent", llm: "LLM", ifuri: "ifURI peer", webrtc: "WebRTC peer" },
   };
 
   function t(lang, key, ...args) {

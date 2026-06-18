@@ -13,6 +13,7 @@
   --a2a: #fbbf24;
   --llm: #38bdf8;
   --ifuri: #fb7185;
+  --webrtc: #34d399;
   font-family: system-ui, "Segoe UI", sans-serif;
 }
 
@@ -196,6 +197,14 @@ body {
 .kind-a2a { background: rgba(251, 191, 36, 0.2); color: var(--a2a); }
 .kind-llm { background: rgba(56, 189, 248, 0.2); color: var(--llm); }
 .kind-ifuri { background: rgba(251, 113, 133, 0.2); color: var(--ifuri); }
+.kind-webrtc { background: rgba(52, 211, 153, 0.2); color: var(--webrtc); }
+
+.webrtc-status {
+  font-size: 0.75rem;
+  color: var(--webrtc);
+  align-self: center;
+}
+.webrtc-status.error { color: #f87171; }
 
 .chat-head-actions { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
 

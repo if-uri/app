@@ -30,6 +30,7 @@ from .voice_pipeline import (
     voice_capabilities,
     voice_planner_mode,
 )
+from .webrtc_pipeline import install_webrtc_pack, webrtc_capabilities, webrtc_smoke
 
 
 def print_json(data) -> None:
@@ -228,6 +229,26 @@ def cmd_voice_install_packs(args) -> int:
     return 0 if result.get("ok") else 1
 
 
+def cmd_webrtc_capabilities(args) -> int:
+    client = UrisysNodeClient(args.endpoint) if args.endpoint else None
+    print_json(webrtc_capabilities(client))
+    return 0
+
+
+def cmd_webrtc_install_pack(args) -> int:
+    client = UrisysNodeClient(args.endpoint) if args.endpoint else None
+    result = install_webrtc_pack(client=client, dry_run=args.dry_run)
+    print_json(result)
+    return 0 if result.get("ok") else 1
+
+
+def cmd_webrtc_smoke(args) -> int:
+    client = UrisysNodeClient(args.endpoint) if args.endpoint else None
+    result = webrtc_smoke(client=client)
+    print_json(result)
+    return 0 if result.get("ok") else 1
+
+
 def cmd_voice_run(args) -> int:
     client = UrisysNodeClient(args.endpoint) if args.endpoint else None
     result = run_voice_command(
@@ -404,6 +425,19 @@ def build_parser() -> argparse.ArgumentParser:
     p_vip.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
     p_vip.add_argument("--dry-run", action="store_true")
     p_vip.set_defaults(func=cmd_voice_install_packs)
+
+    p_wcap = sub.add_parser("webrtc-capabilities", help="webrtc pack availability on urisys-node")
+    p_wcap.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_wcap.set_defaults(func=cmd_webrtc_capabilities)
+
+    p_wip = sub.add_parser("webrtc-install-pack", help="run 02c-install-webrtc-pack on node")
+    p_wip.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_wip.add_argument("--dry-run", action="store_true")
+    p_wip.set_defaults(func=cmd_webrtc_install_pack)
+
+    p_wsm = sub.add_parser("webrtc-smoke", help="webrtc session start + data envelope smoke")
+    p_wsm.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
+    p_wsm.set_defaults(func=cmd_webrtc_smoke)
 
     p_vr = sub.add_parser("voice-run", help="run voice command pipeline")
     p_vr.add_argument("text")

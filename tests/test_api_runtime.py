@@ -168,3 +168,17 @@ def test_not_found(server):
         assert exc.code == 404
         body = json.loads(exc.read().decode("utf-8"))
         assert body.get("error") == "not_found"
+
+
+def test_webrtc_signal_api(server):
+    room = "webrtc-peer:smoke"
+    status, posted = _post(
+        f"{server.url}/api/webrtc/signal",
+        {"room": room, "from": "http://127.0.0.1:8766", "type": "offer", "data": {"sdp": "v=0"}},
+    )
+    assert status == 200
+    assert posted.get("ok") is True
+    status, inbox = _get(f"{server.url}/api/webrtc/signal?room={room}&since=0")
+    assert status == 200
+    assert inbox.get("ok") is True
+    assert len(inbox.get("signals") or []) == 1

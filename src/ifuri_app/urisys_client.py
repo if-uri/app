@@ -27,6 +27,7 @@ def default_node_endpoint() -> str:
 
 
 VOICE_PACK_NAMES = frozenset({"stt", "tts", "voice", "uristt", "uri2voice", "uriwebrtc"})
+WEBRTC_PACK_NAMES = frozenset({"webrtc", "uriwebrtc"})
 
 
 LLM_PACK_NAMES = frozenset({"llm", "urillm"})
@@ -41,11 +42,20 @@ def node_llm_available(client: UrisysNodeClient | None = None) -> bool:
     return bool(packs & LLM_PACK_NAMES)
 
 
+def node_webrtc_available(client: UrisysNodeClient | None = None) -> bool:
+    node = client or UrisysNodeClient()
+    health = node.health()
+    if not health.get("ok"):
+        return False
+    packs = {str(p).lower() for p in (health.get("packs_loaded") or [])}
+    return bool(packs & WEBRTC_PACK_NAMES)
+
+
 def node_voice_capabilities(client: UrisysNodeClient | None = None) -> dict[str, Any]:
     node = client or UrisysNodeClient()
     health = node.health()
     if not health.get("ok"):
-        return {"stt": False, "tts": False, "llm": False, "reachable": False, "endpoint": node.endpoint}
+        return {"stt": False, "tts": False, "llm": False, "webrtc": False, "reachable": False, "endpoint": node.endpoint}
     packs = {str(p).lower() for p in (health.get("packs_loaded") or [])}
     has_voice = bool(packs & VOICE_PACK_NAMES) or "stt" in packs
     routes = int(health.get("routes_count") or 0)
@@ -57,6 +67,7 @@ def node_voice_capabilities(client: UrisysNodeClient | None = None) -> dict[str,
         "stt": has_stt,
         "tts": has_stt,
         "llm": node_llm_available(node),
+        "webrtc": node_webrtc_available(node),
         "packs_loaded": sorted(packs),
     }
 

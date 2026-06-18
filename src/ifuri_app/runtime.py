@@ -41,6 +41,8 @@ from .voice_pipeline import (
     voice_capabilities,
 )
 from .voice_planner import load_flow_catalog, voice_planner_mode
+from .webrtc_signal import local_peer_url, poll_signals, post_signal, room_stats
+from .webrtc_pipeline import webrtc_capabilities
 
 WEB_DIR = web_dir()
 
@@ -352,13 +354,32 @@ def make_handler(state: RuntimeState):
                 ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
                 client = UrisysNodeClient(ep or None) if ep else UrisysNodeClient()
                 self._send(200, voice_capabilities(client))
+            elif path == "/api/webrtc/capabilities":
+                qs = parse_qs(urlparse(self.path).query)
+                ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+                client = UrisysNodeClient(ep or None) if ep else None
+                out = webrtc_capabilities(client)
+                out["local_api_url"] = local_peer_url(host=state.host, port=state.port)
+                self._send(200, out)
+            elif path == "/api/webrtc/signal":
+                qs = parse_qs(urlparse(self.path).query)
+                room = (qs.get("room") or [""])[0]
+                try:
+                    since = int((qs.get("since") or ["0"])[0])
+                except ValueError:
+                    since = 0
+                self._send(200, poll_signals(room, since=since))
             elif path == "/api/chat/channels":
                 qs = parse_qs(urlparse(self.path).query)
                 try:
                     timeout = float((qs.get("timeout") or ["1.5"])[0])
                 except ValueError:
                     timeout = 1.5
-                payload = list_chat_channels(timeout=min(max(timeout, 0.5), 5.0))
+                payload = list_chat_channels(
+                    timeout=min(max(timeout, 0.5), 5.0),
+                    local_host=state.host,
+                    local_port=state.port,
+                )
                 router = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
                 if router or payload.get("channels"):
                     hist = fetch_chat_channel_index(router_endpoint=router or None)
@@ -567,12 +588,27 @@ def make_handler(state: RuntimeState):
                         force=bool(body.get("force", False)),
                     ),
                 )
+            elif path == "/api/webrtc/signal":
+                room = str(body.get("room") or "").strip()
+                from_peer = str(body.get("from") or "").strip()
+                signal_type = str(body.get("type") or "").strip()
+                self._send(
+                    200,
+                    post_signal(
+                        room,
+                        from_peer=from_peer,
+                        signal_type=signal_type,
+                        data=body.get("data"),
+                    ),
+                )
             elif path == "/api/chat/channels":
                 self._send(
                     200,
                     list_chat_channels(
                         timeout=min(max(float(body.get("timeout", 1.5)), 0.5), 5.0),
                         scan_subnet=bool(body.get("scan_subnet", True)),
+                        local_host=state.host,
+                        local_port=state.port,
                     ),
                 )
             elif path == "/api/network/scan":

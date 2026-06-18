@@ -22,12 +22,24 @@ Repo: [github.com/if-uri/app](https://github.com/if-uri/app)
 | POST | `/api/chat/migrate` | Body: `{ endpoint?, dry_run?, force? }` — upload local JSONL |
 | POST | `/api/chat/send` | Body: `{ channel, text \| prompt, dry_run, router_endpoint }` |
 
+## WebRTC (peer duplex voice)
+
+See [WEBRTC.md](WEBRTC.md) for full contract (room id, data channel protocol).
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/webrtc/capabilities?endpoint=` | Node `webrtc` pack + `local_api_url` |
+| GET | `/api/webrtc/signal?room=&since=` | Poll local signaling inbox |
+| POST | `/api/webrtc/signal` | Body: `{ room, from, type, data }` — `offer` \| `answer` \| `ice` |
+
+Chat channel type `webrtc-peer` appears in `/api/chat/channels` when LAN scan finds other ifURI instances.
+
 ## Voice & urisys
 
 | Method | Path | Description |
 |--------|------|-------------|
 | POST | `/api/voice/install-packs` | Body: `{ endpoint?, dry_run? }` — flow 02b stt/tts |
-| GET | `/api/voice/capabilities?endpoint=` | stt/tts/llm + install hint |
+| GET | `/api/voice/capabilities?endpoint=` | stt/tts/llm/webrtc + install hint |
 | POST | `/api/voice/plan` | `{ text, endpoint?, planner? }` → flow/uri plan |
 | POST | `/api/voice/run` | Full voice pipeline |
 | POST | `/api/urisys/call` | Proxy to node `POST /uri/call` |
@@ -56,6 +68,7 @@ Persistent query parameters (shareable links):
 | `theme` | `dark`, `light`, `ifuri` | Color theme |
 | `view` | `chat`, `screen` | Active panel |
 | `channel` | `urisys-node:http://…:8790` | Active chat channel id |
+| `channel` | `webrtc-peer:http://…:8767` | WebRTC peer channel (see [WEBRTC.md](WEBRTC.md)) |
 | `prompt` | `health` | Composer text / deep link |
 | `action` | `send` | With `prompt` → auto-send on load |
 | `dry_run` | `0`, `1` | Dry-run toggle |
@@ -84,4 +97,4 @@ make api-smoke PORT=8766
 make stop
 ```
 
-See also [ARCHITECTURE.md](ARCHITECTURE.md), [README.md](../README.md).
+See also [ARCHITECTURE.md](ARCHITECTURE.md), [WEBRTC.md](WEBRTC.md), [README.md](../README.md).

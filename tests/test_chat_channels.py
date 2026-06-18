@@ -20,13 +20,15 @@ def test_channels_from_scan_groups_endpoints():
         "mcp_agent_services": [],
         "llm_services": [{"scheme": "llm", "name": "qwen", "uri": "llm://local/qwen/analyze", "source": "local"}],
     }
-    channels = channels_from_scan(scan)
+    channels = channels_from_scan(scan, local_api_url="http://192.168.1.10:8766")
     kinds = {c["kind"] for c in channels}
     assert "node" in kinds
     assert "mcp" in kinds
     assert "a2a" in kinds
     assert "ifuri" in kinds
+    assert "webrtc" in kinds
     assert any(c["endpoint"] == "http://192.168.1.10:8790" for c in channels)
+    assert any(c.get("type") == "webrtc-peer" for c in channels)
 
 
 def test_send_empty_message():

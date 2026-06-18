@@ -35,6 +35,8 @@
             <option value="ifuri">ifuri</option>
           </select>
           <button id="btnViewToggle" type="button" class="ghost" hidden>Czat</button>
+          <button id="btnWebRtcConnect" type="button" class="ghost" hidden>WebRTC</button>
+          <span id="webrtcStatus" class="webrtc-status" hidden></span>
           <button id="btnScreen" type="button" class="ghost" hidden></button>
           <label class="chk" id="screenAutoWrap" hidden><input id="screenAuto" type="checkbox" /> <span id="screenAutoLabel"></span></label>
         </div>
@@ -48,6 +50,8 @@
         <p id="voicePackText"></p>
         <button id="btnInstallVoicePacks" type="button" class="ghost"></button>
       </div>
+
+      <audio id="webrtcRemoteAudio" autoplay playsinline hidden></audio>
 
       <div id="messages" class="messages" aria-live="polite"></div>
 
@@ -66,6 +70,7 @@
   <script src="/web/i18n.js"></script>
   <script src="/web/theme.js"></script>
   <script type="module" src="/web/page_runtime.js"></script>
+  <script src="/web/webrtc_peer.js"></script>
   <script src="/web/voice.js"></script>
 </body>
 </html>

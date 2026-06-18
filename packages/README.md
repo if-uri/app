@@ -18,6 +18,7 @@ ifURI /voice       ──►  UI + chat + proxy (this repo)
 | **uricore-js** | tellmesh/uricore-js | Browser `page://` handlers — `ifuri-page/` |
 | **uri2flow** | tellmesh/uri2flow | Replace `flow_engine.py` expand/validate (integrated in 0.2.4+) |
 | **urisys-node** | tellmesh/urisys-node | Real execution on lenovo / host |
+| **uriwebrtc** | tellmesh/uriwebrtc | `webrtc://` on node; browser P2P in `/voice` — [docs/WEBRTC.md](../docs/WEBRTC.md) |
 
 ## Pack layout
 

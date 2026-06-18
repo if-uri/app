@@ -16,7 +16,7 @@ from .voice_planner import (
 VOICE_PACKS_FLOW = "lenovo-remote/02b-install-voice-packs.uri.flow.yaml"
 VOICE_STT_WHEEL = os.environ.get(
     "URISYS_STT_WHEEL",
-    f"{os.environ.get('URISYS_WHEEL_HOST', 'http://192.168.188.212:8765')}/urisys_automation_lab-0.1.1-py3-none-any.whl",
+    f"{os.environ.get('URISYS_WHEEL_HOST', 'http://192.168.188.212:8765')}/uristt-0.1.0-py3-none-any.whl",
 )
 
 __all__ = [

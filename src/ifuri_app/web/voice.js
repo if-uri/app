@@ -11,6 +11,8 @@ const btnListen = document.getElementById("btnListen");
 const btnRefresh = document.getElementById("btnRefresh");
 const btnScreen = document.getElementById("btnScreen");
 const btnViewToggle = document.getElementById("btnViewToggle");
+const btnWebRtcConnect = document.getElementById("btnWebRtcConnect");
+const webrtcStatusEl = document.getElementById("webrtcStatus");
 const dryRunEl = document.getElementById("dryRun");
 const chatKindEl = document.getElementById("chatKind");
 const chatTitleEl = document.getElementById("chatTitle");
@@ -26,6 +28,7 @@ const screenAutoLabel = document.getElementById("screenAutoLabel");
 const voicePackBanner = document.getElementById("voicePackBanner");
 const voicePackText = document.getElementById("voicePackText");
 const btnInstallVoicePacks = document.getElementById("btnInstallVoicePacks");
+const webrtcRemoteAudio = document.getElementById("webrtcRemoteAudio");
 
 let channels = [];
 let activeChannel = null;
@@ -35,6 +38,8 @@ let screenTimer = null;
 let lang = "pl";
 let autoSendPending = false;
 let lastChannelData = null;
+let localApiUrl = null;
+let webrtcSession = null;
 
 function t(key, ...args) {
   return I()?.t(lang, key, ...args) ?? key;
@@ -228,9 +233,20 @@ function selectChannel(ch, { replace = false } = {}) {
   btnListen.disabled = false;
 
   const isNode = ch.type === "urisys-node";
+  const isWebRtc = ch.type === "webrtc-peer";
   btnScreen.hidden = !isNode;
   btnViewToggle.hidden = !isNode;
   screenAutoWrap.hidden = !isNode;
+  if (btnWebRtcConnect) {
+    btnWebRtcConnect.hidden = !isWebRtc;
+    btnWebRtcConnect.textContent = webrtcSession ? t("webrtcDisconnect") : t("webrtcConnect");
+  }
+  if (webrtcStatusEl) webrtcStatusEl.hidden = !isWebRtc;
+  if (isWebRtc && webrtcSession) {
+    /* keep session across channel re-select */
+  } else if (!isWebRtc && webrtcSession) {
+    disconnectWebRtc();
+  }
   if (isNode) {
     localStorage.setItem("ifuri_node", ch.endpoint);
     applyViewFromUrl();
@@ -250,7 +266,7 @@ function renderChannelList(data) {
   chatListEl.innerHTML = "";
   const groups = data.groups || {};
   const historyIndex = data.history_index || {};
-  const order = ["node", "mcp", "a2a", "llm", "ifuri"];
+  const order = ["node", "mcp", "a2a", "llm", "ifuri", "webrtc"];
   const labels = groupLabels();
 
   for (const key of order) {
@@ -342,6 +358,7 @@ async function refreshChannels() {
     const qs = ep ? `?timeout=1.8&endpoint=${encodeURIComponent(ep)}` : "?timeout=1.8";
     const data = await api(`/api/chat/channels${qs}`);
     channels = data.channels || [];
+    localApiUrl = data.local_api_url || localApiUrl;
     const node = channels.find((c) => c.type === "urisys-node");
     if (node?.endpoint) {
       localStorage.setItem("ifuri_node", node.endpoint);
@@ -365,6 +382,23 @@ async function sendMessage() {
   inputEl.value = "";
   syncUrl({ prompt: null }, { replace: true });
   appendMessage(activeChannel.id, "assistant", "…", { pending: true });
+
+  if (activeChannel.type === "webrtc-peer") {
+    if (!webrtcSession?.isReady()) {
+      messages[activeChannel.id].pop();
+      appendMessage(activeChannel.id, "assistant", t("webrtcConnectFirst"), { error: true });
+      return;
+    }
+    try {
+      const reply = await webrtcSession.sendVoiceRequest(text, dryRunEl.checked);
+      messages[activeChannel.id].pop();
+      appendMessage(activeChannel.id, "assistant", reply.text || t("webrtcVoiceEmpty"), reply);
+    } catch (err) {
+      messages[activeChannel.id].pop();
+      appendMessage(activeChannel.id, "assistant", `${t("errorPrefix")} ${err}`, { error: true });
+    }
+    return;
+  }
 
   const payload = {
     channel: activeChannel,
@@ -438,15 +472,110 @@ themeSelect.addEventListener("change", () => {
 });
 
 function groupChannels(list) {
-  const groups = { node: [], mcp: [], a2a: [], llm: [], ifuri: [] };
+  const groups = { node: [], mcp: [], a2a: [], llm: [], ifuri: [], webrtc: [] };
   for (const ch of list) groups[ch.kind]?.push(ch);
   return groups;
+}
+
+function setWebRtcStatus(state, detail) {
+  if (!webrtcStatusEl) return;
+  webrtcStatusEl.hidden = false;
+  webrtcStatusEl.classList.toggle("error", state === "error" || state === "failed");
+  const labels = {
+    connecting: t("webrtcStatusConnecting"),
+    connected: t("webrtcStatusConnected"),
+    closed: t("webrtcStatusClosed"),
+    error: t("webrtcStatusError"),
+    failed: t("webrtcStatusError"),
+  };
+  webrtcStatusEl.textContent = labels[state] || `WebRTC: ${state}${detail ? ` (${detail})` : ""}`;
+}
+
+async function handleWebRtcEnvelope(envelope) {
+  if (!envelope || envelope.kind !== "voice" || !envelope.id) {
+    if (envelope?.kind === "uri" && activeChannel) {
+      appendMessage(activeChannel.id, "assistant", `URI envelope:\n${JSON.stringify(envelope, null, 2)}`);
+    }
+    return;
+  }
+  const channelId = activeChannel?.id;
+  if (channelId) {
+    appendMessage(channelId, "user", `[peer] ${envelope.text}`, { via: "webrtc" });
+    appendMessage(channelId, "assistant", "…", { pending: true });
+  }
+  try {
+    const ep = routerEndpoint();
+    const data = await api("/api/voice/run", {
+      text: envelope.text,
+      endpoint: ep || undefined,
+      dry_run: Boolean(envelope.dry_run),
+      speak: !envelope.dry_run,
+    });
+    const summary = data.summary || data.text || JSON.stringify(data, null, 2);
+    if (channelId) {
+      messages[channelId].pop();
+      appendMessage(channelId, "assistant", summary, data);
+    }
+    webrtcSession?.sendVoiceReply(envelope.id, { ok: data.ok !== false, text: summary, body: data });
+  } catch (err) {
+    if (channelId) {
+      messages[channelId].pop();
+      appendMessage(channelId, "assistant", `${t("errorPrefix")} ${err}`, { error: true });
+    }
+    webrtcSession?.sendVoiceReply(envelope.id, { ok: false, text: String(err) });
+  }
+}
+
+async function connectWebRtc() {
+  if (!activeChannel || activeChannel.type !== "webrtc-peer") return;
+  if (webrtcSession) {
+    disconnectWebRtc();
+    return;
+  }
+  const localUrl = localApiUrl || (await api("/api/webrtc/capabilities")).local_api_url;
+  const remoteUrl = activeChannel.peer_url;
+  const room = activeChannel.signaling_room;
+  if (!localUrl || !remoteUrl || !room || !window.IfuriWebRtcPeer) {
+    setWebRtcStatus("error", "missing peer config");
+    return;
+  }
+  webrtcSession = new window.IfuriWebRtcPeer.WebRtcPeerSession({
+    room,
+    localUrl,
+    remoteUrl,
+    remoteAudioEl: webrtcRemoteAudio,
+    onStatus: ({ state, detail }) => {
+      setWebRtcStatus(state, detail);
+      if (state === "connected" || state === "datachannel-open") {
+        if (btnWebRtcConnect) btnWebRtcConnect.textContent = t("webrtcDisconnect");
+        if (btnListen) btnListen.disabled = false;
+      }
+    },
+    onMessage: (envelope) => handleWebRtcEnvelope(envelope),
+  });
+  if (btnWebRtcConnect) btnWebRtcConnect.textContent = t("webrtcDisconnect");
+  try {
+    await webrtcSession.start();
+  } catch (err) {
+    setWebRtcStatus("error", String(err));
+    disconnectWebRtc();
+  }
+}
+
+function disconnectWebRtc() {
+  if (webrtcSession) {
+    webrtcSession.stop();
+    webrtcSession = null;
+  }
+  if (btnWebRtcConnect) btnWebRtcConnect.textContent = t("webrtcConnect");
+  setWebRtcStatus("closed");
 }
 
 btnRefresh.onclick = refreshChannels;
 btnSend.onclick = sendMessage;
 btnScreen.onclick = refreshScreen;
 btnViewToggle.onclick = toggleView;
+if (btnWebRtcConnect) btnWebRtcConnect.onclick = connectWebRtc;
 if (btnInstallVoicePacks) btnInstallVoicePacks.onclick = installVoicePacks;
 screenAutoEl.addEventListener("change", () => setScreenAuto(screenAutoEl.checked));
 dryRunEl.addEventListener("change", () => syncUrl({ dry_run: dryRunEl.checked ? "1" : "0" }));
@@ -471,9 +600,13 @@ btnListen.onclick = () => {
   }
   const rec = new SR();
   rec.lang = lang === "en" ? "en-US" : "pl-PL";
-  rec.onresult = (ev) => {
-    inputEl.value = ev.results[0][0].transcript;
+  rec.onresult = async (ev) => {
+    const transcript = ev.results[0][0].transcript;
+    inputEl.value = transcript;
     syncPromptToUrl({ replace: true });
+    if (activeChannel.type === "webrtc-peer" && webrtcSession?.isReady()) {
+      await sendMessage();
+    }
   };
   rec.start();
 };

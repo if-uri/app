@@ -3,7 +3,7 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.2.9-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.2.10-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
 ![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.80-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-3.6h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
 - 🤖 **LLM usage:** $0.8012 (5 commits)
@@ -21,7 +21,7 @@ Published at [github.com/if-uri/app](https://github.com/if-uri/app) · [ifuri.co
 
 **ifURI** (`ifuri-app`) lets users:
 
-- chat with each **urisys-node :8790**, MCP, A2A, LLM and ifURI peer in **`/voice`**,
+- chat with each **urisys-node :8790**, MCP, A2A, LLM, ifURI peer and **WebRTC peer** in **`/voice`**,
 - keep **URL state** (`lang`, `theme`, `view`, `channel`, `prompt`) in shareable links,
 - store chat history on **urisys-node** (`/app/chat/*`) or locally as fallback,
 - run **URI flows** from [urisys-examples](https://github.com/tellmesh/urisys-examples),
@@ -39,6 +39,8 @@ make run-gui           # desktop Tkinter
 make api-smoke         # curl health + chat endpoints
 make chat-status URISYS=http://192.168.188.201:8790
 make chat-migrate-dry URISYS=http://192.168.188.201:8790   # po upgrade node
+make webrtc-install-pack URISYS=http://192.168.188.201:8790
+make webrtc-smoke URISYS=http://192.168.188.201:8790
 ```
 
 Zmienne: `PORT=8766`, `URISYS=http://192.168.188.201:8790`, `PYTHON=python3`
@@ -93,12 +95,15 @@ ifuri-app chat-migrate --endpoint http://192.168.188.201:8790
 ifuri-app packs
 ifuri-app flow-validate lenovo-remote/01-health-probe.uri.flow.yaml
 ifuri-app voice-plan "sprawdź health"
+ifuri-app webrtc-capabilities --endpoint http://192.168.188.201:8790
+ifuri-app webrtc-install-pack --endpoint http://192.168.188.201:8790
+ifuri-app webrtc-smoke --endpoint http://192.168.188.201:8790
 ifuri-app discover
 ```
 
 ## Runtime API
 
-Pełna dokumentacja: **[docs/API.md](docs/API.md)** · diagram: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**
+Pełna dokumentacja: **[docs/API.md](docs/API.md)** · diagram: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** · WebRTC: **[docs/WEBRTC.md](docs/WEBRTC.md)**
 
 | Method | Path | Purpose |
 |--------|------|---------|
@@ -108,6 +113,8 @@ Pełna dokumentacja: **[docs/API.md](docs/API.md)** · diagram: **[docs/ARCHITEC
 | GET | `/api/chat/history?channel_id=` | Thread history |
 | POST | `/api/chat/send` | Send message (`text` or `prompt`) |
 | POST | `/api/voice/run` | Voice pipeline |
+| GET | `/api/webrtc/signal` | WebRTC signaling inbox (poll) |
+| POST | `/api/webrtc/signal` | WebRTC SDP/ICE relay |
 | POST | `/api/urisys/call` | Proxy to node |
 
 ## Data

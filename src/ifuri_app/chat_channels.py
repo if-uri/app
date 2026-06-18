@@ -9,6 +9,7 @@ from .chat_store import LocalChatStore
 from .network_scan import scan_network
 from .urisys_client import UrisysNodeClient, default_node_endpoint
 from .voice_pipeline import plan_voice_command, run_voice_command
+from .webrtc_signal import local_peer_url, webrtc_room_id
 
 A2A_SCHEMES = frozenset({"agent", "a2a"})
 
@@ -18,7 +19,7 @@ def _channel_id(kind: str, key: str) -> str:
     return f"{kind}:{safe}"
 
 
-def channels_from_scan(scan: dict[str, Any]) -> list[dict[str, Any]]:
+def channels_from_scan(scan: dict[str, Any], *, local_api_url: str | None = None) -> list[dict[str, Any]]:
     """Build chat channel list from network scan payload."""
     out: list[dict[str, Any]] = []
 
@@ -50,17 +51,32 @@ def channels_from_scan(scan: dict[str, Any]) -> list[dict[str, Any]]:
         if not url:
             continue
         name = str(peer.get("name") or peer.get("id") or peer.get("address") or "ifURI")
+        peer_url = url.rstrip("/")
         out.append(
             {
-                "id": _channel_id("ifuri", url),
+                "id": _channel_id("ifuri", peer_url),
                 "type": "ifuri",
                 "kind": "ifuri",
                 "title": name,
-                "subtitle": url,
-                "peer_url": url.rstrip("/"),
+                "subtitle": peer_url,
+                "peer_url": peer_url,
                 "meta": {"schemes": peer.get("schemes") or []},
             }
         )
+        if local_api_url and peer_url.rstrip("/") != local_api_url.rstrip("/"):
+            room = webrtc_room_id(local_api_url, peer_url)
+            out.append(
+                {
+                    "id": _channel_id("webrtc-peer", peer_url),
+                    "type": "webrtc-peer",
+                    "kind": "webrtc",
+                    "title": f"{name} (WebRTC)",
+                    "subtitle": peer_url,
+                    "peer_url": peer_url,
+                    "signaling_room": room,
+                    "meta": {"local_url": local_api_url, "remote_url": peer_url},
+                }
+            )
 
     for svc in (scan.get("services") or []) + (scan.get("mcp_agent_services") or []) + (scan.get("llm_services") or []):
         uri = str(svc.get("uri") or "")
@@ -99,16 +115,18 @@ def channels_from_scan(scan: dict[str, Any]) -> list[dict[str, Any]]:
     return deduped
 
 
-def list_chat_channels(*, timeout: float = 1.5, scan_subnet: bool = True) -> dict[str, Any]:
+def list_chat_channels(*, timeout: float = 1.5, scan_subnet: bool = True, local_host: str = "127.0.0.1", local_port: int = 8765) -> dict[str, Any]:
     scan = scan_network(timeout=timeout, scan_subnet=scan_subnet)
-    channels = channels_from_scan(scan)
-    groups: dict[str, list[dict[str, Any]]] = {"node": [], "mcp": [], "a2a": [], "llm": [], "ifuri": []}
+    local_api = local_peer_url(host=local_host, port=local_port)
+    channels = channels_from_scan(scan, local_api_url=local_api)
+    groups: dict[str, list[dict[str, Any]]] = {"node": [], "mcp": [], "a2a": [], "llm": [], "ifuri": [], "webrtc": []}
     for ch in channels:
         groups.setdefault(ch["kind"], []).append(ch)
     return {
         "ok": True,
         "scanned_at": scan.get("scanned_at"),
         "counts": scan.get("counts"),
+        "local_api_url": local_api,
         "channels": channels,
         "groups": groups,
     }

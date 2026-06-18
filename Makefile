@@ -11,6 +11,7 @@ VENV ?= .venv
 
 .PHONY: help install install-dev test test-api test-e2e install-e2e test-gui test-gui-docker \
 	run-gui run-voice run-voice-bg stop health api-smoke chat-status chat-migrate \
+	voice-capabilities voice-install-packs webrtc-capabilities webrtc-install-pack webrtc-smoke \
 	vendor-uricore-js wheel build clean
 
 help:
@@ -122,6 +123,15 @@ voice-capabilities:
 
 voice-install-packs:
 	PYTHONPATH=src $(PYTHON) -m ifuri_app voice-install-packs --endpoint $(URISYS)
+
+webrtc-capabilities:
+	PYTHONPATH=src $(PYTHON) -m ifuri_app webrtc-capabilities --endpoint $(URISYS)
+
+webrtc-install-pack:
+	PYTHONPATH=src $(PYTHON) -m ifuri_app webrtc-install-pack --endpoint $(URISYS)
+
+webrtc-smoke:
+	PYTHONPATH=src $(PYTHON) -m ifuri_app webrtc-smoke --endpoint $(URISYS)
 
 upgrade-node:
 	@if ssh -o ConnectTimeout=5 -o BatchMode=yes "$${URISYS_SSH_USER:-tom}@$${URISYS_HOST:-192.168.188.201}" 'echo ok' 2>/dev/null; then \

@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [0.2.10] - 2026-06-17
+
+### Added
+- WebRTC phases 1–3: pack install (`webrtc-install-pack`), HTTP signaling (`/api/webrtc/signal`), `webrtc-peer` channels, duplex voice over data channel
+- `webrtc_pipeline.py`, `webrtc_signal.py`, `web/webrtc_peer.js`
+- CLI: `webrtc-capabilities`, `webrtc-install-pack`, `webrtc-smoke`
+- `node_voice_capabilities.webrtc`
+
+### Changed
+- `voice_pipeline` / bootstrap: `uristt-0.1.0`, `uriwebrtc-0.1.0` wheels
+
+### Docs
+- [docs/WEBRTC.md](docs/WEBRTC.md) — cross-repo contract
+- Update [docs/API.md](docs/API.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [README.md](README.md)
+
 ## [0.2.9] - 2026-06-17
 
 ### Docs

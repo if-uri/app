@@ -17,7 +17,8 @@ PACKS = [
     ("kvm", f"{WHEEL}/urikvm-0.1.1-py3-none-any.whl"),
     ("him", f"{WHEEL}/urihim-0.1.5-py3-none-any.whl"),
     ("img2nl", f"{WHEEL}/uriimg2nl-0.1.2-py3-none-any.whl"),
-    ("stt", f"{WHEEL}/urisys_automation_lab-0.1.1-py3-none-any.whl"),
+    ("stt", f"{WHEEL}/uristt-0.1.0-py3-none-any.whl"),
+    ("webrtc", f"{WHEEL}/uriwebrtc-0.1.0-py3-none-any.whl"),
 ]
 
 
