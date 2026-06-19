@@ -23,7 +23,7 @@ kvm, llm, …) → bridges into a **urirun binding/registry** the app/flows can 
 - [ ] **Connector package template**: copy the `http-check` pattern for new packages:
   `@uri_command`, `connector_bindings()`, `connector.manifest.json`, Docker smoke,
   README, CI.
-- [ ] **Validation in CI**: validate every connector manifest against `schema/*.json` (see [50-cicd](50-cicd.md)).
+- [x] **Validation in CI**: `scripts/validate_connectors.py` validates manifests + catalog against `schema/*.json` (see [50-cicd](50-cicd.md)).
 - [ ] **Submit flow**: harden `POST /validate-connector`; rate-limit; spam guard for `/submit`.
 - [ ] **Signing/trust**: optional signed manifests + a "verified" badge.
 - [ ] **Discovery**: project the catalog to **MCP tools/list** and an **A2A agent card**
