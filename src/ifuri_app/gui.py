@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
+import threading
+import urllib.request
 import tkinter as tk
 import webbrowser
 from tkinter import messagebox, simpledialog, ttk
@@ -28,6 +31,7 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         self.current_flow_index = 0
         self.runtime: RuntimeServer | None = None
         self.discovery_responder: DiscoveryResponder | None = None
+        self._urirun_serve: subprocess.Popen | None = None
         self._build_style()
         self._build_ui()
         self._load_groups()
@@ -122,6 +126,18 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         ttk.Entry(controls, textvariable=self.service_uri, width=52).pack(side="left", padx=(0, 6))
         ttk.Combobox(controls, textvariable=self.service_scope, values=["private", "shared", "public"], width=10).pack(side="left", padx=(0, 6))
         ttk.Button(controls, text="Add service", command=self.add_service).pack(side="left")
+
+        srv = ttk.LabelFrame(tab, text="urirun-serve · registry HTTP (/health · /routes · POST /run)", padding=8)
+        srv.grid(row=2, column=0, sticky="ew", pady=(8, 0))
+        self.urirun_serve_port = tk.IntVar(value=8780)
+        ttk.Label(srv, text="Port").pack(side="left")
+        ttk.Entry(srv, textvariable=self.urirun_serve_port, width=8).pack(side="left", padx=(4, 8))
+        ttk.Button(srv, text="Start", command=self.start_urirun_serve).pack(side="left")
+        ttk.Button(srv, text="Stop", command=self.stop_urirun_serve).pack(side="left", padx=6)
+        ttk.Button(srv, text="Routes", command=self.show_urirun_routes).pack(side="left")
+        self.urirun_serve_status = tk.StringVar(value="urirun-serve stopped")
+        ttk.Label(srv, textvariable=self.urirun_serve_status, foreground="#5d6d7e").pack(side="left", padx=10)
+
         self._refresh_services()
 
     def _build_network_tab(self) -> None:
@@ -420,9 +436,60 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
     def save_all(self) -> None:
         save_workspace(self.workspace)
 
+    def _urirun_serve_cmd(self, port: int) -> list[str]:
+        # PyInstaller-frozen ifuri-app forwards argv to the CLI; dev runs the module.
+        base = [sys.executable] if getattr(sys, "frozen", False) else [sys.executable, "-m", "ifuri_app"]
+        return [*base, "urirun-serve", "--host", "127.0.0.1", "--port", str(port)]
+
+    def start_urirun_serve(self) -> None:
+        if self._urirun_serve and self._urirun_serve.poll() is None:
+            self.urirun_serve_status.set("urirun-serve already running")
+            return
+        port = int(self.urirun_serve_port.get())
+        try:
+            self._urirun_serve = subprocess.Popen(self._urirun_serve_cmd(port))
+        except OSError as exc:
+            self._urirun_serve = None
+            messagebox.showerror("urirun-serve error", str(exc))
+            return
+        self.urirun_serve_status.set(f"urirun-serve running: http://127.0.0.1:{port}/")
+        self.append_log(f"urirun-serve started on port {port}")
+
+    def stop_urirun_serve(self) -> None:
+        proc = self._urirun_serve
+        self._urirun_serve = None
+        if not proc or proc.poll() is not None:
+            self.urirun_serve_status.set("urirun-serve stopped")
+            return
+        proc.terminate()
+        try:
+            proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+        self.urirun_serve_status.set("urirun-serve stopped")
+        self.append_log("urirun-serve stopped")
+
+    def show_urirun_routes(self) -> None:
+        port = int(self.urirun_serve_port.get())
+        url = f"http://127.0.0.1:{port}/routes"
+
+        def fetch() -> None:
+            try:
+                with urllib.request.urlopen(url, timeout=3) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+            except Exception as exc:  # noqa: BLE001 - surface any failure to the user
+                self.after(0, lambda e=exc: messagebox.showerror("urirun-serve", f"{url}\n{e}"))
+                return
+            routes = data.get("routes", data)
+            text = json.dumps(routes, indent=2, ensure_ascii=False)
+            self.after(0, lambda t=text: messagebox.showinfo("urirun routes", t[:4000]))
+
+        threading.Thread(target=fetch, daemon=True).start()
+
     def _on_close(self) -> None:
         self.save_all()
         self.stop_runtime()
+        self.stop_urirun_serve()
         self.destroy()
 
 
