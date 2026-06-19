@@ -5,13 +5,13 @@
 ## Already in place
 - **app/.github/workflows/ci.yml** — pytest matrix py3.10–3.13 + wheel.
 - **app/.github/workflows/build-release.yml** — wheel + PyInstaller binaries
-  (ubuntu-latest, windows-latest, macos-latest=arm64) → `softprops/action-gh-release` with generated notes.
+  (ubuntu-latest, windows-latest, macos-latest=arm64, macos-13=x86_64) → `softprops/action-gh-release` with generated notes.
 - **urirun/.github/workflows/ci.yml** — `make test`.
 
 ## Gaps → tasks
 ### Desktop app (build-release.yml)
 - [x] **Checksums**: emit `sha256` per artifact (ifuri.com Download already renders `item.sha256`) → wire `releases.php`/release to include them.
-- [ ] **Coverage of arch**: add macos-x86_64 (or build a **universal2**), optional linux arm64.
+- [x] **Coverage of arch**: macos-x86_64 added to `build-release.yml` matrix (`macos-13`). Optional linux arm64 still pending.
 - [ ] **Code signing / notarization**: Apple Developer ID + `notarytool`; Windows Authenticode (OV/EV). Secrets: `APPLE_*`, `WIN_CERT_*`.
 - [ ] **Tauri job** (if Tauri shell chosen, [10](10-app-desktop.md)): `tauri-apps/tauri-action` matrix → signed installers (.dmg/.msi/.AppImage) + updater manifest.
 - [ ] **Release on tag** `v*` only; draft → publish; attach CHANGELOG.

@@ -16,11 +16,11 @@
 - [ ] Tauri: load the app's web UI (`src/ifuri_app/web/`) against the local runtime; bundle/spawn the Python runtime (sidecar) or require `pip install ifuri`.
 - [ ] App icons/splash from brand kit (`if-uri/logo` → `png/icon/*`, `ico/favicon.ico`).
 - [ ] First-run wizard: `init --scan-lan`, pick/registry urirun, set node endpoint.
-- [ ] Node/daemon mode: ship `systemd/` unit + a Windows service / launchd plist.
+- [x] Node/daemon mode: ship `systemd/` unit + a Windows service / launchd plist (`systemd/ifuri-runtime-user.service`, `com.ifuri.runtime.plist`, NSSM note + `systemd/README.md`).
 - [ ] Optional extras packaging: voice (stt/tts), webrtc — keep optional to keep base small.
 - [ ] Auto-update channel (Tauri updater or check GitHub Releases API used by ifuri.com).
 - [ ] Surface `urirun-serve` from the GUI (start/stop local URI HTTP service).
-- [ ] `make build` / `make run` parity with CI `scripts/build-platform.py`.
+- [x] `make build` parity with CI: Makefile `build:` calls `scripts/build-platform.py`.
 
 ## Verify
 - `ifuri-app --help`; `pytest --ignore=tests/e2e` green (currently 82+).

@@ -57,7 +57,7 @@ make stop
 
 ## Install
 
-Pakiet PyPI: **`ifuri`** (aktualnie **0.2.6**).
+Pakiet PyPI: **`ifuri`** (aktualnie **0.2.10**).
 
 Monorepo tellmesh (uri2flow, uricore lokalnie):
 
@@ -102,6 +102,7 @@ make run-tauri-dev URISYS=http://192.168.188.201:8790
 
 ```bash
 ifuri-app app                         # Tkinter desktop
+ifuri-app init --scan-lan             # create workspace, discover urisys-node on /24
 ifuri-app voice --prompt "health"     # voice UI + URL z prompt=
 ifuri-app chat-channels
 ifuri-app chat-send "status" --endpoint http://192.168.188.201:8790
@@ -110,6 +111,9 @@ ifuri-app chat-migrate --endpoint http://192.168.188.201:8790
 ifuri-app packs
 ifuri-app urirun-info
 ifuri-app urirun-call tool://local/report/render --registry generated/registry.json --payload '{"format":"html"}'
+ifuri-app urirun-scan . --out generated/bindings.json
+ifuri-app urirun-serve --registry generated/registry.json   # HTTP /health /routes POST /run
+ifuri-app urirun-mcp tools --registry generated/registry.json   # tools|card|serve (MCP / A2A)
 ifuri-app flow-validate lenovo-remote/01-health-probe.uri.flow.yaml
 ifuri-app voice-plan "sprawdź health"
 ifuri-app webrtc-capabilities --endpoint http://192.168.188.201:8790

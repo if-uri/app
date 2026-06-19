@@ -29,9 +29,9 @@ Current: `node.sh` pins `@main`; has `/health`; no `--upgrade`/`--service`/`node
 - Risk: low (additive endpoints + CI).
 
 ## 10 + 50 · app + CI (`if-uri/app`) — 🟢 PR-only (no deploy/secrets)
-- [ ] Node/daemon unit: `systemd/ifuri-node.service` (+ launchd plist, NSSM note) — beside existing voice unit.
-- [ ] `make build`/`run` parity → call `scripts/build-platform.py`.
-- [ ] build-release.yml matrix: add macos-13 (x86_64) or universal2, optional linux arm64.
+- [x] Node/daemon unit: `systemd/ifuri-runtime-user.service` (+ `com.ifuri.runtime.plist`, NSSM note in `systemd/README.md`) — beside existing voice unit.
+- [x] `make build` parity → calls `scripts/build-platform.py` (Makefile `build:` target).
+- [x] build-release.yml matrix: macos-13 (x86_64) added; universal2 / optional linux arm64 pending.
 - [ ] Post-build/deploy smoke: `curl -fsSI`.
 - Verify: `pytest --ignore=tests/e2e` (82+), `ifuri-app --help`.
 - Risk: low (matrix runs on tag only).
