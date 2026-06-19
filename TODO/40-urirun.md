@@ -11,6 +11,7 @@
   bindings from decorators.
 
 ## Tasks
+- [x] **Pinned consumers** to released tag `v0.3.5` (app extra, get/node.sh, connector deps, connect catalog); docs stay `@main` = latest.
 - [x] **Release workflow** (`release.yml`): on tag `v*` → build wheel + sdist (`adapters/python`),
   attach to GitHub Release (+ `sha256sums.txt`). This is what `get`/app should pin to.
 - [ ] **Version source of truth**: bump `adapters/python/pyproject.toml` (currently 0.3.x) on release;
