@@ -21,7 +21,18 @@ from .runtime import PortInUseError, RuntimeServer, _port_available, find_free_p
 from .storage import load_workspace, save_workspace, workspace_path
 from .packs.loader import pack_summary
 from .packs.runtime import local_runtime_info
-from .urirun_bridge import call_urirun, dispatch_local, parse_json_object, registry_summary, scan_project, serve_http, urirun_info
+from .urirun_bridge import (
+    a2a_card,
+    call_urirun,
+    dispatch_local,
+    mcp_tools,
+    parse_json_object,
+    registry_summary,
+    scan_project,
+    serve_http,
+    serve_mcp,
+    urirun_info,
+)
 from .urisys_client import UrisysNodeClient
 from .url_params import voice_url
 from .voice_pipeline import (
@@ -394,6 +405,27 @@ def cmd_urirun_serve(args) -> int:
     return 0
 
 
+def cmd_urirun_mcp(args) -> int:
+    action = args.action
+    if action == "tools":
+        result = mcp_tools(args.registry)
+        print_json(result)
+        return 0 if result.get("ok") else 1
+    if action == "card":
+        result = a2a_card(args.registry, url=args.url, name=args.name)
+        print_json(result)
+        return 0 if result.get("ok") else 1
+    if action == "serve":
+        try:
+            serve_mcp(registry_path=args.registry, execute=args.execute)
+        except Exception as exc:  # noqa: BLE001 - report startup failure as JSON
+            print_json({"ok": False, "error": str(exc)})
+            return 1
+        return 0
+    print_json({"ok": False, "error": f"unknown action: {action}"})
+    return 2
+
+
 def cmd_flow_validate(args) -> int:
     from .flow_compile import validate_flow_compiled
 
@@ -583,6 +615,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_uri_serve.add_argument("--execute", action="store_true", help="allow real execution (default: dry-run only)")
     p_uri_serve.add_argument("--policy", help="JSON policy file gating execution")
     p_uri_serve.set_defaults(func=cmd_urirun_serve)
+
+    p_uri_mcp = sub.add_parser("urirun-mcp", help="project/serve the urirun registry as MCP tools / A2A card")
+    p_uri_mcp.add_argument("action", choices=["tools", "card", "serve"], help="tools=MCP tools/list, card=A2A agent card, serve=MCP stdio server")
+    p_uri_mcp.add_argument("--registry", help="urirun registry JSON (default: env IFURI_URIRUN_REGISTRY or workspace)")
+    p_uri_mcp.add_argument("--url", default="https://ifuri.com", help="agent card URL (card)")
+    p_uri_mcp.add_argument("--name", default="ifuri-urirun", help="agent card name (card)")
+    p_uri_mcp.add_argument("--execute", action="store_true", help="allow real execution in serve mode (default: dry-run)")
+    p_uri_mcp.set_defaults(func=cmd_urirun_mcp)
 
     p_fv = sub.add_parser("flow-validate", help="validate compact URI flow YAML")
     p_fv.add_argument("flow_file")

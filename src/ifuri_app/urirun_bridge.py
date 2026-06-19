@@ -358,3 +358,55 @@ def scan_project(
     if proc.returncode != 0 and proc.stderr.strip():
         result["error"] = proc.stderr.strip()
     return result
+
+
+def mcp_tools(registry_path: str | Path | None = None, *, registry: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Project a urirun registry to an MCP tools/list (via urirun.v2_mcp)."""
+    info = urirun_info()
+    if not info["available"]:
+        return {"ok": False, "available": False, "error": "urirun is not installed", "install": INSTALL_HINT}
+    reg = registry if registry is not None else load_registry(registry_path or default_urirun_registry())
+    if not reg:
+        return {"ok": False, "error": "no urirun registry configured"}
+    try:
+        m = importlib.import_module("urirun.v2_mcp")
+        return {"ok": True, "tools": m.to_mcp_tools(reg)}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "error": str(exc)}
+
+
+def a2a_card(
+    registry_path: str | Path | None = None,
+    *,
+    registry: dict[str, Any] | None = None,
+    name: str = "ifuri-urirun",
+    url: str = "https://ifuri.com",
+    version: str = "0.8.0",
+) -> dict[str, Any]:
+    """Project a urirun registry to an A2A agent card (via urirun.v2_mcp)."""
+    info = urirun_info()
+    if not info["available"]:
+        return {"ok": False, "available": False, "error": "urirun is not installed", "install": INSTALL_HINT}
+    reg = registry if registry is not None else load_registry(registry_path or default_urirun_registry())
+    if not reg:
+        return {"ok": False, "error": "no urirun registry configured"}
+    try:
+        m = importlib.import_module("urirun.v2_mcp")
+        card = m.to_a2a_card(reg, name=name, url=url, version=version)
+        return {"ok": True, "card": card}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "error": str(exc)}
+
+
+def serve_mcp(*, registry_path: str | Path | None = None, execute: bool = False, policy: dict[str, Any] | None = None) -> None:
+    """Serve the urirun registry as an MCP server over stdio (via urirun.v2_mcp)."""
+    info = urirun_info()
+    if not info["available"]:
+        raise RuntimeError(f"urirun is not installed. {INSTALL_HINT}")
+    reg = load_registry(registry_path or default_urirun_registry())
+    if not reg:
+        raise RuntimeError("no urirun registry configured (use --registry or workspace urirun.registry)")
+    if policy is None and execute:
+        policy = {"execute": {"allow": ["**"]}}
+    m = importlib.import_module("urirun.v2_mcp")
+    m.serve_mcp(reg, policy=policy, mode=("execute" if execute else "dry-run"))
