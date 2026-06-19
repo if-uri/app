@@ -20,7 +20,7 @@ kvm, llm, …) → bridges into a **urirun binding/registry** the app/flows can 
 - [x] **Manifest ↔ urirun bridge**: `/install?connectors=…` now imports the installed connector packages, builds `urirun.bindings.v2` via `urirun.connector_bindings()` and compiles a runnable registry (`ifuri-app urirun-call`).
 - [x] **Connector package template**: `connect.ifuri.com/scripts/connector-template` + `new-connector.sh` scaffold the `http-check` pattern (`@urirun.command`, `urirun.connector_bindings()`, schema-valid manifest, CLI, README); CI self-checks it.
 - [x] **Validation in CI**: `scripts/validate_connectors.py` validates manifests + catalog against `schema/*.json` (see [50-cicd](50-cicd.md)).
-- [ ] **Submit flow**: harden `POST /validate-connector`; rate-limit; spam guard for `/submit`.
+- [x] **Submit flow**: `POST /validate-connector` hardened — per-IP rate limit (30/60s), 64 KB body cap, JSON depth cap (32).
 - [ ] **Signing/trust**: optional signed manifests + a "verified" badge.
 - [x] **Discovery**: catalog projected to MCP tools (`/mcp.json`) + A2A card (`/a2a.json`, `/.well-known/agent.json`) so agents can find connectors.
 - [ ] **SEO**: confirm `sitemap.php`/`robots.php` output; link from ifuri.com.
