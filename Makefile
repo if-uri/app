@@ -10,9 +10,9 @@ URISYS ?= http://192.168.188.201:8790
 VENV ?= .venv
 
 .PHONY: help install install-dev test test-api test-e2e install-e2e test-gui test-gui-docker \
-	run-gui run-voice run-voice-bg run-tauri-dev stop health api-smoke chat-status chat-migrate \
+	run run-gui run-voice run-voice-bg run-tauri-dev stop health api-smoke chat-status chat-migrate \
 	voice-capabilities voice-install-packs webrtc-capabilities webrtc-install-pack webrtc-smoke \
-	vendor-uricore-js wheel build clean
+	urirun-info vendor-uricore-js wheel build clean
 
 help:
 	@echo "ifURI app — make targets"
@@ -24,6 +24,7 @@ help:
 	@echo "  test-e2e         Playwright /voice UI (uv sync --group e2e && make install-e2e)"
 	@echo "  test-gui-docker  Docker GUI smoke (debian/ubuntu/fedora)"
 	@echo ""
+	@echo "  run ARGS='...'   run arbitrary ifuri-app CLI command"
 	@echo "  run-gui          Tkinter desktop (flows + czaty + LAN)"
 	@echo "  run-voice        HTTP /voice UI (PORT=$(PORT), URISYS=$(URISYS))"
 	@echo "  run-voice-bg     voice server in background → /tmp/ifuri-voice.pid"
@@ -33,6 +34,7 @@ help:
 	@echo "  api-smoke        quick curl checks for main endpoints"
 	@echo "  chat-status      check urisys /app/chat on URISYS"
 	@echo "  chat-migrate     upload local chat history to urisys-node"
+	@echo "  urirun-info      optional urirun runtime status"
 	@echo "  upgrade-node     hint/script for lenovo urisys-node >= 0.1.15"
 	@echo "  vendor-uricore-js  copy @uricore/js + ifuri-page into web/"
 	@echo ""
@@ -72,6 +74,9 @@ test-gui:
 
 test-gui-docker:
 	bash scripts/test-gui-docker.sh
+
+run:
+	PYTHONPATH=src $(PYTHON) -m ifuri_app $(ARGS)
 
 run-gui:
 	PYTHONPATH=src $(PYTHON) -m ifuri_app app
@@ -137,6 +142,9 @@ webrtc-install-pack:
 
 webrtc-smoke:
 	PYTHONPATH=src $(PYTHON) -m ifuri_app webrtc-smoke --endpoint $(URISYS)
+
+urirun-info:
+	PYTHONPATH=src $(PYTHON) -m ifuri_app urirun-info
 
 upgrade-node:
 	@if ssh -o ConnectTimeout=5 -o BatchMode=yes "$${URISYS_SSH_USER:-tom}@$${URISYS_HOST:-192.168.188.201}" 'echo ok' 2>/dev/null; then \

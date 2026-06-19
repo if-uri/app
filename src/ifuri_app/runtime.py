@@ -19,6 +19,14 @@ from .flow_compile import uri2flow_available, validate_flow_compiled
 from .flow_engine import dry_run_flow, dry_run_uri, expand_flow
 from .packs.loader import pack_summary
 from .packs.runtime import dispatch_local_uri, get_local_uri_runtime, local_runtime_info
+from .urirun_bridge import (
+    call_urirun,
+    default_urirun_registry,
+    dispatch_local as urirun_dispatch,
+    parse_json_object,
+    registry_summary,
+    urirun_info,
+)
 from .urisys_client import UrisysNodeClient
 from .flow_runner import examples_root, run_flow_file
 from .chat_channels import (
@@ -113,6 +121,23 @@ class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
 
 
+def _load_urirun_policy(data: dict[str, Any], approved: bool) -> dict[str, Any] | None:
+    """Policy for in-process urirun execution.
+
+    Uses ``urirun.policy`` (a JSON path) from the workspace when present. When the
+    operator approved a real run we default to allowing the registry's own routes
+    (mirroring the old approved urisys-node behaviour); otherwise execution stays
+    default-deny.
+    """
+    pol_path = (data.get("urirun") or {}).get("policy")
+    if pol_path:
+        try:
+            return json.loads(Path(pol_path).expanduser().read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001 - bad policy path should not crash dispatch
+            pass
+    return {"execute": {"allow": ["**"]}} if approved else None
+
+
 class RuntimeState:
     def __init__(self, host: str = "127.0.0.1", port: int = 8765):
         self.host = host
@@ -140,6 +165,7 @@ class RuntimeState:
             "services": len(data.get("services", [])),
             "groups": len(data.get("groups", [])),
             "packs": local_runtime_info(),
+            "urirun": urirun_info(),
             "uri2flow": uri2flow_available(),
             "time": now_iso(),
         }
@@ -179,11 +205,25 @@ class RuntimeState:
                     return preview
                 except Exception:
                     pass
+        # urirun in-process runtime (registry-backed) before any remote fallback
+        urirun_reg = (data.get("urirun") or {}).get("registry") or default_urirun_registry()
+        urirun_resp = urirun_dispatch(
+            uri,
+            payload,
+            execute=not dry_run,
+            confirm=approved,
+            policy=_load_urirun_policy(data, approved) if not dry_run else None,
+            registry_path=urirun_reg,
+        )
+        if urirun_resp is not None:
+            add_event(data, "uri.call", uri=uri, dry_run=dry_run, ok=urirun_resp.get("ok"), via="urirun")
+            save_workspace(data)
+            return urirun_resp
         result = dry_run_uri(uri, payload)
         result["dry_run"] = dry_run
         if not dry_run:
             result["ok"] = False
-            result["message"] = "no local pack route — use /api/urisys/call or install matching handler"
+            result["message"] = "no local pack route — use urirun registry, /api/urisys/call, or install a matching handler"
         add_event(data, "uri.call", uri=uri, dry_run=dry_run, ok=result.get("ok"))
         save_workspace(data)
         return result
@@ -201,6 +241,8 @@ class RuntimeState:
         nodes = (expanded.get("workflow_graph") or {}).get("nodes") or []
         node_ep = data.get("urisys", {}).get("endpoint") or UrisysNodeClient().endpoint
         client = UrisysNodeClient(node_ep)
+        urirun_reg = (data.get("urirun") or {}).get("registry") or default_urirun_registry()
+        urirun_pol = _load_urirun_policy(data, approved)
         steps_out: list[dict[str, Any]] = []
         ok = True
         for node in nodes:
@@ -209,9 +251,18 @@ class RuntimeState:
                 continue
             payload = node.get("payload") if isinstance(node.get("payload"), dict) else {}
             local = dispatch_local_uri(uri, payload, context={"endpoint": node_ep, "approved": approved, "dry_run": False})
+            urirun_resp = None
+            if local is None:
+                urirun_resp = urirun_dispatch(
+                    uri, payload, execute=True, confirm=approved,
+                    policy=urirun_pol, registry_path=urirun_reg,
+                )
             if local is not None:
                 step_ok = bool(local.get("ok"))
                 steps_out.append({"id": node.get("id"), "uri": uri, "ok": step_ok, "via": "uricore-local", "response": local})
+            elif urirun_resp is not None:
+                step_ok = bool(urirun_resp.get("ok"))
+                steps_out.append({"id": node.get("id"), "uri": uri, "ok": step_ok, "via": "urirun", "response": urirun_resp})
             else:
                 resp = client.call_uri(uri, payload, approved=approved, allow_real=True)
                 step_ok = bool(resp.get("ok", True)) and not resp.get("error")
@@ -338,6 +389,16 @@ def make_handler(state: RuntimeState):
                         "uri2flow": uri2flow_available(),
                     },
                 )
+            elif path == "/api/urirun":
+                qs = parse_qs(urlparse(self.path).query)
+                registry = (qs.get("registry") or [""])[0]
+                out = urirun_info()
+                if registry:
+                    try:
+                        out["registry"] = registry_summary(registry)
+                    except Exception as exc:  # noqa: BLE001 - invalid registry path is API data.
+                        out["registry"] = {"ok": False, "path": registry, "error": str(exc)}
+                self._send(200, out)
             elif path == "/api/voice/catalog":
                 qs = parse_qs(urlparse(self.path).query)
                 refresh = (qs.get("refresh") or ["0"])[0] == "1"
@@ -544,6 +605,29 @@ def make_handler(state: RuntimeState):
                         approved=bool(body.get("approved", True)),
                         allow_real=bool(body.get("allow_real", True)),
                         dry_run=bool(body.get("dry_run", False)),
+                    ),
+                )
+            elif path == "/api/urirun/call":
+                uri = str(body.get("uri", "")).strip()
+                if not uri:
+                    self._send(400, {"ok": False, "error": "missing uri"})
+                    return
+                try:
+                    service_map = parse_json_object(body.get("service_map") or body.get("serviceMap"), name="service_map")
+                except Exception as exc:  # noqa: BLE001 - API should return a JSON error.
+                    self._send(400, {"ok": False, "error": str(exc)})
+                    return
+                self._send(
+                    200,
+                    call_urirun(
+                        uri,
+                        body.get("payload") or {},
+                        registry_path=body.get("registry") or body.get("registry_path"),
+                        registry=body.get("registry_json") if isinstance(body.get("registry_json"), dict) else None,
+                        execute=bool(body.get("execute", False)),
+                        service_map=service_map,
+                        timeout=float(body.get("timeout", 30.0)),
+                        validate=not bool(body.get("no_validate", False)),
                     ),
                 )
             elif path == "/api/urisys/screen":

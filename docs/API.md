@@ -47,6 +47,16 @@ Chat channel type `webrtc-peer` appears in `/api/chat/channels` when LAN scan fi
 | GET | `/api/urisys/screen.png?endpoint=&node_id=&monitor=` | Remote screenshot |
 | GET | `/api/urisys/control-test?endpoint=&node_id=` | HIM probe |
 
+## urirun runtime
+
+`urirun` is optional. Install it with `pip install -e ".[urirun]"` or directly
+from GitHub. Without it, endpoints return a stable JSON install hint.
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/urirun?registry=` | urirun availability and optional registry summary |
+| POST | `/api/urirun/call` | Body: `{ uri, payload?, registry?, registry_json?, service_map?, execute? }` |
+
 ## Network & workspace
 
 | Method | Path | Description |

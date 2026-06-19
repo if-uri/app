@@ -70,6 +70,27 @@ def test_api_packs(server):
     assert "runtime" in data
 
 
+def test_api_urirun_status(server):
+    status, data = _get(f"{server.url}/api/urirun")
+    assert status == 200
+    assert data.get("package") == "urirun"
+    assert "available" in data
+
+
+def test_api_urirun_call_contract(server):
+    status, data = _post(
+        f"{server.url}/api/urirun/call",
+        {
+            "uri": "tool://local/report/render",
+            "payload": {"format": "html"},
+            "execute": False,
+        },
+    )
+    assert status == 200
+    assert data.get("via") == "urirun"
+    assert data.get("uri") == "tool://local/report/render"
+
+
 def test_uri_call_voice_plan(server):
     status, data = _post(
         f"{server.url}/api/uri/call",

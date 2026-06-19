@@ -21,6 +21,7 @@ from .runtime import PortInUseError, RuntimeServer, _port_available, find_free_p
 from .storage import load_workspace, save_workspace, workspace_path
 from .packs.loader import pack_summary
 from .packs.runtime import local_runtime_info
+from .urirun_bridge import call_urirun, parse_json_object, registry_summary, scan_project, urirun_info
 from .urisys_client import UrisysNodeClient
 from .url_params import voice_url
 from .voice_pipeline import (
@@ -314,6 +315,43 @@ def cmd_packs(_args) -> int:
     return 0
 
 
+def cmd_urirun_info(args) -> int:
+    info = urirun_info()
+    if args.registry:
+        try:
+            info["registry"] = registry_summary(args.registry)
+        except Exception as exc:  # noqa: BLE001 - CLI reports invalid registry path as JSON.
+            info["registry"] = {"ok": False, "error": str(exc), "path": args.registry}
+    print_json(info)
+    return 0
+
+
+def cmd_urirun_call(args) -> int:
+    try:
+        payload = parse_json_object(args.payload, name="payload")
+        service_map = parse_json_object(args.service_map, name="service_map")
+    except Exception as exc:  # noqa: BLE001 - CLI payload errors should be user-facing.
+        print_json({"ok": False, "error": str(exc)})
+        return 2
+    result = call_urirun(
+        args.uri,
+        payload,
+        registry_path=args.registry,
+        execute=args.execute,
+        service_map=service_map,
+        timeout=args.timeout,
+        validate=not args.no_validate,
+    )
+    print_json(result)
+    return 0 if result.get("ok") else 1
+
+
+def cmd_urirun_scan(args) -> int:
+    result = scan_project(args.path, out=args.out, registry_out=args.registry_out)
+    print_json(result)
+    return 0 if result.get("ok") else 1
+
+
 def cmd_flow_validate(args) -> int:
     from .flow_compile import validate_flow_compiled
 
@@ -475,6 +513,26 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_packs = sub.add_parser("packs", help="list local URI packs (packages/)")
     p_packs.set_defaults(func=cmd_packs)
+
+    p_uri_info = sub.add_parser("urirun-info", help="show optional urirun runtime status")
+    p_uri_info.add_argument("--registry", help="optional urirun registry JSON to summarize")
+    p_uri_info.set_defaults(func=cmd_urirun_info)
+
+    p_uri_call = sub.add_parser("urirun-call", help="call URI through urirun v2_service")
+    p_uri_call.add_argument("uri")
+    p_uri_call.add_argument("--payload", default="{}", help="JSON object payload")
+    p_uri_call.add_argument("--registry", help="urirun registry JSON")
+    p_uri_call.add_argument("--service-map", default="{}", help='JSON object for URI_SERVICE_MAP, e.g. {"worker":"http://127.0.0.1:9001"}')
+    p_uri_call.add_argument("--execute", action="store_true", help="execute instead of dry-run")
+    p_uri_call.add_argument("--timeout", type=float, default=30.0)
+    p_uri_call.add_argument("--no-validate", action="store_true", help="skip urirun JSON Schema validation")
+    p_uri_call.set_defaults(func=cmd_urirun_call)
+
+    p_uri_scan = sub.add_parser("urirun-scan", help="scan a project for URI bindings and compile a urirun registry")
+    p_uri_scan.add_argument("path")
+    p_uri_scan.add_argument("--out", help="bindings JSON output path")
+    p_uri_scan.add_argument("--registry-out", dest="registry_out", help="compiled registry JSON output path")
+    p_uri_scan.set_defaults(func=cmd_urirun_scan)
 
     p_fv = sub.add_parser("flow-validate", help="validate compact URI flow YAML")
     p_fv.add_argument("flow_file")

@@ -13,7 +13,7 @@ Generated on 2026-06-17 using [openrouter/qwen/qwen3-coder-next](https://openrou
 
 ---
 
-Desktop and browser-shell client for **[urisys](https://github.com/tellmesh/urisys)** — voice commands, multi-endpoint chat, flow execution, and LAN pairing.
+Desktop and browser client for **IFURI** — voice commands, multi-endpoint chat, URI flow execution, LAN pairing and optional **urirun** registry execution.
 
 Published at [github.com/if-uri/app](https://github.com/if-uri/app) · [ifuri.com](https://ifuri.com)
 
@@ -25,6 +25,7 @@ Published at [github.com/if-uri/app](https://github.com/if-uri/app) · [ifuri.co
 - keep **URL state** (`lang`, `theme`, `view`, `channel`, `prompt`) in shareable links,
 - store chat history on **urisys-node** (`/app/chat/*`) or locally as fallback,
 - run **URI flows** from [urisys-examples](https://github.com/tellmesh/urisys-examples),
+- call local or service-backed **urirun** registries through `ifuri-app urirun-call` and `/api/urirun/call`,
 - use the **Tkinter desktop** app (flows + LAN + czaty).
 
 ## Makefile (recommended)
@@ -41,6 +42,7 @@ make chat-status URISYS=http://192.168.188.201:8790
 make chat-migrate-dry URISYS=http://192.168.188.201:8790   # po upgrade node
 make webrtc-install-pack URISYS=http://192.168.188.201:8790
 make webrtc-smoke URISYS=http://192.168.188.201:8790
+make run ARGS="urirun-info"
 ```
 
 Zmienne: `PORT=8766`, `URISYS=http://192.168.188.201:8790`, `PYTHON=python3`
@@ -71,6 +73,16 @@ make install-dev
 ifuri-app --version
 ```
 
+Optional urirun runtime:
+
+```bash
+python -m pip install -e ".[urirun]"
+ifuri-app urirun-info
+ifuri-app urirun-call tool://local/report/render \
+  --registry generated/registry.json \
+  --payload '{"format":"html"}'
+```
+
 ## Quick start
 
 ```bash
@@ -96,6 +108,8 @@ ifuri-app chat-send "status" --endpoint http://192.168.188.201:8790
 ifuri-app chat-status --endpoint http://192.168.188.201:8790
 ifuri-app chat-migrate --endpoint http://192.168.188.201:8790
 ifuri-app packs
+ifuri-app urirun-info
+ifuri-app urirun-call tool://local/report/render --registry generated/registry.json --payload '{"format":"html"}'
 ifuri-app flow-validate lenovo-remote/01-health-probe.uri.flow.yaml
 ifuri-app voice-plan "sprawdź health"
 ifuri-app webrtc-capabilities --endpoint http://192.168.188.201:8790
@@ -118,6 +132,8 @@ Pełna dokumentacja: **[docs/API.md](docs/API.md)** · diagram: **[docs/ARCHITEC
 | POST | `/api/voice/run` | Voice pipeline |
 | GET | `/api/webrtc/signal` | WebRTC signaling inbox (poll) |
 | POST | `/api/webrtc/signal` | WebRTC SDP/ICE relay |
+| GET | `/api/urirun` | Optional urirun runtime status |
+| POST | `/api/urirun/call` | Call URI through urirun registry |
 | POST | `/api/urisys/call` | Proxy to node |
 
 ## Data

@@ -1,6 +1,9 @@
 # ifURI architecture
 
-ifURI is a **desktop + browser-shell client** for the [urisys](https://github.com/tellmesh/urisys) ecosystem. It does not replace `urisys-node`; it talks to it over HTTP and runs flows from [urisys-examples](https://github.com/tellmesh/urisys-examples).
+ifURI is a **desktop + browser client** for URI-addressed work. It can still talk
+to `urisys-node` over HTTP, but the preferred local execution layer is now
+**urirun**: a registry-backed runtime for Python, shell, Docker and service
+adapters.
 
 Repo: [github.com/if-uri/app](https://github.com/if-uri/app) · Site: [ifuri.com](https://ifuri.com)
 
@@ -12,16 +15,18 @@ Repo: [github.com/if-uri/app](https://github.com/if-uri/app) · Site: [ifuri.com
  │ ifuri-app voice :8766   │           │ urisys-node :8790       │
  │  /voice chat UI         │  LAN      │  screen/kvm/him/shell   │
  │  URL state + history    │◄─────────►│  stt:// tts:// voice:// │
+ │  /api/urirun/call       │           │  legacy host adapters   │
  └───────────┬─────────────┘           └───────────┬─────────────┘
-             │ POST /uri/call                      │
+             │ POST /api/urirun/call               │
              ▼                                     ▼
  ┌─────────────────────────┐           ┌─────────────────────────┐
- │ urisys-node (optional)  │           │ app:// chat history *   │
+ │ urirun registry/runtime │           │ app:// chat history *   │
  └─────────────────────────┘           └─────────────────────────┘
   * /app/chat/* on node — fallback ~/.ifuri/app-chat.jsonl locally
 ```
 
-Each device can be **client** (ifURI) or **host** (urisys-node), or both on one machine.
+Each device can be **client** (ifURI), **runtime host** (urirun), **legacy node**
+(`urisys-node`), or several of those roles on one machine.
 
 ## Voice & chat pipeline
 
@@ -61,6 +66,7 @@ Install: `make webrtc-install-pack URISYS=…` · Full contract: [WEBRTC.md](WEB
 | **uricore** | tellmesh/uricore | Python URI control plane — local handlers in `packages/*/handlers/` |
 | **uricore-js** | tellmesh/uricore-js | Browser `page://` — `packages/ifuri-page/` |
 | **uri2flow** | tellmesh/uri2flow | Compile compact YAML → workflow graph (used by `/api/flow/expand`) |
+| **urirun** | tellmesh/urirun | Registry-backed URI execution via `/api/urirun/call` and `ifuri-app urirun-call` |
 | ifURI app | [if-uri/app](https://github.com/if-uri/app) | UI, planning, chat, flow client |
 | urisys-node | [tellmesh/urisys-node](https://github.com/tellmesh/urisys-node) | URI server on host |
 | uriwebrtc | [tellmesh/uriwebrtc](https://github.com/tellmesh/uriwebrtc) | `webrtc://` pack (signaling mock + envelopes) |
