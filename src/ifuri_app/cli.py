@@ -21,7 +21,7 @@ from .runtime import PortInUseError, RuntimeServer, _port_available, find_free_p
 from .storage import load_workspace, save_workspace, workspace_path
 from .packs.loader import pack_summary
 from .packs.runtime import local_runtime_info
-from .urirun_bridge import call_urirun, parse_json_object, registry_summary, scan_project, serve_http, urirun_info
+from .urirun_bridge import call_urirun, dispatch_local, parse_json_object, registry_summary, scan_project, serve_http, urirun_info
 from .urisys_client import UrisysNodeClient
 from .url_params import voice_url
 from .voice_pipeline import (
@@ -333,15 +333,35 @@ def cmd_urirun_call(args) -> int:
     except Exception as exc:  # noqa: BLE001 - CLI payload errors should be user-facing.
         print_json({"ok": False, "error": str(exc)})
         return 2
-    result = call_urirun(
-        args.uri,
-        payload,
-        registry_path=args.registry,
-        execute=args.execute,
-        service_map=service_map,
-        timeout=args.timeout,
-        validate=not args.no_validate,
-    )
+    if service_map:
+        # Remote dispatch through a urirun HTTP service (URI_SERVICE_MAP).
+        result = call_urirun(
+            args.uri,
+            payload,
+            registry_path=args.registry,
+            execute=args.execute,
+            service_map=service_map,
+            timeout=args.timeout,
+            validate=not args.no_validate,
+        )
+    else:
+        # Local in-process dispatch (default). --execute opts into running behind
+        # an allow-all policy; without it the call is a policy-gated dry-run.
+        policy = {"execute": {"allow": ["**"]}} if args.execute else None
+        result = dispatch_local(
+            args.uri,
+            payload,
+            registry_path=args.registry,
+            execute=args.execute,
+            policy=policy,
+        )
+        if result is None:
+            result = {
+                "ok": False,
+                "via": "urirun",
+                "uri": args.uri,
+                "error": "route not in registry, or urirun not installed / no registry configured",
+            }
     print_json(result)
     return 0 if result.get("ok") else 1
 
