@@ -8,7 +8,7 @@
 - Consumers pin `@main` today (app extra, get/node.sh) — not reproducible.
 
 ## Tasks
-- [ ] **Release workflow** (`release.yml`): on tag `v*` → build wheel + sdist (`adapters/python`),
+- [x] **Release workflow** (`release.yml`): on tag `v*` → build wheel + sdist (`adapters/python`),
   attach to GitHub Release (+ `sha256sums.txt`). This is what `get`/app should pin to.
 - [ ] **Version source of truth**: bump `adapters/python/pyproject.toml` (currently 0.3.x) on release;
   keep CHANGELOG.

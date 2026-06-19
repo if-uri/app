@@ -96,7 +96,9 @@ jobs:
         run: |
           mkdir -p release
           find artifacts -type f \( -name 'ifuri-*.whl' -o -name 'ifuri-*.tar.gz' -o -name 'ifuri-*.zip' \) -exec cp {} release/ \;
+          ( cd release && sha256sum ifuri-* > sha256sums.txt )
           ls -la release/
+          cat release/sha256sums.txt
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2

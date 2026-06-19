@@ -10,14 +10,14 @@
 
 ## Gaps → tasks
 ### Desktop app (build-release.yml)
-- [ ] **Checksums**: emit `sha256` per artifact (ifuri.com Download already renders `item.sha256`) → wire `releases.php`/release to include them.
+- [x] **Checksums**: emit `sha256` per artifact (ifuri.com Download already renders `item.sha256`) → wire `releases.php`/release to include them.
 - [ ] **Coverage of arch**: add macos-x86_64 (or build a **universal2**), optional linux arm64.
 - [ ] **Code signing / notarization**: Apple Developer ID + `notarytool`; Windows Authenticode (OV/EV). Secrets: `APPLE_*`, `WIN_CERT_*`.
 - [ ] **Tauri job** (if Tauri shell chosen, [10](10-app-desktop.md)): `tauri-apps/tauri-action` matrix → signed installers (.dmg/.msi/.AppImage) + updater manifest.
 - [ ] **Release on tag** `v*` only; draft → publish; attach CHANGELOG.
 
 ### urirun (new release.yml) — see [40](40-urirun.md)
-- [ ] Tag → wheel+sdist+sha256 → GitHub Release; optional PyPI/npm.
+- [x] Tag → wheel+sdist+sha256 → GitHub Release (release.yml). Optional PyPI/npm pending.
 
 ### Connectors (connect.ifuri.com)
 - [ ] Validate connector manifests against `schema/*.json` on PR.
