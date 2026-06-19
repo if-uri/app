@@ -210,3 +210,15 @@ def test_cli_urirun_call_in_process_execute(tmp_path):
     assert data["ok"] is True
     assert data["via"] == "urirun"
     assert data["result"]["stdout"].strip() == "hello-cli"
+
+
+def test_mcp_tools_and_a2a_card():
+    reg = _registry()
+    t = ub.mcp_tools(registry=reg)
+    assert t["ok"] is True
+    assert len(t["tools"]) == 2
+    assert all("name" in x and "inputSchema" in x for x in t["tools"])
+    c = ub.a2a_card(registry=reg, url="https://ifuri.com")
+    assert c["ok"] is True
+    assert c["card"]["name"] == "ifuri-urirun"
+    assert len(c["card"]["skills"]) >= 1
