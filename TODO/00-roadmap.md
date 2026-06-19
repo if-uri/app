@@ -51,7 +51,7 @@ Cross-repo plan for the ifURI ecosystem. One file per area; check items as done.
 - [60-reuse.md](60-reuse.md) — where ifURI/urirun can be re-used
 
 ## Open decisions (need owner sign-off)
-1. Desktop shell: **PyInstaller (now)** vs **Tauri (next)** vs both. → [10](10-app-desktop.md)
+1. Desktop shell: **DECIDED — both** (PyInstaller engine binary + Tauri GUI shell). → [10](10-app-desktop.md)
 2. urirun distribution: GitHub Release wheels only, or also **PyPI + npm**. → [40](40-urirun.md)
 3. Code signing budget: Apple Developer ID ($99/yr) + Windows cert (EV/OV). → [50](50-cicd.md)
 4. Site deploy: keep manual `make deploy`, or **GitHub Actions over SSH** (secret key). → [50](50-cicd.md)

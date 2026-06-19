@@ -12,7 +12,7 @@
 - **Next:** make **Tauri** the GUI shell that wraps the local HTTP runtime (small binary, native webview, real signing/auto-update). The Python runtime stays the engine.
 
 ## Tasks
-- [ ] Decide PyInstaller-only vs Tauri-shell (see [00 open decisions](00-roadmap.md)).
+- [x] Decide PyInstaller-only vs Tauri-shell → **both**: PyInstaller binary stays the engine/download; Tauri is the GUI shell (CI: `tauri-release.yml`).
 - [ ] Tauri: load the app's web UI (`src/ifuri_app/web/`) against the local runtime; bundle/spawn the Python runtime (sidecar) or require `pip install ifuri`.
 - [ ] App icons/splash from brand kit (`if-uri/logo` → `png/icon/*`, `ico/favicon.ico`).
 - [ ] First-run wizard: `init --scan-lan`, pick/registry urirun, set node endpoint.
