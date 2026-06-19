@@ -16,8 +16,7 @@ A manifest describing URI routes a third party exposes (DNS, planfile, MCP serve
 kvm, llm, …) → bridges into a **urirun binding/registry** the app/flows can call.
 
 ## Tasks
-- [ ] **Seed real connectors**: planfile, namecheap-dns, mcp-filesystem, browser (noVNC),
-  llm (local/qwen), kvm, get-node — as validated manifests in the catalog.
+- [x] **Seed real connectors**: planfile, namecheap-dns, http-check, time-tools, domain-monitor, sqlite-context, grpc-transport (available) + mqtt, browser-control, mcp-filesystem, llm, kvm, get-node (planned) — 13 validated catalog manifests.
 - [ ] **Manifest ↔ urirun bridge**: define connector.schema → `urirun.bindings.v2` mapping
   so `/install?connectors=…` produces a registry the app runs (`ifuri-app urirun-call`).
 - [x] **Connector package template**: `connect.ifuri.com/scripts/connector-template` + `new-connector.sh` scaffold the `http-check` pattern (`@urirun.command`, `urirun.connector_bindings()`, schema-valid manifest, CLI, README); CI self-checks it.
