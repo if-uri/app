@@ -4,11 +4,11 @@ This is the practical order for executing the roadmap without breaking the
 current working path.
 
 ## Phase 1 — make the runtime reproducible
-- [ ] Tag `tellmesh/urirun` after `connector_bindings()` and verify the release
+- [x] Tag `tellmesh/urirun` after `connector_bindings()` and verify the release
   contains wheel, sdist and `sha256sums.txt`.
-- [ ] Install from that release wheel in a clean venv and run:
+- [x] Install from that release wheel in a clean venv and run:
   `urirun --help`, `urirun validate`, `urirun compile`, `urirun run`.
-- [ ] Update `if-uri/get/node.sh`, app optional dependency and connector packages
+- [x] Update `if-uri/get/node.sh`, app optional dependency and connector packages
   to pin a tag/release instead of `@main`, keeping an override env var.
 
 ## Phase 2 — automate the proven E2E path
