@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- launchd agent — ifURI local runtime / LAN node (macOS).
+     Install:
+       sed "s|USERNAME|$USER|g" systemd/com.ifuri.runtime.plist \
+         > ~/Library/LaunchAgents/com.ifuri.runtime.plist
+       launchctl load ~/Library/LaunchAgents/com.ifuri.runtime.plist
+     Adjust the ifuri-app path if it is not under ~/venv. -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ifuri.runtime</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/USERNAME/venv/bin/ifuri-app</string>
+    <string>serve</string>
+    <string>--host</string><string>0.0.0.0</string>
+    <string>--port</string><string>8765</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>/tmp/ifuri-runtime.log</string>
+  <key>StandardErrorPath</key><string>/tmp/ifuri-runtime.log</string>
+</dict>
+</plist>

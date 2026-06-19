@@ -1,0 +1,29 @@
+# systemd user unit — ifURI local runtime / LAN node (HTTP API + discovery)
+#
+# Turns this machine into a discoverable ifURI node serving the local runtime
+# API on port 8765 (same default as the get.ifuri.com urirun node).
+#
+# Install:
+#   cp systemd/ifuri-runtime-user.service ~/.config/systemd/user/ifuri-runtime.service
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now ifuri-runtime.service
+#   loginctl enable-linger "$USER"        # keep running after logout
+#
+# Override defaults in ~/.config/ifuri/runtime.env (see ifuri-runtime.env.example).
+# Adjust ExecStart's venv path if ifuri-app lives elsewhere (e.g. pipx / system).
+
+[Unit]
+Description=ifURI local runtime / LAN node (/health, runtime API)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=IFURI_HOME=%h/.ifuri
+EnvironmentFile=-%h/.config/ifuri/runtime.env
+ExecStart=%h/venv/bin/ifuri-app serve --host 0.0.0.0 --port 8765
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
