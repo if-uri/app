@@ -29,7 +29,7 @@ dependencies = []
 [project.optional-dependencies]
 flows = ["pyyaml>=6.0"]
 packs = ["uricore>=0.1.8", "pyyaml>=6.0"]
-urirun = ["urirun @ git+https://github.com/tellmesh/urirun.git@v0.3.11#subdirectory=adapters/python"]
+urirun = ["urirun @ git+https://github.com/tellmesh/urirun.git@v0.3.12#subdirectory=adapters/python"]
 build = ["pyinstaller>=6.0", "pyyaml>=6.0"]
 dev = [
   "pytest>=8.0",

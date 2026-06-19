@@ -9,7 +9,7 @@ Cross-repo plan for the ifURI ecosystem. One file per area; check items as done.
 - **urirun**: renamed `tellmesh/urirun`; v1/v2 runtime; integrated into the app
   (`ifuri-app urirun-info|scan|call|serve`, urirun-first dispatch).
 - **urirun connector authoring**: `urirun.v2.connector_bindings()` exists, so connector
-  packages can expose JSON-serializable bindings from `@uri_command` decorators.
+  packages can expose JSON-serializable bindings from `@urirun.command` decorators.
 - **Full E2E lab**: `if-uri/examples/12-full_e2e_connect_lab` verifies get.ifuri.com,
   two urirun nodes, connector install, registry runtime, flow execution, MCP tools
   and A2A skills.
@@ -31,7 +31,7 @@ Cross-repo plan for the ifURI ecosystem. One file per area; check items as done.
 2. **Automate the proven E2E path**: move the passing full Docker lab into CI as a
    manual/nightly workflow, because it validates the actual user path across repos.
 3. **Harden connector distribution**: validate hub manifests in CI, keep the catalog
-   generated, and migrate new connector packages to `@uri_command` +
+   generated, and migrate new connector packages to `@urirun.command` +
    `connector_bindings()`.
 4. **Then package UX**: first-run wizard, service install, and Tauri shell only after
    the runtime/install path is reproducible.
