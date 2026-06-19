@@ -17,8 +17,7 @@ kvm, llm, …) → bridges into a **urirun binding/registry** the app/flows can 
 
 ## Tasks
 - [x] **Seed real connectors**: planfile, namecheap-dns, http-check, time-tools, domain-monitor, sqlite-context, grpc-transport (available) + mqtt, browser-control, mcp-filesystem, llm, kvm, get-node (planned) — 13 validated catalog manifests.
-- [ ] **Manifest ↔ urirun bridge**: define connector.schema → `urirun.bindings.v2` mapping
-  so `/install?connectors=…` produces a registry the app runs (`ifuri-app urirun-call`).
+- [x] **Manifest ↔ urirun bridge**: `/install?connectors=…` now imports the installed connector packages, builds `urirun.bindings.v2` via `urirun.connector_bindings()` and compiles a runnable registry (`ifuri-app urirun-call`).
 - [x] **Connector package template**: `connect.ifuri.com/scripts/connector-template` + `new-connector.sh` scaffold the `http-check` pattern (`@urirun.command`, `urirun.connector_bindings()`, schema-valid manifest, CLI, README); CI self-checks it.
 - [x] **Validation in CI**: `scripts/validate_connectors.py` validates manifests + catalog against `schema/*.json` (see [50-cicd](50-cicd.md)).
 - [ ] **Submit flow**: harden `POST /validate-connector`; rate-limit; spam guard for `/submit`.
