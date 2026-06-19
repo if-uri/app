@@ -20,9 +20,7 @@ kvm, llm, …) → bridges into a **urirun binding/registry** the app/flows can 
   llm (local/qwen), kvm, get-node — as validated manifests in the catalog.
 - [ ] **Manifest ↔ urirun bridge**: define connector.schema → `urirun.bindings.v2` mapping
   so `/install?connectors=…` produces a registry the app runs (`ifuri-app urirun-call`).
-- [ ] **Connector package template**: copy the `http-check` pattern for new packages:
-  `@uri_command`, `connector_bindings()`, `connector.manifest.json`, Docker smoke,
-  README, CI.
+- [x] **Connector package template**: `connect.ifuri.com/scripts/connector-template` + `new-connector.sh` scaffold the `http-check` pattern (`@uri_command`, `connector_bindings()`, schema-valid manifest, CLI, README); CI self-checks it.
 - [x] **Validation in CI**: `scripts/validate_connectors.py` validates manifests + catalog against `schema/*.json` (see [50-cicd](50-cicd.md)).
 - [ ] **Submit flow**: harden `POST /validate-connector`; rate-limit; spam guard for `/submit`.
 - [ ] **Signing/trust**: optional signed manifests + a "verified" badge.
