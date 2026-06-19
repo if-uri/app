@@ -130,3 +130,63 @@ def test_run_flow_routes_via_urirun(tmp_path, monkeypatch):
     steps = res.get("steps", [])
     assert steps and steps[0]["via"] == "urirun"
     assert res["ok"] is True
+
+
+def test_urirun_serve_http(tmp_path):
+    import json as _json
+    import socket
+    import threading
+    import time
+    import urllib.request
+
+    (tmp_path / "urirun.bindings.v2.json").write_text(
+        _json.dumps(
+            {
+                "version": "urirun.bindings.v2",
+                "bindings": {
+                    "sys://local/echo/hello": {
+                        "kind": "command",
+                        "adapter": "argv-template",
+                        "argv": ["echo", "served-by-urirun"],
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    reg = tmp_path / "registry.json"
+    assert ub.scan_project(tmp_path, registry_out=reg)["ok"]
+
+    sk = socket.socket()
+    sk.bind(("127.0.0.1", 0))
+    port = sk.getsockname()[1]
+    sk.close()
+
+    threading.Thread(
+        target=ub.serve_http,
+        kwargs=dict(registry_path=str(reg), host="127.0.0.1", port=port, execute=True),
+        daemon=True,
+    ).start()
+
+    base = f"http://127.0.0.1:{port}"
+    for _ in range(50):
+        try:
+            urllib.request.urlopen(base + "/health", timeout=1)
+            break
+        except Exception:
+            time.sleep(0.1)
+
+    def _get(path):
+        return _json.loads(urllib.request.urlopen(base + path, timeout=2).read())
+
+    def _post(path, obj):
+        req = urllib.request.Request(
+            base + path, data=_json.dumps(obj).encode(), headers={"Content-Type": "application/json"}
+        )
+        return _json.loads(urllib.request.urlopen(req, timeout=2).read())
+
+    assert _get("/health")["ok"] is True
+    assert len(_get("/routes")["routes"]) >= 1
+    run = _post("/run", {"uri": "sys://local/echo/hello", "execute": True})
+    assert run["ok"] is True
+    assert run["result"]["stdout"].strip() == "served-by-urirun"

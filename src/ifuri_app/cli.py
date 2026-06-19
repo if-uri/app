@@ -21,7 +21,7 @@ from .runtime import PortInUseError, RuntimeServer, _port_available, find_free_p
 from .storage import load_workspace, save_workspace, workspace_path
 from .packs.loader import pack_summary
 from .packs.runtime import local_runtime_info
-from .urirun_bridge import call_urirun, parse_json_object, registry_summary, scan_project, urirun_info
+from .urirun_bridge import call_urirun, parse_json_object, registry_summary, scan_project, serve_http, urirun_info
 from .urisys_client import UrisysNodeClient
 from .url_params import voice_url
 from .voice_pipeline import (
@@ -352,6 +352,28 @@ def cmd_urirun_scan(args) -> int:
     return 0 if result.get("ok") else 1
 
 
+def cmd_urirun_serve(args) -> int:
+    policy = None
+    if args.policy:
+        try:
+            policy = json.loads(Path(args.policy).expanduser().read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001 - user-facing config error
+            print_json({"ok": False, "error": f"bad policy file: {exc}"})
+            return 2
+    try:
+        serve_http(
+            registry_path=args.registry,
+            host=args.host,
+            port=args.port,
+            execute=args.execute,
+            policy=policy,
+        )
+    except Exception as exc:  # noqa: BLE001 - report startup failure as JSON
+        print_json({"ok": False, "error": str(exc)})
+        return 1
+    return 0
+
+
 def cmd_flow_validate(args) -> int:
     from .flow_compile import validate_flow_compiled
 
@@ -533,6 +555,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_uri_scan.add_argument("--out", help="bindings JSON output path")
     p_uri_scan.add_argument("--registry-out", dest="registry_out", help="compiled registry JSON output path")
     p_uri_scan.set_defaults(func=cmd_urirun_scan)
+
+    p_uri_serve = sub.add_parser("urirun-serve", help="serve a urirun registry over HTTP (/health, /routes, POST /run)")
+    p_uri_serve.add_argument("--registry", help="urirun registry JSON (default: env IFURI_URIRUN_REGISTRY or workspace)")
+    p_uri_serve.add_argument("--host", default="127.0.0.1")
+    p_uri_serve.add_argument("--port", type=int, default=8780)
+    p_uri_serve.add_argument("--execute", action="store_true", help="allow real execution (default: dry-run only)")
+    p_uri_serve.add_argument("--policy", help="JSON policy file gating execution")
+    p_uri_serve.set_defaults(func=cmd_urirun_serve)
 
     p_fv = sub.add_parser("flow-validate", help="validate compact URI flow YAML")
     p_fv.add_argument("flow_file")

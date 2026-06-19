@@ -210,6 +210,120 @@ def dispatch_local(
     return result
 
 
+def list_routes(
+    registry_path: str | Path | None = None,
+    *,
+    registry: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """List routes in a urirun registry (uses urirun.v2.list_routes)."""
+    info = urirun_info()
+    if not info["available"]:
+        return {"ok": False, "available": False, "error": "urirun is not installed", "install": INSTALL_HINT}
+    reg = registry if registry is not None else load_registry(registry_path or default_urirun_registry())
+    if not reg:
+        return {"ok": False, "error": "no urirun registry configured"}
+    try:
+        v2 = importlib.import_module("urirun.v2")
+        return {"ok": True, "routes": v2.list_routes(reg)}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "error": str(exc)}
+
+
+def serve_http(
+    *,
+    registry_path: str | Path | None = None,
+    host: str = "127.0.0.1",
+    port: int = 8780,
+    execute: bool = False,
+    policy: dict[str, Any] | None = None,
+) -> None:
+    """Serve a urirun registry over HTTP.
+
+    Endpoints: ``GET /health``, ``GET /routes``, ``POST /run`` ({uri, payload,
+    execute?}). Execution is dry-run unless the server was started with
+    ``execute=True`` (and the request asks for it), always behind the policy gate.
+    """
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    from urllib.parse import urlparse
+
+    info = urirun_info()
+    if not info["available"]:
+        raise RuntimeError(f"urirun is not installed. {INSTALL_HINT}")
+    reg_path = registry_path or default_urirun_registry()
+    registry = load_registry(reg_path)
+    if not registry:
+        raise RuntimeError("no urirun registry configured (use --registry or workspace urirun.registry)")
+    # When the operator starts the server with --execute but supplies no policy,
+    # default to allowing the registry's routes (mirrors approved flow execution).
+    if policy is None and execute:
+        policy = {"execute": {"allow": ["**"]}}
+
+    def _summary() -> dict[str, Any]:
+        out = {"ok": True, "urirun": info, "execute": execute}
+        if reg_path:
+            try:
+                out["registry"] = registry_summary(reg_path)
+            except Exception:  # noqa: BLE001
+                out["registry"] = {"ok": False, "path": str(reg_path)}
+        return out
+
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, *args):  # quiet
+            pass
+
+        def _send(self, code: int, obj: dict[str, Any]) -> None:
+            body = json.dumps(obj).encode("utf-8")
+            self.send_response(code)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_GET(self):  # noqa: N802
+            route = urlparse(self.path).path
+            if route in ("/", "/health"):
+                self._send(200, _summary())
+            elif route == "/routes":
+                self._send(200, list_routes(registry=registry))
+            else:
+                self._send(404, {"ok": False, "error": "not found", "path": route})
+
+        def do_POST(self):  # noqa: N802
+            route = urlparse(self.path).path
+            if route != "/run":
+                self._send(404, {"ok": False, "error": "not found", "path": route})
+                return
+            length = int(self.headers.get("Content-Length") or 0)
+            try:
+                body = json.loads(self.rfile.read(length) or b"{}")
+            except Exception as exc:  # noqa: BLE001
+                self._send(400, {"ok": False, "error": f"invalid JSON: {exc}"})
+                return
+            uri = body.get("uri")
+            if not uri:
+                self._send(400, {"ok": False, "error": "missing 'uri'"})
+                return
+            want_execute = bool(body.get("execute")) and execute
+            result = dispatch_local(
+                uri, body.get("payload") or {},
+                execute=want_execute, confirm=bool(body.get("confirm")),
+                policy=policy, registry=registry,
+            )
+            if result is None:
+                self._send(404, {"ok": False, "via": "urirun", "uri": uri, "error": "route not in registry"})
+            else:
+                self._send(200 if result.get("ok") else 422, result)
+
+    httpd = HTTPServer((host, port), Handler)
+    print(json.dumps({"ok": True, "serving": f"http://{host}:{port}", "execute": execute, "registry": str(reg_path)}))
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        httpd.server_close()
+
+
 def scan_project(
     path: str | Path,
     *,
