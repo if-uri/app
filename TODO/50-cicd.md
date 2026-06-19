@@ -32,6 +32,7 @@
 - [ ] Post-deploy smoke: `curl -fsSI https://<sub>.ifuri.com/`.
 
 ### Integrations / images
+- [x] **E2E lab in CI**: `examples/.github/workflows/e2e.yml` (nightly + manual) runs the full Docker scenario + host examples on pinned urirun.
 - [ ] Docker images for urirun nodes + workers (publish to GHCR) on tag.
 - [ ] (Optional) VS Code extension build, MCP server image — see [60-reuse](60-reuse.md).
 
