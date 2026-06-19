@@ -52,6 +52,9 @@ jobs:
           - os: macos-latest
             tag: macos-arm64
             tk: false
+          - os: macos-13
+            tag: macos-x86_64
+            tk: false
 
     runs-on: ${{ matrix.os }}
     steps:
