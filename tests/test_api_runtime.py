@@ -91,6 +91,46 @@ def test_api_urirun_call_contract(server):
     assert data.get("uri") == "tool://local/report/render"
 
 
+def test_api_urirun_call_local_registry_execute(server, tmp_path):
+    pytest.importorskip("urirun")
+    import urirun.v2 as v2
+
+    registry = v2.compile_registry(
+        {
+            "version": "urirun.bindings.v2",
+            "bindings": {
+                "util://local/echo/say": {
+                    "kind": "command",
+                    "adapter": "argv-template",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {"text": {"type": "string"}},
+                        "required": ["text"],
+                    },
+                    "argv": ["echo", "{text}"],
+                }
+            },
+        }
+    )
+    registry_path = tmp_path / "registry.json"
+    registry_path.write_text(json.dumps(registry), encoding="utf-8")
+
+    status, data = _post(
+        f"{server.url}/api/urirun/call",
+        {
+            "uri": "util://local/echo/say",
+            "payload": {"text": "hello-from-api"},
+            "registry": str(registry_path),
+            "execute": True,
+        },
+    )
+    assert status == 200
+    assert data.get("ok") is True
+    assert data.get("via") == "urirun"
+    assert data.get("mode") == "execute"
+    assert (data.get("result") or {}).get("stdout", "").strip() == "hello-from-api"
+
+
 def test_uri_call_voice_plan(server):
     status, data = _post(
         f"{server.url}/api/uri/call",

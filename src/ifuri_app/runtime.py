@@ -617,19 +617,45 @@ def make_handler(state: RuntimeState):
                 except Exception as exc:  # noqa: BLE001 - API should return a JSON error.
                     self._send(400, {"ok": False, "error": str(exc)})
                     return
-                self._send(
-                    200,
-                    call_urirun(
+                registry_path = body.get("registry") or body.get("registry_path")
+                registry_json = body.get("registry_json") if isinstance(body.get("registry_json"), dict) else None
+                payload = body.get("payload") or {}
+                execute = bool(body.get("execute", False))
+                if service_map:
+                    result = call_urirun(
                         uri,
-                        body.get("payload") or {},
-                        registry_path=body.get("registry") or body.get("registry_path"),
-                        registry=body.get("registry_json") if isinstance(body.get("registry_json"), dict) else None,
-                        execute=bool(body.get("execute", False)),
+                        payload,
+                        registry_path=registry_path,
+                        registry=registry_json,
+                        execute=execute,
                         service_map=service_map,
                         timeout=float(body.get("timeout", 30.0)),
                         validate=not bool(body.get("no_validate", False)),
-                    ),
-                )
+                    )
+                else:
+                    policy = {"execute": {"allow": ["**"]}} if execute else None
+                    result = urirun_dispatch(
+                        uri,
+                        payload,
+                        registry_path=registry_path,
+                        registry=registry_json,
+                        execute=execute,
+                        policy=policy,
+                    )
+                    if result is None:
+                        # Compatibility path: without a local registry, keep the
+                        # old dry-run service envelope for clients that use this
+                        # endpoint as a transport planner.
+                        result = call_urirun(
+                            uri,
+                            payload,
+                            registry_path=registry_path,
+                            registry=registry_json,
+                            execute=execute,
+                            timeout=float(body.get("timeout", 30.0)),
+                            validate=not bool(body.get("no_validate", False)),
+                        )
+                self._send(200, result)
             elif path == "/api/urisys/screen":
                 ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
                 node_id = str(body.get("node_id") or "lenovo")
