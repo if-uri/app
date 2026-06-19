@@ -13,7 +13,10 @@ services:
     container_name: ifuri-gui-novnc
     ports:
       - "6080:6080"   # noVNC (browser)
-      - "8765:8765"   # ifURI runtime API (optional)
+      # The in-container runtime API stays on 8765 internally. Host-publishing it
+      # collides with a urirun node already on 8765, so it is opt-in:
+      #   docker compose ... run -p 8765:8765 ...  (or uncomment below)
+      # - "8765:8765"
     environment:
       IFURI_GUI_GEOMETRY: ${IFURI_GUI_GEOMETRY:-1280x800x24}
       URISYS_NODE_ENDPOINT: ${URISYS_NODE_ENDPOINT:-}
