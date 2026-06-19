@@ -39,7 +39,9 @@ class ChatTabMixin:
         self._chat_channel_map = {}
 
         tab = ttk.Frame(self.notebook, padding=8)
-        self.notebook.insert(0, tab, text="Czaty")
+        # Chat is built first into an empty notebook, so it is already index 0;
+        # insert(0, ...) raises "Slave index 0 out of bounds" on Tk 8.6.15+.
+        self.notebook.add(tab, text="Czaty")
         tab.columnconfigure(1, weight=1)
         tab.rowconfigure(0, weight=1)
 
