@@ -33,6 +33,6 @@ The contract is constant — `scheme://target/resource/operation` + JSON-Schema 
 - [ ] One-liner node bootstrap (get.ifuri.com) for any machine on a LAN.
 
 ## Highest-leverage next bets
-1. **MCP server packaging** (urirun → instant value in LLM tooling).
+1. **MCP server packaging** — DONE: `ifuri-app urirun-mcp tools|card|serve` (+ `urirun.v2_mcp`).
 2. **Connector marketplace** seeded with 5–10 real connectors.
 3. **Pinned, signed releases** so third parties trust `pip install` / `curl|bash`.
