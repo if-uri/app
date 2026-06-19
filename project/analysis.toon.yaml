@@ -1,0 +1,235 @@
+# code2llm | 78f 13130L | python:38,shell:10,javascript:10,yaml:6,json:6,rust:3,toml:2,yml:1,gui-test:1 | 2026-06-19
+# generated in 0.03s
+# CC̅=4.0 | critical:16/454 | dups:0 | cycles:0
+
+HEALTH[17]:
+  🔴 GOD   src/ifuri_app/runtime.py = 783L, 4 classes, 16m, max CC=17
+  🟡 CC    expand_flow_compiled CC=15 (limit:15)
+  🟡 CC    _apply_chat_channels CC=16 (limit:15)
+  🟡 CC    run_voice_command CC=23 (limit:15)
+  🟡 CC    scan_urisys_nodes CC=15 (limit:15)
+  🟡 CC    scan_network CC=17 (limit:15)
+  🟡 CC    renderChannelList CC=21 (limit:15)
+  🟡 CC    handleWebRtcEnvelope CC=17 (limit:15)
+  🟡 CC    connectWebRtc CC=15 (limit:15)
+  🟡 CC    run_flow CC=17 (limit:15)
+  🟡 CC    cmd_chat_send CC=19 (limit:15)
+  🟡 CC    channels_from_scan CC=34 (limit:15)
+  🟡 CC    migrate_local_chat_to_urisys CC=16 (limit:15)
+  🟡 CC    send_chat_message CC=18 (limit:15)
+  🟡 CC    send_chat_message_routed CC=17 (limit:15)
+  🟡 CC    _format_voice_reply CC=16 (limit:15)
+  🟡 CC    _refresh_network_views CC=15 (limit:15)
+
+REFACTOR[2]:
+  1. split src/ifuri_app/runtime.py  (god module)
+  2. split 16 high-CC methods  (CC>15)
+
+PIPELINES[201]:
+  [1] Src [get_url_state]: get_url_state → urlState
+      PURITY: 100% pure
+  [2] Src [state]: state
+      PURITY: 100% pure
+  [3] Src [set_url_state]: set_url_state → urlState
+      PURITY: 100% pure
+  [4] Src [toggle_view]: toggle_view → urlState
+      PURITY: 100% pure
+  [5] Src [current]: current
+      PURITY: 100% pure
+  [6] Src [urisys_call]: urisys_call → _endpoint
+      PURITY: 100% pure
+  [7] Src [node_health]: node_health → _endpoint
+      PURITY: 100% pure
+  [8] Src [plan]: plan → plan_voice_command → load_flow_catalog → examples_root
+      PURITY: 100% pure
+  [9] Src [web_dir]: web_dir → app_package_dir
+      PURITY: 100% pure
+  [10] Src [assets_dir]: assets_dir → app_package_dir
+      PURITY: 100% pure
+  [11] Src [packages_dir]: packages_dir → repo_root → app_package_dir
+      PURITY: 100% pure
+  [12] Src [__init__]: __init__ → default_node_endpoint → load_workspace → ensure_home → ...(1 more)
+      PURITY: 100% pure
+  [13] Src [health]: health
+      PURITY: 100% pure
+  [14] Src [call_uri]: call_uri
+      PURITY: 100% pure
+  [15] Src [app_chat_messages]: app_chat_messages
+      PURITY: 100% pure
+  [16] Src [app_chat_channels]: app_chat_channels
+      PURITY: 100% pure
+  [17] Src [app_chat_append]: app_chat_append
+      PURITY: 100% pure
+  [18] Src [_get]: _get
+      PURITY: 100% pure
+  [19] Src [_post]: _post
+      PURITY: 100% pure
+  [20] Src [list_messages]: list_messages
+      PURITY: 100% pure
+  [21] Src [list_channels]: list_channels
+      PURITY: 100% pure
+  [22] Src [__init__]: __init__ → ensure_home → app_home
+      PURITY: 100% pure
+  [23] Src [append]: append
+      PURITY: 100% pure
+  [24] Src [list_messages]: list_messages
+      PURITY: 100% pure
+  [25] Src [list_channels]: list_channels
+      PURITY: 100% pure
+  [26] Src [is_webrtc_initiator]: is_webrtc_initiator
+      PURITY: 100% pure
+  [27] Src [room_stats]: room_stats
+      PURITY: 100% pure
+  [28] Src [__init__]: __init__
+      PURITY: 100% pure
+  [29] Src [start]: start
+      PURITY: 100% pure
+  [30] Src [stop]: stop
+      PURITY: 100% pure
+  [31] Src [_loop]: _loop → local_descriptor → load_workspace → ensure_home → ...(1 more)
+      PURITY: 100% pure
+  [32] Src [_build_chat_tab]: _build_chat_tab
+      PURITY: 100% pure
+  [33] Src [_router_endpoint]: _router_endpoint → load_workspace → ensure_home → app_home
+      PURITY: 100% pure
+  [34] Src [_runtime_base_url]: _runtime_base_url
+      PURITY: 100% pure
+  [35] Src [_chat_prompt_text]: _chat_prompt_text
+      PURITY: 100% pure
+  [36] Src [_sync_chat_prompt_url]: _sync_chat_prompt_url → voice_url → voice_query
+      PURITY: 100% pure
+  [37] Src [_open_chat_in_browser]: _open_chat_in_browser
+      PURITY: 100% pure
+  [38] Src [_refresh_chat_channels]: _refresh_chat_channels → list_chat_channels → scan_network → discover → ...(3 more)
+      PURITY: 100% pure
+  [39] Src [_apply_chat_channels]: _apply_chat_channels
+      PURITY: 100% pure
+  [40] Src [_on_chat_channel_select]: _on_chat_channel_select → save_workspace → normalize_workspace → default_workspace
+      PURITY: 100% pure
+  [41] Src [_load_chat_history_from_urisys]: _load_chat_history_from_urisys → fetch_chat_history → resolve_data_endpoint → default_node_endpoint → ...(3 more)
+      PURITY: 100% pure
+  [42] Src [_apply_chat_history]: _apply_chat_history
+      PURITY: 100% pure
+  [43] Src [_render_chat_thread]: _render_chat_thread
+      PURITY: 100% pure
+  [44] Src [_append_chat]: _append_chat
+      PURITY: 100% pure
+  [45] Src [_send_chat_message]: _send_chat_message → send_chat_message_routed → _payload_for_scheme
+      PURITY: 100% pure
+  [46] Src [_finish_chat_reply]: _finish_chat_reply
+      PURITY: 100% pure
+  [47] Src [registry]: registry
+      PURITY: 100% pure
+  [48] Src [runtime]: runtime
+      PURITY: 100% pure
+  [49] Src [base]: base
+      PURITY: 100% pure
+  [50] Src [start]: start → _setStatus
+      PURITY: 100% pure
+
+LAYERS:
+  packages/                       CC̄=5.4    ←in:0  →out:0
+  │ urisys_call                 59L  0C    3m  CC=10     ←0
+  │ handlers.js                 51L  0C   10m  CC=10     ←1
+  │ manifest.js                 35L  0C    0m  CC=0.0    ←0
+  │ messages                    29L  0C    2m  CC=4      ←0
+  │ manifest.yaml               26L  0C    0m  CC=0.0    ←0
+  │ manifest.yaml               26L  0C    0m  CC=0.0    ←0
+  │ plan                        23L  0C    1m  CC=11     ←0
+  │ manifest.yaml               17L  0C    0m  CC=0.0    ←0
+  │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │
+  src/                            CC̄=4.0    ←in:0  →out:0
+  │ !! runtime                    783L  4C   16m  CC=17     ←2
+  │ !! cli                        657L  0C   34m  CC=19     ←0
+  │ !! voice.js                   638L  0C  118m  CC=21     ←0
+  │ !! chat_channels              528L  0C   17m  CC=34     ←3
+  │ !! gui                        431L  1C   32m  CC=15     ←1
+  │ urirun_bridge              412L  0C   14m  CC=10     ←2
+  │ !! gui_chat                   287L  1C   15m  CC=16     ←0
+  │ voice_planner              286L  0C   11m  CC=14     ←5
+  │ webrtc_peer.js             229L  1C   25m  CC=14     ←0
+  │ !! network_scan               224L  0C    9m  CC=17     ←5
+  │ !! voice_pipeline             194L  0C    6m  CC=23     ←3
+  │ urisys_client              155L  1C   12m  CC=8      ←3
+  │ !! flow_compile               151L  1C    6m  CC=15     ←4
+  │ webrtc_pipeline            129L  0C    4m  CC=8      ←2
+  │ flow_engine                127L  0C   10m  CC=6      ←5
+  │ discovery                  123L  1C    6m  CC=9      ←2
+  │ remote_screen              113L  0C    4m  CC=11     ←3
+  │ i18n.js                    111L  0C    4m  CC=4      ←0
+  │ webrtc_signal              104L  0C    7m  CC=10     ←2
+  │ storage                     94L  0C    8m  CC=3      ←11
+  │ chat_store                  87L  1C    5m  CC=9      ←0
+  │ flow_runner                 87L  0C    4m  CC=9      ←5
+  │ sample_data                 76L  0C    1m  CC=3      ←1
+  │ loader                      74L  0C    5m  CC=6      ←3
+  │ url_state.js                67L  0C   15m  CC=9      ←3
+  │ runtime                     60L  0C    3m  CC=5      ←2
+  │ handlers.js                 51L  0C   10m  CC=10     ←0
+  │ url_params                  40L  0C    3m  CC=5      ←3
+  │ theme.js                    39L  0C    8m  CC=2      ←0
+  │ manifest.js                 35L  0C    0m  CC=0.0    ←0
+  │ paths                       33L  0C    5m  CC=4      ←1
+  │ page_runtime.js             20L  0C    2m  CC=1      ←0
+  │ __init__                    13L  0C    0m  CC=0.0    ←0
+  │ __init__                     6L  0C    0m  CC=0.0    ←0
+  │ __main__                     4L  0C    0m  CC=0.0    ←0
+  │
+  scripts/                        CC̄=2.9    ←in:0  →out:4
+  │ gui_smoke                  169L  0C    4m  CC=5      ←0
+  │ build-platform             141L  0C    6m  CC=6      ←0
+  │ bootstrap-lenovo-packs      57L  0C    2m  CC=5      ←0
+  │ upgrade-lenovo-node.sh      55L  0C    1m  CC=0.0    ←0
+  │ cd-github.sh                52L  0C    0m  CC=0.0    ←0
+  │ test-gui-docker.sh          47L  0C    0m  CC=0.0    ←0
+  │ upgrade-lenovo-remote       34L  0C    1m  CC=2      ←0
+  │ vendor-uricore-js.sh        20L  0C    0m  CC=0.0    ←0
+  │ ifuri_app_entry              6L  0C    0m  CC=0.0    ←0
+  │ run-ifuri-app.sh             3L  0C    0m  CC=0.0    ←0
+  │
+  desktop/                        CC̄=1.5    ←in:0  →out:0
+  │ !! desktop-schema.json       2310L  0C    0m  CC=0.0    ←0
+  │ !! linux-schema.json         2310L  0C    0m  CC=0.0    ←0
+  │ dev-server.sh               38L  0C    1m  CC=0.0    ←0
+  │ tauri.conf.json             33L  0C    0m  CC=0.0    ←0
+  │ Cargo.toml                  25L  0C    0m  CC=0.0    ←0
+  │ lib.rs                      16L  0C    1m  CC=4      ←0
+  │ default.json                11L  0C    0m  CC=0.0    ←0
+  │ main.rs                      6L  0C    1m  CC=1      ←0
+  │ build.rs                     3L  0C    1m  CC=1      ←0
+  │ capabilities.json            1L  0C    0m  CC=0.0    ←0
+  │ acl-manifests.json           1L  0C    0m  CC=0.0    ←0
+  │
+  docker/                         CC̄=0.0    ←in:0  →out:0
+  │ entrypoint-gui-test.sh      64L  0C    1m  CC=0.0    ←0
+  │ docker-compose.gui.yml      44L  0C    0m  CC=0.0    ←0
+  │ install-gui-deps.sh         39L  0C    0m  CC=0.0    ←0
+  │ Dockerfile.gui-test         29L  0C    0m  CC=0.0    ←0
+  │
+  ./                              CC̄=0.0    ←in:0  →out:0
+  │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
+  │ Makefile                   165L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             117L  0C    0m  CC=0.0    ←0
+  │ project.sh                  63L  0C    0m  CC=0.0    ←0
+  │ nlp2uri.yaml                 8L  0C    0m  CC=0.0    ←0
+  │ tree.sh                      1L  0C    0m  CC=0.0    ←0
+  │
+  examples/                       CC̄=0.0    ←in:0  →out:0
+  │ local_network.uri.flow.yaml    13L  0C    0m  CC=0.0    ←0
+  │
+
+COUPLING:
+                               src.ifuri_app   packages.ifuri-page               scripts  packages.ifuri-voice
+         src.ifuri_app                    ──                     4                    ←4                    ←1  hub
+   packages.ifuri-page                    ←4                    ──                                            
+               scripts                     4                                          ──                      
+  packages.ifuri-voice                     1                                                                ──
+  CYCLES: none
+  HUB: src.ifuri_app/ (fan-in=5)
+
+EXTERNAL:
+  validation: run `vallm batch .` → validation.toon
+  duplication: run `redup scan .` → duplication.toon

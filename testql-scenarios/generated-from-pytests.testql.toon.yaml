@@ -1,0 +1,92 @@
+# SCENARIO: Auto-generated from Python Tests
+# TYPE: integration
+# GENERATED: true
+
+CONFIG[2]{key, value}:
+  base_url, ${api_url:-http://localhost:8101}
+  timeout_ms, 10000
+
+# Converted 82 assertions from pytest
+ASSERT[82]{field, operator, expected}:
+  status, ==, 200
+  status, ==, 200
+  package, ==, "urirun"
+  status, ==, 200
+  via, ==, "urirun"
+  uri, ==, "tool://local/report/render"
+  exc.code, ==, 400
+  status, ==, 200
+  exc.code, ==, 404
+  error, ==, "not_found"
+  status, ==, 200
+  status, ==, 200
+  len(inbox.signals or []), ==, 1
+  webrtc_room_id(a, b), ==, webrtc_room_id(b
+  len(inbox.signals), ==, 1
+  inbox.signals[0].type, ==, "offer"
+  empty.signals, ==, []
+  out.plan, ==, "flow"
+  out.planner, ==, "llm"
+  os.environ.URI_SERVICE_MAP, ==, '{"new": "http://new"}'
+  os.environ.URI_SERVICE_MAP, ==, '{"old":"http://old"}'
+  run.result.stdout.strip(), ==, "served-by-urirun"
+  len(t.tools), ==, 2
+  card.name, ==, "ifuri-urirun"
+  out.messages_uploaded, ==, 1
+  mock_client.app_chat_append.call_count, ==, 1
+  messages[0].text, ==, "hi"
+  mock_client.app_chat_append.call_count, ==, 2
+  out.via, ==, "local"
+  out.messages[0].text, ==, "cached"
+  out.via, ==, "local"
+  len(local_store.list_messages("node:x")), ==, 2
+  any(c.endpoint, ==, "http://192.168.1.10:8790" for c in channels)
+  any(c.type, ==, "webrtc-peer" for c in channels)
+  len(result.ifuri_peers), ==, 1
+  len(result.urisys_nodes), ==, 1
+  result.counts.ifuri_peers, ==, 1
+  result.counts.urisys_nodes, ==, 1
+  any(s.scheme, ==, "mcp" for s in result["mcp_agent_services"])
+  out.png, ==, b"hello"
+  code, ==, 0
+  status, ==, 200
+  status, ==, 200
+  package, ==, "urirun"
+  status, ==, 200
+  via, ==, "urirun"
+  uri, ==, "tool://local/report/render"
+  exc.code, ==, 400
+  status, ==, 200
+  exc.code, ==, 404
+  error, ==, "not_found"
+  status, ==, 200
+  status, ==, 200
+  len(inbox.signals or []), ==, 1
+  webrtc_room_id(a, b), ==, webrtc_room_id(b
+  len(inbox.signals), ==, 1
+  inbox.signals[0].type, ==, "offer"
+  empty.signals, ==, []
+  out.plan, ==, "flow"
+  out.planner, ==, "llm"
+  os.environ.URI_SERVICE_MAP, ==, '{"new": "http://new"}'
+  os.environ.URI_SERVICE_MAP, ==, '{"old":"http://old"}'
+  run.result.stdout.strip(), ==, "served-by-urirun"
+  len(t.tools), ==, 2
+  card.name, ==, "ifuri-urirun"
+  out.messages_uploaded, ==, 1
+  mock_client.app_chat_append.call_count, ==, 1
+  messages[0].text, ==, "hi"
+  mock_client.app_chat_append.call_count, ==, 2
+  out.via, ==, "local"
+  out.messages[0].text, ==, "cached"
+  out.via, ==, "local"
+  len(local_store.list_messages("node:x")), ==, 2
+  any(c.endpoint, ==, "http://192.168.1.10:8790" for c in channels)
+  any(c.type, ==, "webrtc-peer" for c in channels)
+  len(result.ifuri_peers), ==, 1
+  len(result.urisys_nodes), ==, 1
+  result.counts.ifuri_peers, ==, 1
+  result.counts.urisys_nodes, ==, 1
+  any(s.scheme, ==, "mcp" for s in result["mcp_agent_services"])
+  out.png, ==, b"hello"
+  code, ==, 0

@@ -1,0 +1,229 @@
+// LESS format — define @variables here as needed
+
+app {
+  name: ifuri;
+  version: 0.2.10;
+}
+
+dependencies {
+  flows: pyyaml>=6.0;
+  packs: "uricore>=0.1.8, pyyaml>=6.0";
+  urirun: "urirun @ git+https://github.com/tellmesh/urirun.git@main#subdirectory=adapters/python";
+  build: "pyinstaller>=6.0, pyyaml>=6.0";
+  dev: "pytest>=8.0, pyyaml>=6.0, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
+}
+
+interface[type="cli"] {
+  framework: argparse;
+}
+interface[type="cli"] page[name="ifuri-app"] {
+  entry: ifuri_app.cli:main;
+}
+interface[type="cli"] page[name="ifuri"] {
+  entry: ifuri_app.cli:main;
+}
+
+interface[type="desktop"] {
+  type: tauri;
+  framework: tauri;
+}
+
+workflow[name="install"] {
+  trigger: manual;
+  step-1: run cmd=$(PYTHON) -m pip install -e .;
+}
+
+workflow[name="install-dev"] {
+  trigger: manual;
+  step-1: run cmd=if command -v uv >/dev/null 2>&1; then \;
+  step-2: run cmd=uv sync --group dev --group tellmesh; \;
+  step-3: run cmd=else \;
+  step-4: run cmd=$(PYTHON) -m pip install -e ".[flows,dev,packs]"; \;
+  step-5: run cmd=$(PYTHON) -m pip install -e ../../tellmesh/uri2flow ../../tellmesh/uricore 2>/dev/null || true; \;
+  step-6: run cmd=fi;
+}
+
+workflow[name="vendor-uricore-js"] {
+  trigger: manual;
+  step-1: run cmd=bash scripts/vendor-uricore-js.sh;
+}
+
+workflow[name="test"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m pytest -q --ignore=tests/e2e;
+}
+
+workflow[name="test-api"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m pytest tests/test_api_runtime.py -q;
+}
+
+workflow[name="test-e2e"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src uv run --group e2e pytest tests/e2e -q;
+}
+
+workflow[name="install-e2e"] {
+  trigger: manual;
+  step-1: run cmd=uv sync --group e2e;
+  step-2: run cmd=uv run --group e2e python -m playwright install chromium;
+}
+
+workflow[name="test-gui"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m pytest tests/test_gui_smoke.py -q;
+}
+
+workflow[name="test-gui-docker"] {
+  trigger: manual;
+  step-1: run cmd=bash scripts/test-gui-docker.sh;
+}
+
+workflow[name="run"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app $(ARGS);
+}
+
+workflow[name="run-gui"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app app;
+}
+
+workflow[name="run-voice"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app voice \;
+  step-2: run cmd=--urisys-endpoint $(URISYS) --port $(PORT) --auto-port;
+}
+
+workflow[name="run-voice-bg"] {
+  trigger: manual;
+  step-1: run cmd=! test -f /tmp/ifuri-voice.pid || { echo "already running (pid $$(cat /tmp/ifuri-voice.pid))"; exit 1; };
+  step-2: run cmd=PYTHONPATH=src nohup $(PYTHON) -m ifuri_app voice \;
+  step-3: run cmd=--urisys-endpoint $(URISYS) --port $(PORT) --no-auto-port \;
+  step-4: run cmd=>/tmp/ifuri-voice.log 2>&1 & echo $$! > /tmp/ifuri-voice.pid;
+  step-5: run cmd=sleep 0.8;
+  step-6: run cmd=grep -m1 'voice UI:' /tmp/ifuri-voice.log || tail -3 /tmp/ifuri-voice.log;
+}
+
+workflow[name="run-tauri-dev"] {
+  trigger: manual;
+  step-1: run cmd=PORT=$(PORT) URISYS=$(URISYS) PYTHON=$(PYTHON) bash desktop/dev-server.sh;
+  step-2: run cmd=cd desktop && cargo tauri dev;
+}
+
+workflow[name="stop"] {
+  trigger: manual;
+  step-1: run cmd=if test -f /tmp/ifuri-voice.pid; then \;
+  step-2: run cmd=kill $$(cat /tmp/ifuri-voice.pid) 2>/dev/null || true; \;
+  step-3: run cmd=rm -f /tmp/ifuri-voice.pid; \;
+  step-4: run cmd=echo "stopped"; \;
+  step-5: run cmd=else \;
+  step-6: run cmd=echo "no pid file (/tmp/ifuri-voice.pid)"; \;
+  step-7: run cmd=fi;
+}
+
+workflow[name="health"] {
+  trigger: manual;
+  step-1: run cmd=curl -fsS "http://127.0.0.1:$(PORT)/api/health" | $(PYTHON) -m json.tool | head -20;
+}
+
+workflow[name="api-smoke"] {
+  trigger: manual;
+  step-1: run cmd=echo "== /voice ==";
+  step-2: run cmd=curl -fsS "http://127.0.0.1:$(PORT)/voice" | head -c 120; echo;
+  step-3: run cmd=echo "== /api/packs ==";
+  step-4: run cmd=curl -fsS "http://127.0.0.1:$(PORT)/api/packs" | $(PYTHON) -m json.tool | head -12;
+  step-5: run cmd=echo "== /api/chat/channels ==";
+  step-6: run cmd=curl -fsS "http://127.0.0.1:$(PORT)/api/chat/channels?timeout=0.5" | $(PYTHON) -m json.tool | head -15;
+  step-7: run cmd=echo "== /api/chat/history ==";
+  step-8: run cmd=curl -fsS "http://127.0.0.1:$(PORT)/api/chat/history?channel_id=smoke" | $(PYTHON) -m json.tool | head -10;
+}
+
+workflow[name="chat-status"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app chat-status --endpoint $(URISYS);
+}
+
+workflow[name="chat-migrate"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app chat-migrate --endpoint $(URISYS);
+}
+
+workflow[name="chat-migrate-dry"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app chat-migrate --endpoint $(URISYS) --dry-run;
+}
+
+workflow[name="voice-capabilities"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app voice-capabilities --endpoint $(URISYS);
+}
+
+workflow[name="voice-install-packs"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app voice-install-packs --endpoint $(URISYS);
+}
+
+workflow[name="webrtc-capabilities"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app webrtc-capabilities --endpoint $(URISYS);
+}
+
+workflow[name="webrtc-install-pack"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app webrtc-install-pack --endpoint $(URISYS);
+}
+
+workflow[name="webrtc-smoke"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app webrtc-smoke --endpoint $(URISYS);
+}
+
+workflow[name="urirun-info"] {
+  trigger: manual;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m ifuri_app urirun-info;
+}
+
+workflow[name="upgrade-node"] {
+  trigger: manual;
+  step-1: run cmd=if ssh -o ConnectTimeout=5 -o BatchMode=yes "$${URISYS_SSH_USER:-tom}@$${URISYS_HOST:-192.168.188.201}" 'echo ok' 2>/dev/null; then \;
+  step-2: run cmd=bash scripts/upgrade-lenovo-node.sh; \;
+  step-3: run cmd=else \;
+  step-4: run cmd=echo "SSH unavailable — upgrading via shell:// URI…"; \;
+  step-5: run cmd=$(PYTHON) scripts/upgrade-lenovo-remote.py; \;
+  step-6: run cmd=fi;
+}
+
+workflow[name="wheel"] {
+  trigger: manual;
+  step-1: run cmd=$(PYTHON) -m pip wheel -w dist .;
+}
+
+workflow[name="build"] {
+  trigger: manual;
+  step-1: run cmd=$(PYTHON) scripts/build-platform.py;
+}
+
+workflow[name="clean"] {
+  trigger: manual;
+  step-1: run cmd=rm -rf dist/*.whl dist/*.tar.gz dist/*.zip .pytest_cache **/__pycache__;
+  step-2: run cmd=find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true;
+}
+
+env_vars {
+  keys: OPENROUTER_API_KEY, LLM_MODEL, PFIX_AUTO_APPLY, PFIX_AUTO_INSTALL_DEPS, PFIX_AUTO_RESTART, PFIX_MAX_RETRIES, PFIX_DRY_RUN, PFIX_ENABLED, PFIX_GIT_COMMIT, PFIX_GIT_PREFIX, PFIX_CREATE_BACKUPS, URI_SERVICE_MAP, IFURI_URIRUN_REGISTRY, URISYS_EXAMPLES_ROOT, IFURI_EXAMPLES_ROOT, IFURI_VOICE_PLANNER, URISYS_WEBRTC_WHEEL, URISYS_WHEEL_HOST, URISYS_NODE_ENDPOINT, IFURI_HOME, URISYS_STT_WHEEL, IFURI_STT_URI, IFURI_TTS_URI;
+}
+
+deploy {
+  target: docker;
+}
+
+environment[name="local"] {
+  runtime: docker-compose;
+  env_file: .env;
+  template_file: .env.example;
+  python_version: >=3.10;
+  vars: LLM_MODEL, OPENROUTER_API_KEY, PFIX_AUTO_APPLY, PFIX_AUTO_INSTALL_DEPS, PFIX_AUTO_RESTART, PFIX_CREATE_BACKUPS, PFIX_DRY_RUN, PFIX_ENABLED, PFIX_GIT_COMMIT, PFIX_GIT_PREFIX, PFIX_MAX_RETRIES;
+  runtime_llm: OPENROUTER_API_KEY;
+  runtime_pfix: PFIX_AUTO_APPLY, PFIX_AUTO_INSTALL_DEPS, PFIX_AUTO_RESTART, PFIX_CREATE_BACKUPS, PFIX_DRY_RUN, PFIX_ENABLED, PFIX_GIT_COMMIT, PFIX_GIT_PREFIX, PFIX_MAX_RETRIES;
+}

@@ -1,0 +1,4197 @@
+project: /home/tom/github/if-uri/app
+generated_from: code2llm call graph analysis
+stats:
+  total_nodes: 314
+  total_edges: 459
+  modules_count: 36
+nodes:
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._applySignal:
+    name: _applySignal
+    module: src.ifuri_app.web.webrtc_peer
+    line: 148
+    cyclomatic_complexity: 10
+    calls_out: 5
+    calls_in: 1
+  src.ifuri_app.storage.load_workspace:
+    name: load_workspace
+    module: src.ifuri_app.storage
+    line: 36
+    cyclomatic_complexity: 3
+    calls_out: 18
+    calls_in: 17
+  src.ifuri_app.web.voice.refreshVoiceCapabilities:
+    name: refreshVoiceCapabilities
+    module: src.ifuri_app.web.voice
+    line: 307
+    cyclomatic_complexity: 8
+    calls_out: 4
+    calls_in: 4
+  src.ifuri_app.flow_engine.dry_run_flow:
+    name: dry_run_flow
+    module: src.ifuri_app.flow_engine
+    line: 115
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 4
+  src.ifuri_app.web.voice.ep:
+    name: ep
+    module: src.ifuri_app.web.voice
+    line: 507
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.urirun_bridge.list_routes:
+    name: list_routes
+    module: src.ifuri_app.urirun_bridge
+    line: 213
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 1
+  src.ifuri_app.web.voice.api:
+    name: api
+    module: src.ifuri_app.web.voice
+    line: 76
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 9
+  src.ifuri_app.chat_channels._format_json_reply:
+    name: _format_json_reply
+    module: src.ifuri_app.chat_channels
+    line: 501
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 5
+  packages.ifuri-page.handlers.urlState:
+    name: urlState
+    module: packages.ifuri-page.handlers
+    line: 6
+    cyclomatic_complexity: 3
+    calls_out: 0
+    calls_in: 3
+  src.ifuri_app.gui_chat.ChatTabMixin._load_chat_history_from_urisys:
+    name: _load_chat_history_from_urisys
+    module: src.ifuri_app.gui_chat
+    line: 197
+    cyclomatic_complexity: 1
+    calls_out: 17
+    calls_in: 0
+  scripts.build-platform.run_pyinstaller:
+    name: run_pyinstaller
+    module: scripts.build-platform
+    line: 50
+    cyclomatic_complexity: 6
+    calls_out: 20
+    calls_in: 1
+  src.ifuri_app.urisys_client.UrisysNodeClient.__init__:
+    name: __init__
+    module: src.ifuri_app.urisys_client
+    line: 76
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.chat_store.chat_store_path:
+    name: chat_store_path
+    module: src.ifuri_app.chat_store
+    line: 14
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 1
+  src.ifuri_app.runtime.make_handler:
+    name: make_handler
+    module: src.ifuri_app.runtime
+    line: 283
+    cyclomatic_complexity: 1
+    calls_out: 447
+    calls_in: 1
+  src.ifuri_app.network_scan.scan_urisys_nodes:
+    name: scan_urisys_nodes
+    module: src.ifuri_app.network_scan
+    line: 122
+    cyclomatic_complexity: 15
+    calls_out: 19
+    calls_in: 2
+  src.ifuri_app.cli.cmd_flow_run:
+    name: cmd_flow_run
+    module: src.ifuri_app.cli
+    line: 200
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.clearTimeout:
+    name: clearTimeout
+    module: src.ifuri_app.web.webrtc_peer
+    line: 192
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  src.ifuri_app.web.voice.refreshChannels:
+    name: refreshChannels
+    module: src.ifuri_app.web.voice
+    line: 353
+    cyclomatic_complexity: 11
+    calls_out: 11
+    calls_in: 0
+  src.ifuri_app.web.voice.setWebRtcStatus:
+    name: setWebRtcStatus
+    module: src.ifuri_app.web.voice
+    line: 480
+    cyclomatic_complexity: 5
+    calls_out: 2
+    calls_in: 5
+  src.ifuri_app.webrtc_signal._purge_room:
+    name: _purge_room
+    module: src.ifuri_app.webrtc_signal
+    line: 41
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 2
+  src.ifuri_app.cli.cmd_flow_validate:
+    name: cmd_flow_validate
+    module: src.ifuri_app.cli
+    line: 429
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.web.url_state.read:
+    name: read
+    module: src.ifuri_app.web.url_state
+    line: 8
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 5
+  src.ifuri_app.web.webrtc_peer.newId:
+    name: newId
+    module: src.ifuri_app.web.webrtc_peer
+    line: 24
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  src.ifuri_app.cli.cmd_node_control_test:
+    name: cmd_node_control_test
+    module: src.ifuri_app.cli
+    line: 171
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.web.voice.remoteUrl:
+    name: remoteUrl
+    module: src.ifuri_app.web.voice
+    line: 536
+    cyclomatic_complexity: 5
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.webrtc_signal.local_peer_url:
+    name: local_peer_url
+    module: src.ifuri_app.webrtc_signal
+    line: 17
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 2
+  src.ifuri_app.urirun_bridge.mcp_tools:
+    name: mcp_tools
+    module: src.ifuri_app.urirun_bridge
+    line: 363
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 1
+  scripts.gui_smoke.run_gui_smoke:
+    name: run_gui_smoke
+    module: scripts.gui_smoke
+    line: 43
+    cyclomatic_complexity: 2
+    calls_out: 60
+    calls_in: 1
+  src.ifuri_app.chat_channels._urisys_chat_unavailable:
+    name: _urisys_chat_unavailable
+    module: src.ifuri_app.chat_channels
+    line: 158
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 4
+  src.ifuri_app.cli.cmd_webrtc_capabilities:
+    name: cmd_webrtc_capabilities
+    module: src.ifuri_app.cli
+    line: 244
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.chat_channels.migrate_local_chat_to_urisys:
+    name: migrate_local_chat_to_urisys
+    module: src.ifuri_app.chat_channels
+    line: 296
+    cyclomatic_complexity: 16
+    calls_out: 26
+    calls_in: 2
+  src.ifuri_app.web.voice.section:
+    name: section
+    module: src.ifuri_app.web.voice
+    line: 275
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.urisys_client.default_node_endpoint:
+    name: default_node_endpoint
+    module: src.ifuri_app.urisys_client
+    line: 13
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 2
+  src.ifuri_app.web.voice.I:
+    name: I
+    module: src.ifuri_app.web.voice
+    line: 3
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 7
+  src.ifuri_app.chat_channels.send_chat_message_routed:
+    name: send_chat_message_routed
+    module: src.ifuri_app.chat_channels
+    line: 435
+    cyclomatic_complexity: 17
+    calls_out: 25
+    calls_in: 3
+  src.ifuri_app.cli.cmd_voice:
+    name: cmd_voice
+    module: src.ifuri_app.cli
+    line: 125
+    cyclomatic_complexity: 6
+    calls_out: 19
+    calls_in: 0
+  src.ifuri_app.urirun_bridge.load_registry:
+    name: load_registry
+    module: src.ifuri_app.urirun_bridge
+    line: 48
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 8
+  src.ifuri_app.web.i18n.t:
+    name: t
+    module: src.ifuri_app.web.i18n
+    line: 99
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.gui.IfuriDesktop.add_service:
+    name: add_service
+    module: src.ifuri_app.gui
+    line: 279
+    cyclomatic_complexity: 3
+    calls_out: 12
+    calls_in: 0
+  src.ifuri_app.cli.cmd_app:
+    name: cmd_app
+    module: src.ifuri_app.cli
+    line: 79
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.timer:
+    name: timer
+    module: src.ifuri_app.web.webrtc_peer
+    line: 184
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.web.voice.syncPromptToUrl:
+    name: syncPromptToUrl
+    module: src.ifuri_app.web.voice
+    line: 58
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  src.ifuri_app.cli.print_json:
+    name: print_json
+    module: src.ifuri_app.cli
+    line: 48
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 35
+  src.ifuri_app.web.theme.setLang:
+    name: setLang
+    module: src.ifuri_app.web.theme
+    line: 33
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.web.voice.btn:
+    name: btn
+    module: src.ifuri_app.web.voice
+    line: 279
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.runtime.RuntimeState.call_uri:
+    name: call_uri
+    module: src.ifuri_app.runtime
+    line: 173
+    cyclomatic_complexity: 11
+    calls_out: 25
+    calls_in: 0
+  src.ifuri_app.cli.cmd_chat_channels:
+    name: cmd_chat_channels
+    module: src.ifuri_app.cli
+    line: 276
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.gui.IfuriDesktop.start_runtime:
+    name: start_runtime
+    module: src.ifuri_app.gui
+    line: 291
+    cyclomatic_complexity: 5
+    calls_out: 17
+    calls_in: 0
+  packages.ifuri-bridge.handlers.urisys_call.node_health:
+    name: node_health
+    module: packages.ifuri-bridge.handlers.urisys_call
+    line: 51
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  src.ifuri_app.web.voice.next:
+    name: next
+    module: src.ifuri_app.web.voice
+    line: 188
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.web.i18n.val:
+    name: val
+    module: src.ifuri_app.web.i18n
+    line: 101
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  scripts.build-platform.add_data_arg:
+    name: add_data_arg
+    module: scripts.build-platform
+    line: 45
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  src.ifuri_app.paths.web_dir:
+    name: web_dir
+    module: src.ifuri_app.paths
+    line: 19
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.web.voice.promptSyncTimer:
+    name: promptSyncTimer
+    module: src.ifuri_app.web.voice
+    line: 56
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.start:
+    name: start
+    module: src.ifuri_app.web.webrtc_peer
+    line: 67
+    cyclomatic_complexity: 14
+    calls_out: 16
+    calls_in: 0
+  src.ifuri_app.web.voice.screenTimer:
+    name: screenTimer
+    module: src.ifuri_app.web.voice
+    line: 37
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.web.voice.dry:
+    name: dry
+    module: src.ifuri_app.web.voice
+    line: 162
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.web.voice.isWebRtc:
+    name: isWebRtc
+    module: src.ifuri_app.web.voice
+    line: 236
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.url_params.voice_url:
+    name: voice_url
+    module: src.ifuri_app.url_params
+    line: 24
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 3
+  src.ifuri_app.flow_engine._legacy_expand_flow:
+    name: _legacy_expand_flow
+    module: src.ifuri_app.flow_engine
+    line: 15
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 1
+  src.ifuri_app.cli.cmd_urirun_scan:
+    name: cmd_urirun_scan
+    module: src.ifuri_app.cli
+    line: 380
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.flow_engine.uri_scheme:
+    name: uri_scheme
+    module: src.ifuri_app.flow_engine
+    line: 58
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 2
+  scripts.build-platform.read_version:
+    name: read_version
+    module: scripts.build-platform
+    line: 23
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 1
+  packages.ifuri-page.handlers.set_url_state:
+    name: set_url_state
+    module: packages.ifuri-page.handlers
+    line: 26
+    cyclomatic_complexity: 9
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.web.voice.node:
+    name: node
+    module: src.ifuri_app.web.voice
+    line: 362
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.web.voice.selectChannel:
+    name: selectChannel
+    module: src.ifuri_app.web.voice
+    line: 222
+    cyclomatic_complexity: 14
+    calls_out: 13
+    calls_in: 7
+  src.ifuri_app.storage.add_event:
+    name: add_event
+    module: src.ifuri_app.storage
+    line: 92
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 11
+  src.ifuri_app.network_scan.try_mdns_urisys:
+    name: try_mdns_urisys
+    module: src.ifuri_app.network_scan
+    line: 218
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  src.ifuri_app.web.url_state.onPopState:
+    name: onPopState
+    module: src.ifuri_app.web.url_state
+    line: 43
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.web.url_state.withParams:
+    name: withParams
+    module: src.ifuri_app.web.url_state
+    line: 47
+    cyclomatic_complexity: 9
+    calls_out: 6
+    calls_in: 0
+  src.ifuri_app.flow_engine.extract_steps:
+    name: extract_steps
+    module: src.ifuri_app.flow_engine
+    line: 64
+    cyclomatic_complexity: 3
+    calls_out: 9
+    calls_in: 3
+  src.ifuri_app.cli.cmd_urirun_call:
+    name: cmd_urirun_call
+    module: src.ifuri_app.cli
+    line: 340
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 0
+  src.ifuri_app.web.page.handlers.toggle_view:
+    name: toggle_view
+    module: src.ifuri_app.web.page.handlers
+    line: 39
+    cyclomatic_complexity: 9
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.web.voice.hist:
+    name: hist
+    module: src.ifuri_app.web.voice
+    line: 283
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.flow_compile.uri2flow_available:
+    name: uri2flow_available
+    module: src.ifuri_app.flow_compile
+    line: 13
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 6
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._poll:
+    name: _poll
+    module: src.ifuri_app.web.webrtc_peer
+    line: 132
+    cyclomatic_complexity: 7
+    calls_out: 5
+    calls_in: 1
+  src.ifuri_app.web.voice.esc:
+    name: esc
+    module: src.ifuri_app.web.voice
+    line: 70
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 12
+  packages.ifuri-voice.handlers.plan.plan:
+    name: plan
+    module: packages.ifuri-voice.handlers.plan
+    line: 8
+    cyclomatic_complexity: 11
+    calls_out: 14
+    calls_in: 0
+  src.ifuri_app.storage.normalize_workspace:
+    name: normalize_workspace
+    module: src.ifuri_app.storage
+    line: 56
+    cyclomatic_complexity: 1
+    calls_out: 16
+    calls_in: 2
+  src.ifuri_app.voice_planner.node_has_llm:
+    name: node_has_llm
+    module: src.ifuri_app.voice_planner
+    line: 74
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 1
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.answer:
+    name: answer
+    module: src.ifuri_app.web.webrtc_peer
+    line: 154
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.urirun_bridge.default_urirun_registry:
+    name: default_urirun_registry
+    module: src.ifuri_app.urirun_bridge
+    line: 152
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 8
+  src.ifuri_app.voice_pipeline.voice_pack_install_hint:
+    name: voice_pack_install_hint
+    module: src.ifuri_app.voice_pipeline
+    line: 165
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 5
+  src.ifuri_app.web.voice.labels:
+    name: labels
+    module: src.ifuri_app.web.voice
+    line: 270
+    cyclomatic_complexity: 13
+    calls_out: 6
+    calls_in: 0
+  src.ifuri_app.web.voice.items:
+    name: items
+    module: src.ifuri_app.web.voice
+    line: 273
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.isReady:
+    name: isReady
+    module: src.ifuri_app.web.webrtc_peer
+    line: 46
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  src.ifuri_app.web.voice.loadChannelHistory:
+    name: loadChannelHistory
+    module: src.ifuri_app.web.voice
+    line: 90
+    cyclomatic_complexity: 8
+    calls_out: 10
+    calls_in: 2
+  src.ifuri_app.packs.loader.discover_manifests:
+    name: discover_manifests
+    module: src.ifuri_app.packs.loader
+    line: 18
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 2
+  src.ifuri_app.cli.cmd_serve:
+    name: cmd_serve
+    module: src.ifuri_app.cli
+    line: 84
+    cyclomatic_complexity: 8
+    calls_out: 19
+    calls_in: 0
+  src.ifuri_app.flow_compile.expand_flow_compiled:
+    name: expand_flow_compiled
+    module: src.ifuri_app.flow_compile
+    line: 49
+    cyclomatic_complexity: 15
+    calls_out: 26
+    calls_in: 1
+  src.ifuri_app.chat_channels.persist_chat_turn:
+    name: persist_chat_turn
+    module: src.ifuri_app.chat_channels
+    line: 239
+    cyclomatic_complexity: 11
+    calls_out: 15
+    calls_in: 1
+  src.ifuri_app.cli.build_parser:
+    name: build_parser
+    module: src.ifuri_app.cli
+    line: 457
+    cyclomatic_complexity: 1
+    calls_out: 171
+    calls_in: 1
+  src.ifuri_app.web.page.handlers.urlState:
+    name: urlState
+    module: src.ifuri_app.web.page.handlers
+    line: 6
+    cyclomatic_complexity: 3
+    calls_out: 0
+    calls_in: 3
+  src.ifuri_app.cli.cmd_voice_install_packs:
+    name: cmd_voice_install_packs
+    module: src.ifuri_app.cli
+    line: 237
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.urirun_bridge.call_urirun:
+    name: call_urirun
+    module: src.ifuri_app.urirun_bridge
+    line: 80
+    cyclomatic_complexity: 9
+    calls_out: 7
+    calls_in: 2
+  src.ifuri_app.cli.cmd_voice_plan:
+    name: cmd_voice_plan
+    module: src.ifuri_app.cli
+    line: 212
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.web.voice.applyViewFromUrl:
+    name: applyViewFromUrl
+    module: src.ifuri_app.web.voice
+    line: 149
+    cyclomatic_complexity: 7
+    calls_out: 5
+    calls_in: 2
+  src.ifuri_app.runtime.format_port_in_use_error:
+    name: format_port_in_use_error
+    module: src.ifuri_app.runtime
+    line: 81
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 2
+  src.ifuri_app.cli.cmd_expand:
+    name: cmd_expand
+    module: src.ifuri_app.cli
+    line: 451
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.webrtc_pipeline.webrtc_capabilities:
+    name: webrtc_capabilities
+    module: src.ifuri_app.webrtc_pipeline
+    line: 27
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 2
+  src.ifuri_app.chat_channels.fetch_chat_channel_index:
+    name: fetch_chat_channel_index
+    module: src.ifuri_app.chat_channels
+    line: 215
+    cyclomatic_complexity: 3
+    calls_out: 8
+    calls_in: 1
+  src.ifuri_app.web.voice.url:
+    name: url
+    module: src.ifuri_app.web.voice
+    line: 432
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.storage.now_iso:
+    name: now_iso
+    module: src.ifuri_app.storage
+    line: 32
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 6
+  src.ifuri_app.packs.loader.pack_summary:
+    name: pack_summary
+    module: src.ifuri_app.packs.loader
+    line: 55
+    cyclomatic_complexity: 6
+    calls_out: 10
+    calls_in: 2
+  src.ifuri_app.cli.cmd_webrtc_install_pack:
+    name: cmd_webrtc_install_pack
+    module: src.ifuri_app.cli
+    line: 250
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.web.voice.localUrl:
+    name: localUrl
+    module: src.ifuri_app.web.voice
+    line: 535
+    cyclomatic_complexity: 5
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.chat_channels.resolve_data_endpoint:
+    name: resolve_data_endpoint
+    module: src.ifuri_app.chat_channels
+    line: 135
+    cyclomatic_complexity: 10
+    calls_out: 14
+    calls_in: 4
+  src.ifuri_app.web.url_state.patch:
+    name: patch
+    module: src.ifuri_app.web.url_state
+    line: 34
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  src.ifuri_app.paths.repo_root:
+    name: repo_root
+    module: src.ifuri_app.paths
+    line: 27
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  src.ifuri_app.runtime._port_available:
+    name: _port_available
+    module: src.ifuri_app.runtime
+    line: 94
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 3
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendVoiceRequest:
+    name: sendVoiceRequest
+    module: src.ifuri_app.web.webrtc_peer
+    line: 179
+    cyclomatic_complexity: 4
+    calls_out: 12
+    calls_in: 0
+  src.ifuri_app.web.voice.room:
+    name: room
+    module: src.ifuri_app.web.voice
+    line: 537
+    cyclomatic_complexity: 5
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.web.voice.auto:
+    name: auto
+    module: src.ifuri_app.web.voice
+    line: 164
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.web.url_state.get:
+    name: get
+    module: src.ifuri_app.web.url_state
+    line: 38
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.cli.cmd_urirun_info:
+    name: cmd_urirun_info
+    module: src.ifuri_app.cli
+    line: 329
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.webrtc_signal.post_signal:
+    name: post_signal
+    module: src.ifuri_app.webrtc_signal
+    line: 47
+    cyclomatic_complexity: 9
+    calls_out: 12
+    calls_in: 1
+  src.ifuri_app.chat_channels._format_voice_reply:
+    name: _format_voice_reply
+    module: src.ifuri_app.chat_channels
+    line: 507
+    cyclomatic_complexity: 16
+    calls_out: 23
+    calls_in: 1
+  src.ifuri_app.web.voice.ch:
+    name: ch
+    module: src.ifuri_app.web.voice
+    line: 619
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.cli.cmd_run:
+    name: cmd_run
+    module: src.ifuri_app.cli
+    line: 437
+    cyclomatic_complexity: 4
+    calls_out: 9
+    calls_in: 0
+  src.ifuri_app.chat_store.LocalChatStore.__init__:
+    name: __init__
+    module: src.ifuri_app.chat_store
+    line: 22
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint:
+    name: webrtc_pack_install_hint
+    module: src.ifuri_app.webrtc_pipeline
+    line: 120
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 3
+  src.ifuri_app.web.voice.applyPromptFromUrl:
+    name: applyPromptFromUrl
+    module: src.ifuri_app.web.voice
+    line: 63
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.gui.IfuriDesktop.__init__:
+    name: __init__
+    module: src.ifuri_app.gui
+    line: 21
+    cyclomatic_complexity: 1
+    calls_out: 10
+    calls_in: 0
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.t:
+    name: t
+    module: src.ifuri_app.web.webrtc_peer
+    line: 150
+    cyclomatic_complexity: 8
+    calls_out: 5
+    calls_in: 0
+  src.ifuri_app.web.page.handlers.get_url_state:
+    name: get_url_state
+    module: src.ifuri_app.web.page.handlers
+    line: 13
+    cyclomatic_complexity: 10
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.cli.cmd_node_call:
+    name: cmd_node_call
+    module: src.ifuri_app.cli
+    line: 164
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.chat_channels.urisys_chat_available:
+    name: urisys_chat_available
+    module: src.ifuri_app.chat_channels
+    line: 286
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 3
+  src.ifuri_app.packs.loader._ensure_pack_path:
+    name: _ensure_pack_path
+    module: src.ifuri_app.packs.loader
+    line: 25
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  src.ifuri_app.discovery.DiscoveryResponder._loop:
+    name: _loop
+    module: src.ifuri_app.discovery
+    line: 59
+    cyclomatic_complexity: 9
+    calls_out: 16
+    calls_in: 0
+  src.ifuri_app.web.voice.connectWebRtc:
+    name: connectWebRtc
+    module: src.ifuri_app.web.voice
+    line: 529
+    cyclomatic_complexity: 15
+    calls_out: 8
+    calls_in: 0
+  src.ifuri_app.gui_chat.ChatTabMixin._on_chat_channel_select:
+    name: _on_chat_channel_select
+    module: src.ifuri_app.gui_chat
+    line: 181
+    cyclomatic_complexity: 5
+    calls_out: 12
+    calls_in: 0
+  src.ifuri_app.chat_channels.send_chat_message:
+    name: send_chat_message
+    module: src.ifuri_app.chat_channels
+    line: 358
+    cyclomatic_complexity: 18
+    calls_out: 33
+    calls_in: 1
+  src.ifuri_app.urisys_client.node_voice_capabilities:
+    name: node_voice_capabilities
+    module: src.ifuri_app.urisys_client
+    line: 54
+    cyclomatic_complexity: 8
+    calls_out: 12
+    calls_in: 5
+  src.ifuri_app.network_scan._collect_local_services:
+    name: _collect_local_services
+    module: src.ifuri_app.network_scan
+    line: 77
+    cyclomatic_complexity: 8
+    calls_out: 13
+    calls_in: 1
+  src.ifuri_app.cli.cmd_node_health:
+    name: cmd_node_health
+    module: src.ifuri_app.cli
+    line: 158
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.cli.cmd_packs:
+    name: cmd_packs
+    module: src.ifuri_app.cli
+    line: 324
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.runtime.RuntimeState.run_flow:
+    name: run_flow
+    module: src.ifuri_app.runtime
+    line: 231
+    cyclomatic_complexity: 17
+    calls_out: 41
+    calls_in: 0
+  src.ifuri_app.cli.cmd_urirun_serve:
+    name: cmd_urirun_serve
+    module: src.ifuri_app.cli
+    line: 386
+    cyclomatic_complexity: 4
+    calls_out: 8
+    calls_in: 0
+  src.ifuri_app.urisys_client.node_llm_available:
+    name: node_llm_available
+    module: src.ifuri_app.urisys_client
+    line: 36
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 1
+  src.ifuri_app.web.voice.blob:
+    name: blob
+    module: src.ifuri_app.web.voice
+    line: 437
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 2
+  src.ifuri_app.runtime.json_bytes:
+    name: json_bytes
+    module: src.ifuri_app.runtime
+    line: 279
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  scripts.gui_smoke.main:
+    name: main
+    module: scripts.gui_smoke
+    line: 158
+    cyclomatic_complexity: 2
+    calls_out: 9
+    calls_in: 0
+  src.ifuri_app.web.url_state.base:
+    name: base
+    module: src.ifuri_app.web.url_state
+    line: 48
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._dispatch:
+    name: _dispatch
+    module: src.ifuri_app.web.webrtc_peer
+    line: 54
+    cyclomatic_complexity: 8
+    calls_out: 7
+    calls_in: 1
+  src.ifuri_app.gui.IfuriDesktop.open_voice_ui:
+    name: open_voice_ui
+    module: src.ifuri_app.gui
+    line: 314
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 0
+  src.ifuri_app.web.voice.applyUiLanguage:
+    name: applyUiLanguage
+    module: src.ifuri_app.web.voice
+    line: 127
+    cyclomatic_complexity: 8
+    calls_out: 4
+    calls_in: 1
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.posted:
+    name: posted
+    module: src.ifuri_app.web.webrtc_peer
+    line: 109
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.remote_screen.probe_remote_control:
+    name: probe_remote_control
+    module: src.ifuri_app.remote_screen
+    line: 73
+    cyclomatic_complexity: 7
+    calls_out: 26
+    calls_in: 4
+  src.ifuri_app.flow_engine.dry_run_uri:
+    name: dry_run_uri
+    module: src.ifuri_app.flow_engine
+    line: 102
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 4
+  src.ifuri_app.gui.launch_gui:
+    name: launch_gui
+    module: src.ifuri_app.gui
+    line: 429
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  src.ifuri_app.web.theme.initFromUrl:
+    name: initFromUrl
+    module: src.ifuri_app.web.theme
+    line: 19
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.gui.IfuriDesktop.save_current_flow:
+    name: save_current_flow
+    module: src.ifuri_app.gui
+    line: 254
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 0
+  src.ifuri_app.sample_data.default_workspace:
+    name: default_workspace
+    module: src.ifuri_app.sample_data
+    line: 71
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 4
+  src.ifuri_app.web.voice.SR:
+    name: SR
+    module: src.ifuri_app.web.voice
+    line: 596
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.storage.save_workspace:
+    name: save_workspace
+    module: src.ifuri_app.storage
+    line: 74
+    cyclomatic_complexity: 2
+    calls_out: 14
+    calls_in: 21
+  src.ifuri_app.gui_chat.ChatTabMixin._router_endpoint:
+    name: _router_endpoint
+    module: src.ifuri_app.gui_chat
+    line: 101
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 0
+  src.ifuri_app.cli.cmd_voice_run:
+    name: cmd_voice_run
+    module: src.ifuri_app.cli
+    line: 264
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.voice_pipeline._extract_stt_text:
+    name: _extract_stt_text
+    module: src.ifuri_app.voice_pipeline
+    line: 34
+    cyclomatic_complexity: 9
+    calls_out: 10
+    calls_in: 1
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._setStatus:
+    name: _setStatus
+    module: src.ifuri_app.web.webrtc_peer
+    line: 50
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 4
+  src.ifuri_app.remote_screen.unwrap_result:
+    name: unwrap_result
+    module: src.ifuri_app.remote_screen
+    line: 12
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 1
+  src.ifuri_app.web.voice.handleWebRtcEnvelope:
+    name: handleWebRtcEnvelope
+    module: src.ifuri_app.web.voice
+    line: 494
+    cyclomatic_complexity: 17
+    calls_out: 9
+    calls_in: 1
+  src.ifuri_app.flow_engine.flow_id_from_text:
+    name: flow_id_from_text
+    module: src.ifuri_app.flow_engine
+    line: 79
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 1
+  src.ifuri_app.web.voice._toggleViewDirect:
+    name: _toggleViewDirect
+    module: src.ifuri_app.web.voice
+    line: 187
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  src.ifuri_app.web.theme.applyTheme:
+    name: applyTheme
+    module: src.ifuri_app.web.theme
+    line: 7
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 2
+  src.ifuri_app.packs.runtime.get_local_uri_runtime:
+    name: get_local_uri_runtime
+    module: src.ifuri_app.packs.runtime
+    line: 10
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 3
+  packages.ifuri-page.handlers.next:
+    name: next
+    module: packages.ifuri-page.handlers
+    line: 45
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 4
+  src.ifuri_app.urirun_bridge.parse_json_object:
+    name: parse_json_object
+    module: src.ifuri_app.urirun_bridge
+    line: 69
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 3
+  src.ifuri_app.storage.workspace_path:
+    name: workspace_path
+    module: src.ifuri_app.storage
+    line: 22
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  src.ifuri_app.web.voice.renderMessages:
+    name: renderMessages
+    module: src.ifuri_app.web.voice
+    line: 201
+    cyclomatic_complexity: 7
+    calls_out: 6
+    calls_in: 2
+  src.ifuri_app.runtime.RuntimeState.load:
+    name: load
+    module: src.ifuri_app.runtime
+    line: 146
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.web.voice.webrtcSession:
+    name: webrtcSession
+    module: src.ifuri_app.web.voice
+    line: 42
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.url_params.voice_query:
+    name: voice_query
+    module: src.ifuri_app.url_params
+    line: 19
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 1
+  src.ifuri_app.web.voice.pick:
+    name: pick
+    module: src.ifuri_app.web.voice
+    line: 303
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.paths.assets_dir:
+    name: assets_dir
+    module: src.ifuri_app.paths
+    line: 23
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.packs.loader.load_local_registry:
+    name: load_local_registry
+    module: src.ifuri_app.packs.loader
+    line: 32
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 1
+  src.ifuri_app.chat_channels._payload_for_scheme:
+    name: _payload_for_scheme
+    module: src.ifuri_app.chat_channels
+    line: 484
+    cyclomatic_complexity: 4
+    calls_out: 0
+    calls_in: 2
+  src.ifuri_app.voice_pipeline.voice_capabilities:
+    name: voice_capabilities
+    module: src.ifuri_app.voice_pipeline
+    line: 121
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 2
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendVoiceReply:
+    name: sendVoiceReply
+    module: src.ifuri_app.web.webrtc_peer
+    line: 199
+    cyclomatic_complexity: 9
+    calls_out: 3
+    calls_in: 2
+  src.ifuri_app.flow_engine.expand_flow:
+    name: expand_flow
+    module: src.ifuri_app.flow_engine
+    line: 8
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 4
+  src.ifuri_app.urirun_bridge.registry_summary:
+    name: registry_summary
+    module: src.ifuri_app.urirun_bridge
+    line: 135
+    cyclomatic_complexity: 9
+    calls_out: 18
+    calls_in: 3
+  src.ifuri_app.flow_runner.run_flow_file:
+    name: run_flow_file
+    module: src.ifuri_app.flow_runner
+    line: 53
+    cyclomatic_complexity: 9
+    calls_out: 14
+    calls_in: 5
+  src.ifuri_app.flow_runner.examples_root:
+    name: examples_root
+    module: src.ifuri_app.flow_runner
+    line: 18
+    cyclomatic_complexity: 4
+    calls_out: 9
+    calls_in: 4
+  src.ifuri_app.web.voice.thread:
+    name: thread
+    module: src.ifuri_app.web.voice
+    line: 207
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.web.voice.U:
+    name: U
+    module: src.ifuri_app.web.voice
+    line: 1
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 8
+  src.ifuri_app.cli.cmd_voice_catalog:
+    name: cmd_voice_catalog
+    module: src.ifuri_app.cli
+    line: 224
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.reject:
+    name: reject
+    module: src.ifuri_app.web.webrtc_peer
+    line: 194
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  src.ifuri_app.web.voice.text:
+    name: text
+    module: src.ifuri_app.web.voice
+    line: 378
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.web.voice.initSettingsFromUrl:
+    name: initSettingsFromUrl
+    module: src.ifuri_app.web.voice
+    line: 452
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.offer:
+    name: offer
+    module: src.ifuri_app.web.webrtc_peer
+    line: 107
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.urirun_bridge.serve_http:
+    name: serve_http
+    module: src.ifuri_app.urirun_bridge
+    line: 232
+    cyclomatic_complexity: 7
+    calls_out: 46
+    calls_in: 1
+  src.ifuri_app.chat_channels.fetch_chat_history:
+    name: fetch_chat_history
+    module: src.ifuri_app.chat_channels
+    line: 170
+    cyclomatic_complexity: 9
+    calls_out: 18
+    calls_in: 2
+  src.ifuri_app.cli.cmd_init:
+    name: cmd_init
+    module: src.ifuri_app.cli
+    line: 52
+    cyclomatic_complexity: 7
+    calls_out: 19
+    calls_in: 0
+  src.ifuri_app.web.voice.prefs:
+    name: prefs
+    module: src.ifuri_app.web.voice
+    line: 453
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.runtime.find_free_port:
+    name: find_free_port
+    module: src.ifuri_app.runtime
+    line: 104
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 3
+  src.ifuri_app.paths.app_package_dir:
+    name: app_package_dir
+    module: src.ifuri_app.paths
+    line: 9
+    cyclomatic_complexity: 4
+    calls_out: 7
+    calls_in: 3
+  src.ifuri_app.web.voice.installVoicePacks:
+    name: installVoicePacks
+    module: src.ifuri_app.web.voice
+    line: 327
+    cyclomatic_complexity: 9
+    calls_out: 6
+    calls_in: 0
+  src.ifuri_app.webrtc_pipeline.install_webrtc_pack:
+    name: install_webrtc_pack
+    module: src.ifuri_app.webrtc_pipeline
+    line: 39
+    cyclomatic_complexity: 8
+    calls_out: 17
+    calls_in: 1
+  src.ifuri_app.storage.app_home:
+    name: app_home
+    module: src.ifuri_app.storage
+    line: 15
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 3
+  src.ifuri_app.web.voice.summary:
+    name: summary
+    module: src.ifuri_app.web.voice
+    line: 514
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.web.voice.groupLabels:
+    name: groupLabels
+    module: src.ifuri_app.web.voice
+    line: 48
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 1
+  src.ifuri_app.cli.cmd_urirun_mcp:
+    name: cmd_urirun_mcp
+    module: src.ifuri_app.cli
+    line: 408
+    cyclomatic_complexity: 7
+    calls_out: 10
+    calls_in: 0
+  src.ifuri_app.remote_screen.capture_remote_screen:
+    name: capture_remote_screen
+    module: src.ifuri_app.remote_screen
+    line: 30
+    cyclomatic_complexity: 11
+    calls_out: 22
+    calls_in: 5
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendEnvelope:
+    name: sendEnvelope
+    module: src.ifuri_app.web.webrtc_peer
+    line: 173
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  src.ifuri_app.voice_planner.plan_with_regex:
+    name: plan_with_regex
+    module: src.ifuri_app.voice_planner
+    line: 96
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  src.ifuri_app.webrtc_pipeline.webrtc_smoke:
+    name: webrtc_smoke
+    module: src.ifuri_app.webrtc_pipeline
+    line: 80
+    cyclomatic_complexity: 6
+    calls_out: 14
+    calls_in: 1
+  src.ifuri_app.chat_channels._local_chat_store:
+    name: _local_chat_store
+    module: src.ifuri_app.chat_channels
+    line: 166
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 4
+  src.ifuri_app.web.voice.T:
+    name: T
+    module: src.ifuri_app.web.voice
+    line: 2
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 2
+  src.ifuri_app.web.voice.screenImageUrl:
+    name: screenImageUrl
+    module: src.ifuri_app.web.voice
+    line: 423
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 1
+  packages.ifuri-bridge.handlers.urisys_call.urisys_call:
+    name: urisys_call
+    module: packages.ifuri-bridge.handlers.urisys_call
+    line: 23
+    cyclomatic_complexity: 8
+    calls_out: 17
+    calls_in: 0
+  src.ifuri_app.urirun_bridge.service_map_env:
+    name: service_map_env
+    module: src.ifuri_app.urirun_bridge
+    line: 56
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 1
+  src.ifuri_app.web.voice.cid:
+    name: cid
+    module: src.ifuri_app.web.voice
+    line: 617
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.web.voice.showScreen:
+    name: showScreen
+    module: src.ifuri_app.web.voice
+    line: 151
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.gui.IfuriDesktop.save_all:
+    name: save_all
+    module: src.ifuri_app.gui
+    line: 420
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.web.voice.autoSendPending:
+    name: autoSendPending
+    module: src.ifuri_app.web.voice
+    line: 39
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.runtime.RuntimeState.health:
+    name: health
+    module: src.ifuri_app.runtime
+    line: 154
+    cyclomatic_complexity: 2
+    calls_out: 17
+    calls_in: 0
+  src.ifuri_app.urirun_bridge.scan_project:
+    name: scan_project
+    module: src.ifuri_app.urirun_bridge
+    line: 327
+    cyclomatic_complexity: 10
+    calls_out: 13
+    calls_in: 1
+  src.ifuri_app.flow_engine.clean_uri:
+    name: clean_uri
+    module: src.ifuri_app.flow_engine
+    line: 54
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  src.ifuri_app.web.voice.rec:
+    name: rec
+    module: src.ifuri_app.web.voice
+    line: 601
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.flow_compile._parse_flow_input:
+    name: _parse_flow_input
+    module: src.ifuri_app.flow_compile
+    line: 22
+    cyclomatic_complexity: 12
+    calls_out: 11
+    calls_in: 3
+  src.ifuri_app.web.voice.routerEndpoint:
+    name: routerEndpoint
+    module: src.ifuri_app.web.voice
+    line: 85
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 5
+  src.ifuri_app.web.url_state.write:
+    name: write
+    module: src.ifuri_app.web.url_state
+    line: 15
+    cyclomatic_complexity: 8
+    calls_out: 9
+    calls_in: 1
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._wireChannel:
+    name: _wireChannel
+    module: src.ifuri_app.web.webrtc_peer
+    line: 120
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  src.ifuri_app.web.page.handlers.set_url_state:
+    name: set_url_state
+    module: src.ifuri_app.web.page.handlers
+    line: 26
+    cyclomatic_complexity: 9
+    calls_out: 2
+    calls_in: 0
+  scripts.build-platform.platform_tag:
+    name: platform_tag
+    module: scripts.build-platform
+    line: 33
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  src.ifuri_app.network_scan.probe_urisys_node:
+    name: probe_urisys_node
+    module: src.ifuri_app.network_scan
+    line: 38
+    cyclomatic_complexity: 4
+    calls_out: 9
+    calls_in: 1
+  src.ifuri_app.voice_planner.voice_planner_mode:
+    name: voice_planner_mode
+    module: src.ifuri_app.voice_planner
+    line: 28
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 4
+  src.ifuri_app.packs.runtime.local_runtime_info:
+    name: local_runtime_info
+    module: src.ifuri_app.packs.runtime
+    line: 51
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 3
+  src.ifuri_app.web.voice.appendMessage:
+    name: appendMessage
+    module: src.ifuri_app.web.voice
+    line: 193
+    cyclomatic_complexity: 7
+    calls_out: 5
+    calls_in: 5
+  src.ifuri_app.voice_pipeline.install_voice_packs:
+    name: install_voice_packs
+    module: src.ifuri_app.voice_pipeline
+    line: 134
+    cyclomatic_complexity: 9
+    calls_out: 20
+    calls_in: 2
+  src.ifuri_app.voice_planner._flow_plan:
+    name: _flow_plan
+    module: src.ifuri_app.voice_planner
+    line: 82
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 4
+  src.ifuri_app.cli.cmd_webrtc_smoke:
+    name: cmd_webrtc_smoke
+    module: src.ifuri_app.cli
+    line: 257
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  packages.ifuri-page.handlers.get_url_state:
+    name: get_url_state
+    module: packages.ifuri-page.handlers
+    line: 13
+    cyclomatic_complexity: 10
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.gui_chat.ChatTabMixin._sync_chat_prompt_url:
+    name: _sync_chat_prompt_url
+    module: src.ifuri_app.gui_chat
+    line: 118
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 0
+  src.ifuri_app.webrtc_signal.poll_signals:
+    name: poll_signals
+    module: src.ifuri_app.webrtc_signal
+    line: 84
+    cyclomatic_complexity: 10
+    calls_out: 9
+    calls_in: 1
+  src.ifuri_app.web.voice.sendMessage:
+    name: sendMessage
+    module: src.ifuri_app.web.voice
+    line: 377
+    cyclomatic_complexity: 12
+    calls_out: 11
+    calls_in: 2
+  src.ifuri_app.web.voice.syncUrl:
+    name: syncUrl
+    module: src.ifuri_app.web.voice
+    line: 52
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 10
+  src.ifuri_app.voice_planner.plan_with_llm:
+    name: plan_with_llm
+    module: src.ifuri_app.voice_planner
+    line: 187
+    cyclomatic_complexity: 14
+    calls_out: 19
+    calls_in: 1
+  src.ifuri_app.voice_pipeline.run_voice_command:
+    name: run_voice_command
+    module: src.ifuri_app.voice_pipeline
+    line: 51
+    cyclomatic_complexity: 23
+    calls_out: 30
+    calls_in: 3
+  src.ifuri_app.web.voice.toggleView:
+    name: toggleView
+    module: src.ifuri_app.web.voice
+    line: 176
+    cyclomatic_complexity: 5
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.cli.cmd_chat_send:
+    name: cmd_chat_send
+    module: src.ifuri_app.cli
+    line: 282
+    cyclomatic_complexity: 19
+    calls_out: 18
+    calls_in: 0
+  src.ifuri_app.web.voice.urlChannel:
+    name: urlChannel
+    module: src.ifuri_app.web.voice
+    line: 301
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.gui.IfuriDesktop.discover_peers:
+    name: discover_peers
+    module: src.ifuri_app.gui
+    line: 339
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 0
+  src.ifuri_app.web.voice.transcript:
+    name: transcript
+    module: src.ifuri_app.web.voice
+    line: 604
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  scripts.bootstrap-lenovo-packs.main:
+    name: main
+    module: scripts.bootstrap-lenovo-packs
+    line: 39
+    cyclomatic_complexity: 5
+    calls_out: 13
+    calls_in: 0
+  src.ifuri_app.runtime.RuntimeServer.__init__:
+    name: __init__
+    module: src.ifuri_app.runtime
+    line: 760
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.flow_compile.validate_flow_compiled:
+    name: validate_flow_compiled
+    module: src.ifuri_app.flow_compile
+    line: 132
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 2
+  src.ifuri_app.urirun_bridge.urirun_info:
+    name: urirun_info
+    module: src.ifuri_app.urirun_bridge
+    line: 27
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 11
+  src.ifuri_app.web.url_state.set:
+    name: set
+    module: src.ifuri_app.web.url_state
+    line: 62
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 7
+  src.ifuri_app.web.url_state.cur:
+    name: cur
+    module: src.ifuri_app.web.url_state
+    line: 49
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.web.voice.data:
+    name: data
+    module: src.ifuri_app.web.voice
+    line: 508
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  scripts.bootstrap-lenovo-packs.call:
+    name: call
+    module: scripts.bootstrap-lenovo-packs
+    line: 25
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 1
+  src.ifuri_app.flow_compile.flow_steps_from_document:
+    name: flow_steps_from_document
+    module: src.ifuri_app.flow_compile
+    line: 97
+    cyclomatic_complexity: 11
+    calls_out: 11
+    calls_in: 1
+  src.ifuri_app.urirun_bridge.serve_mcp:
+    name: serve_mcp
+    module: src.ifuri_app.urirun_bridge
+    line: 401
+    cyclomatic_complexity: 7
+    calls_out: 7
+    calls_in: 1
+  scripts.build-platform.main:
+    name: main
+    module: scripts.build-platform
+    line: 113
+    cyclomatic_complexity: 2
+    calls_out: 13
+    calls_in: 0
+  src.ifuri_app.web.voice.refreshScreen:
+    name: refreshScreen
+    module: src.ifuri_app.web.voice
+    line: 430
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 3
+  src.ifuri_app.cli.cmd_chat_status:
+    name: cmd_chat_status
+    module: src.ifuri_app.cli
+    line: 319
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.gui_chat.ChatTabMixin._refresh_chat_channels:
+    name: _refresh_chat_channels
+    module: src.ifuri_app.gui_chat
+    line: 138
+    cyclomatic_complexity: 1
+    calls_out: 9
+    calls_in: 0
+  src.ifuri_app.web.voice.lastChannelData:
+    name: lastChannelData
+    module: src.ifuri_app.web.voice
+    line: 40
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.stop:
+    name: stop
+    module: src.ifuri_app.web.webrtc_peer
+    line: 210
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 0
+  src.ifuri_app.paths.packages_dir:
+    name: packages_dir
+    module: src.ifuri_app.paths
+    line: 32
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.chat_channels.channels_from_scan:
+    name: channels_from_scan
+    module: src.ifuri_app.chat_channels
+    line: 22
+    cyclomatic_complexity: 34
+    calls_out: 49
+    calls_in: 1
+  src.ifuri_app.runtime.bind_runtime_server:
+    name: bind_runtime_server
+    module: src.ifuri_app.runtime
+    line: 111
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow:
+    name: dry_run_current_flow
+    module: src.ifuri_app.gui
+    line: 263
+    cyclomatic_complexity: 1
+    calls_out: 12
+    calls_in: 0
+  scripts.build-platform.package_artifact:
+    name: package_artifact
+    module: scripts.build-platform
+    line: 94
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 1
+  src.ifuri_app.voice_planner.load_flow_catalog:
+    name: load_flow_catalog
+    module: src.ifuri_app.voice_planner
+    line: 34
+    cyclomatic_complexity: 13
+    calls_out: 21
+    calls_in: 5
+  src.ifuri_app.flow_runner.load_flow_steps:
+    name: load_flow_steps
+    module: src.ifuri_app.flow_runner
+    line: 43
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 1
+  src.ifuri_app.gui.IfuriDesktop.refresh_log:
+    name: refresh_log
+    module: src.ifuri_app.gui
+    line: 410
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 0
+  src.ifuri_app.web.voice.localApiUrl:
+    name: localApiUrl
+    module: src.ifuri_app.web.voice
+    line: 41
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.runtime._load_urirun_policy:
+    name: _load_urirun_policy
+    module: src.ifuri_app.runtime
+    line: 124
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 2
+  src.ifuri_app.flow_engine.classify_route:
+    name: classify_route
+    module: src.ifuri_app.flow_engine
+    line: 87
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 1
+  src.ifuri_app.cli.cmd_voice_capabilities:
+    name: cmd_voice_capabilities
+    module: src.ifuri_app.cli
+    line: 231
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.cli.cmd_chat_migrate:
+    name: cmd_chat_migrate
+    module: src.ifuri_app.cli
+    line: 309
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.ifuri_app.web.voice.updateViewToggleLabel:
+    name: updateViewToggleLabel
+    module: src.ifuri_app.web.voice
+    line: 169
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 4
+  src.ifuri_app.packs.runtime.dispatch_local_uri:
+    name: dispatch_local_uri
+    module: src.ifuri_app.packs.runtime
+    line: 28
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 2
+  src.ifuri_app.web.voice.disconnectWebRtc:
+    name: disconnectWebRtc
+    module: src.ifuri_app.web.voice
+    line: 565
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 2
+  src.ifuri_app.web.voice.isNode:
+    name: isNode
+    module: src.ifuri_app.web.voice
+    line: 235
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.web.voice.t:
+    name: t
+    module: src.ifuri_app.web.voice
+    line: 44
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 23
+  src.ifuri_app.gui.IfuriDesktop._on_device_select:
+    name: _on_device_select
+    module: src.ifuri_app.gui
+    line: 384
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 0
+  src.ifuri_app.network_scan.scan_network:
+    name: scan_network
+    module: src.ifuri_app.network_scan
+    line: 161
+    cyclomatic_complexity: 17
+    calls_out: 35
+    calls_in: 4
+  src.ifuri_app.cli.cmd_discover:
+    name: cmd_discover
+    module: src.ifuri_app.cli
+    line: 119
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.cli.cmd_node_screen:
+    name: cmd_node_screen
+    module: src.ifuri_app.cli
+    line: 178
+    cyclomatic_complexity: 7
+    calls_out: 16
+    calls_in: 0
+  packages.ifuri-page.handlers.toggle_view:
+    name: toggle_view
+    module: packages.ifuri-page.handlers
+    line: 39
+    cyclomatic_complexity: 9
+    calls_out: 4
+    calls_in: 0
+  src.ifuri_app.web.voice.preview:
+    name: preview
+    module: src.ifuri_app.web.voice
+    line: 284
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.urirun_bridge.a2a_card:
+    name: a2a_card
+    module: src.ifuri_app.urirun_bridge
+    line: 378
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 1
+  src.ifuri_app.voice_planner.plan_with_catalog:
+    name: plan_with_catalog
+    module: src.ifuri_app.voice_planner
+    line: 117
+    cyclomatic_complexity: 11
+    calls_out: 15
+    calls_in: 1
+  src.ifuri_app.web.voice.view:
+    name: view
+    module: src.ifuri_app.web.voice
+    line: 150
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.web.voice.saved:
+    name: saved
+    module: src.ifuri_app.web.voice
+    line: 302
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.voice_planner.plan_voice_command:
+    name: plan_voice_command
+    module: src.ifuri_app.voice_planner
+    line: 241
+    cyclomatic_complexity: 11
+    calls_out: 14
+    calls_in: 6
+  src.ifuri_app.web.webrtc_peer.postRemote:
+    name: postRemote
+    module: src.ifuri_app.web.webrtc_peer
+    line: 15
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 7
+  src.ifuri_app.remote_screen.screen_uri:
+    name: screen_uri
+    module: src.ifuri_app.remote_screen
+    line: 24
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 1
+  src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.payload:
+    name: payload
+    module: src.ifuri_app.web.webrtc_peer
+    line: 151
+    cyclomatic_complexity: 8
+    calls_out: 5
+    calls_in: 0
+  src.ifuri_app.cli.main:
+    name: main
+    module: src.ifuri_app.cli
+    line: 648
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 0
+  src.ifuri_app.urisys_client.node_webrtc_available:
+    name: node_webrtc_available
+    module: src.ifuri_app.urisys_client
+    line: 45
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 5
+  src.ifuri_app.web.voice.maybeAutoSendFromUrl:
+    name: maybeAutoSendFromUrl
+    module: src.ifuri_app.web.voice
+    line: 118
+    cyclomatic_complexity: 8
+    calls_out: 4
+    calls_in: 1
+  src.ifuri_app.flow_engine.as_pretty_json:
+    name: as_pretty_json
+    module: src.ifuri_app.flow_engine
+    line: 126
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  src.ifuri_app.runtime._port_listeners:
+    name: _port_listeners
+    module: src.ifuri_app.runtime
+    line: 62
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  packages.ifuri-bridge.handlers.urisys_call._endpoint:
+    name: _endpoint
+    module: packages.ifuri-bridge.handlers.urisys_call
+    line: 8
+    cyclomatic_complexity: 10
+    calls_out: 13
+    calls_in: 2
+  src.ifuri_app.web.webrtc_peer.api:
+    name: api
+    module: src.ifuri_app.web.webrtc_peer
+    line: 7
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  src.ifuri_app.discovery.local_descriptor:
+    name: local_descriptor
+    module: src.ifuri_app.discovery
+    line: 16
+    cyclomatic_complexity: 5
+    calls_out: 12
+    calls_in: 1
+  src.ifuri_app.chat_channels.list_chat_channels:
+    name: list_chat_channels
+    module: src.ifuri_app.chat_channels
+    line: 118
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 5
+  src.ifuri_app.voice_planner._catalog_tokens:
+    name: _catalog_tokens
+    module: src.ifuri_app.voice_planner
+    line: 103
+    cyclomatic_complexity: 8
+    calls_out: 12
+    calls_in: 1
+  src.ifuri_app.web.theme.setTheme:
+    name: setTheme
+    module: src.ifuri_app.web.theme
+    line: 28
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.ifuri_app.network_scan._local_ipv4:
+    name: _local_ipv4
+    module: src.ifuri_app.network_scan
+    line: 21
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 2
+  src.ifuri_app.urirun_bridge.dispatch_local:
+    name: dispatch_local
+    module: src.ifuri_app.urirun_bridge
+    line: 173
+    cyclomatic_complexity: 10
+    calls_out: 7
+    calls_in: 2
+  src.ifuri_app.voice_planner._parse_llm_plan_json:
+    name: _parse_llm_plan_json
+    module: src.ifuri_app.voice_planner
+    line: 148
+    cyclomatic_complexity: 11
+    calls_out: 17
+    calls_in: 1
+  src.ifuri_app.web.voice.channelId:
+    name: channelId
+    module: src.ifuri_app.web.voice
+    line: 501
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.ifuri_app.flow_runner.resolve_flow_path:
+    name: resolve_flow_path
+    module: src.ifuri_app.flow_runner
+    line: 32
+    cyclomatic_complexity: 4
+    calls_out: 8
+    calls_in: 1
+  src.ifuri_app.web.voice.renderChannelList:
+    name: renderChannelList
+    module: src.ifuri_app.web.voice
+    line: 265
+    cyclomatic_complexity: 21
+    calls_out: 12
+    calls_in: 1
+  src.ifuri_app.discovery.discover:
+    name: discover
+    module: src.ifuri_app.discovery
+    line: 89
+    cyclomatic_complexity: 9
+    calls_out: 29
+    calls_in: 2
+  src.ifuri_app.web.voice.setScreenAuto:
+    name: setScreenAuto
+    module: src.ifuri_app.web.voice
+    line: 445
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 3
+  scripts.gui_smoke.parse_args:
+    name: parse_args
+    module: scripts.gui_smoke
+    line: 20
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 1
+  src.ifuri_app.packs.loader.packages_root:
+    name: packages_root
+    module: src.ifuri_app.packs.loader
+    line: 11
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  src.ifuri_app.web.theme.applyLang:
+    name: applyLang
+    module: src.ifuri_app.web.theme
+    line: 13
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 2
+  src.ifuri_app.storage.ensure_home:
+    name: ensure_home
+    module: src.ifuri_app.storage
+    line: 26
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 3
+edges:
+- caller: packages.ifuri-page.handlers.get_url_state
+  callee: packages.ifuri-page.handlers.urlState
+  call_type: resolved
+- caller: packages.ifuri-page.handlers.set_url_state
+  callee: packages.ifuri-page.handlers.urlState
+  call_type: resolved
+- caller: packages.ifuri-page.handlers.toggle_view
+  callee: packages.ifuri-page.handlers.urlState
+  call_type: resolved
+- caller: packages.ifuri-bridge.handlers.urisys_call.urisys_call
+  callee: packages.ifuri-bridge.handlers.urisys_call._endpoint
+  call_type: resolved
+- caller: packages.ifuri-bridge.handlers.urisys_call.node_health
+  callee: packages.ifuri-bridge.handlers.urisys_call._endpoint
+  call_type: resolved
+- caller: packages.ifuri-voice.handlers.plan.plan
+  callee: src.ifuri_app.voice_planner.plan_voice_command
+  call_type: resolved
+- caller: src.ifuri_app.paths.web_dir
+  callee: src.ifuri_app.paths.app_package_dir
+  call_type: resolved
+- caller: src.ifuri_app.paths.assets_dir
+  callee: src.ifuri_app.paths.app_package_dir
+  call_type: resolved
+- caller: src.ifuri_app.paths.repo_root
+  callee: src.ifuri_app.paths.app_package_dir
+  call_type: resolved
+- caller: src.ifuri_app.paths.packages_dir
+  callee: src.ifuri_app.paths.repo_root
+  call_type: resolved
+- caller: src.ifuri_app.flow_compile.expand_flow_compiled
+  callee: src.ifuri_app.flow_compile._parse_flow_input
+  call_type: resolved
+- caller: src.ifuri_app.flow_compile.expand_flow_compiled
+  callee: src.ifuri_app.flow_compile.uri2flow_available
+  call_type: resolved
+- caller: src.ifuri_app.flow_compile.flow_steps_from_document
+  callee: src.ifuri_app.flow_compile.uri2flow_available
+  call_type: resolved
+- caller: src.ifuri_app.flow_compile.flow_steps_from_document
+  callee: src.ifuri_app.flow_compile._parse_flow_input
+  call_type: resolved
+- caller: src.ifuri_app.flow_compile.flow_steps_from_document
+  callee: src.ifuri_app.flow_engine.extract_steps
+  call_type: resolved
+- caller: src.ifuri_app.flow_compile.validate_flow_compiled
+  callee: src.ifuri_app.flow_compile._parse_flow_input
+  call_type: resolved
+- caller: src.ifuri_app.flow_compile.validate_flow_compiled
+  callee: src.ifuri_app.flow_compile.uri2flow_available
+  call_type: resolved
+- caller: src.ifuri_app.urisys_client.default_node_endpoint
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.urisys_client.node_voice_capabilities
+  callee: src.ifuri_app.urisys_client.node_llm_available
+  call_type: resolved
+- caller: src.ifuri_app.urisys_client.node_voice_capabilities
+  callee: src.ifuri_app.urisys_client.node_webrtc_available
+  call_type: resolved
+- caller: src.ifuri_app.urisys_client.UrisysNodeClient.__init__
+  callee: src.ifuri_app.urisys_client.default_node_endpoint
+  call_type: resolved
+- caller: src.ifuri_app.webrtc_pipeline.webrtc_capabilities
+  callee: src.ifuri_app.urisys_client.node_webrtc_available
+  call_type: resolved
+- caller: src.ifuri_app.webrtc_pipeline.webrtc_capabilities
+  callee: src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint
+  call_type: resolved
+- caller: src.ifuri_app.webrtc_pipeline.install_webrtc_pack
+  callee: src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint
+  call_type: resolved
+- caller: src.ifuri_app.webrtc_pipeline.install_webrtc_pack
+  callee: src.ifuri_app.flow_runner.run_flow_file
+  call_type: resolved
+- caller: src.ifuri_app.webrtc_pipeline.install_webrtc_pack
+  callee: src.ifuri_app.urisys_client.node_webrtc_available
+  call_type: resolved
+- caller: src.ifuri_app.webrtc_pipeline.webrtc_smoke
+  callee: src.ifuri_app.urisys_client.node_webrtc_available
+  call_type: resolved
+- caller: src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint
+  callee: src.ifuri_app.urisys_client.node_webrtc_available
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.load_flow_catalog
+  callee: src.ifuri_app.flow_runner.examples_root
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.plan_with_regex
+  callee: src.ifuri_app.voice_planner._flow_plan
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.plan_with_catalog
+  callee: src.ifuri_app.voice_planner._flow_plan
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.plan_with_catalog
+  callee: src.ifuri_app.voice_planner.load_flow_catalog
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.plan_with_catalog
+  callee: src.ifuri_app.voice_planner._catalog_tokens
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner._parse_llm_plan_json
+  callee: src.ifuri_app.voice_planner._flow_plan
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.plan_with_llm
+  callee: src.ifuri_app.voice_planner._parse_llm_plan_json
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.plan_with_llm
+  callee: src.ifuri_app.voice_planner.node_has_llm
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.plan_with_llm
+  callee: src.ifuri_app.voice_planner.load_flow_catalog
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.plan_voice_command
+  callee: src.ifuri_app.voice_planner.load_flow_catalog
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.plan_voice_command
+  callee: src.ifuri_app.voice_planner.plan_with_regex
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.plan_voice_command
+  callee: src.ifuri_app.voice_planner.plan_with_catalog
+  call_type: resolved
+- caller: src.ifuri_app.voice_planner.plan_voice_command
+  callee: src.ifuri_app.voice_planner.plan_with_llm
+  call_type: resolved
+- caller: src.ifuri_app.chat_store.chat_store_path
+  callee: src.ifuri_app.storage.app_home
+  call_type: resolved
+- caller: src.ifuri_app.chat_store.LocalChatStore.__init__
+  callee: src.ifuri_app.storage.ensure_home
+  call_type: resolved
+- caller: src.ifuri_app.chat_store.LocalChatStore.__init__
+  callee: src.ifuri_app.chat_store.chat_store_path
+  call_type: resolved
+- caller: src.ifuri_app.webrtc_signal.local_peer_url
+  callee: src.ifuri_app.network_scan._local_ipv4
+  call_type: resolved
+- caller: src.ifuri_app.webrtc_signal.post_signal
+  callee: src.ifuri_app.webrtc_signal._purge_room
+  call_type: resolved
+- caller: src.ifuri_app.webrtc_signal.poll_signals
+  callee: src.ifuri_app.webrtc_signal._purge_room
+  call_type: resolved
+- caller: src.ifuri_app.discovery.local_descriptor
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.discovery.local_descriptor
+  callee: src.ifuri_app.storage.now_iso
+  call_type: resolved
+- caller: src.ifuri_app.discovery.DiscoveryResponder._loop
+  callee: src.ifuri_app.discovery.local_descriptor
+  call_type: resolved
+- caller: src.ifuri_app.discovery.discover
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.discovery.discover
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.remote_screen.capture_remote_screen
+  callee: src.ifuri_app.remote_screen.screen_uri
+  call_type: resolved
+- caller: src.ifuri_app.remote_screen.capture_remote_screen
+  callee: src.ifuri_app.remote_screen.unwrap_result
+  call_type: resolved
+- caller: src.ifuri_app.remote_screen.probe_remote_control
+  callee: src.ifuri_app.web.url_state.set
+  call_type: resolved
+- caller: src.ifuri_app.remote_screen.probe_remote_control
+  callee: src.ifuri_app.remote_screen.capture_remote_screen
+  call_type: resolved
+- caller: src.ifuri_app.storage.workspace_path
+  callee: src.ifuri_app.storage.app_home
+  call_type: resolved
+- caller: src.ifuri_app.storage.ensure_home
+  callee: src.ifuri_app.storage.app_home
+  call_type: resolved
+- caller: src.ifuri_app.storage.load_workspace
+  callee: src.ifuri_app.storage.ensure_home
+  call_type: resolved
+- caller: src.ifuri_app.storage.load_workspace
+  callee: src.ifuri_app.storage.workspace_path
+  call_type: resolved
+- caller: src.ifuri_app.storage.load_workspace
+  callee: src.ifuri_app.storage.normalize_workspace
+  call_type: resolved
+- caller: src.ifuri_app.storage.load_workspace
+  callee: src.ifuri_app.sample_data.default_workspace
+  call_type: resolved
+- caller: src.ifuri_app.storage.load_workspace
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.storage.save_workspace
+  callee: src.ifuri_app.storage.normalize_workspace
+  call_type: resolved
+- caller: src.ifuri_app.storage.save_workspace
+  callee: src.ifuri_app.storage.ensure_home
+  call_type: resolved
+- caller: src.ifuri_app.storage.save_workspace
+  callee: src.ifuri_app.storage.workspace_path
+  call_type: resolved
+- caller: src.ifuri_app.storage.add_event
+  callee: src.ifuri_app.storage.now_iso
+  call_type: resolved
+- caller: src.ifuri_app.gui_chat.ChatTabMixin._router_endpoint
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.gui_chat.ChatTabMixin._sync_chat_prompt_url
+  callee: src.ifuri_app.url_params.voice_url
+  call_type: resolved
+- caller: src.ifuri_app.gui_chat.ChatTabMixin._refresh_chat_channels
+  callee: src.ifuri_app.chat_channels.list_chat_channels
+  call_type: resolved
+- caller: src.ifuri_app.gui_chat.ChatTabMixin._on_chat_channel_select
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.gui_chat.ChatTabMixin._load_chat_history_from_urisys
+  callee: src.ifuri_app.chat_channels.fetch_chat_history
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._dispatch
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.clearTimeout
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._dispatch
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.reject
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.clearTimeout
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendVoiceReply
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.start
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._setStatus
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.start
+  callee: src.ifuri_app.web.webrtc_peer.postRemote
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.start
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._wireChannel
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.offer
+  callee: src.ifuri_app.web.webrtc_peer.postRemote
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.posted
+  callee: src.ifuri_app.web.webrtc_peer.postRemote
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._wireChannel
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._setStatus
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._wireChannel
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._dispatch
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._poll
+  callee: src.ifuri_app.web.webrtc_peer.api
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._poll
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._setStatus
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._poll
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._applySignal
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._applySignal
+  callee: src.ifuri_app.web.webrtc_peer.postRemote
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.t
+  callee: src.ifuri_app.web.webrtc_peer.postRemote
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.payload
+  callee: src.ifuri_app.web.webrtc_peer.postRemote
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.answer
+  callee: src.ifuri_app.web.webrtc_peer.postRemote
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendEnvelope
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.isReady
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendVoiceRequest
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.isReady
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendVoiceRequest
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.reject
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendVoiceRequest
+  callee: src.ifuri_app.web.webrtc_peer.newId
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.timer
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.reject
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.reject
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendVoiceReply
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendVoiceReply
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendEnvelope
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.stop
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.clearTimeout
+  call_type: resolved
+- caller: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.stop
+  callee: src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._setStatus
+  call_type: resolved
+- caller: src.ifuri_app.web.i18n.t
+  callee: src.ifuri_app.web.i18n.val
+  call_type: resolved
+- caller: src.ifuri_app.web.theme.initFromUrl
+  callee: src.ifuri_app.web.theme.applyTheme
+  call_type: resolved
+- caller: src.ifuri_app.web.theme.initFromUrl
+  callee: src.ifuri_app.web.theme.applyLang
+  call_type: resolved
+- caller: src.ifuri_app.web.theme.setTheme
+  callee: src.ifuri_app.web.theme.applyTheme
+  call_type: resolved
+- caller: src.ifuri_app.web.theme.setLang
+  callee: src.ifuri_app.web.theme.applyLang
+  call_type: resolved
+- caller: src.ifuri_app.web.url_state.write
+  callee: src.ifuri_app.web.url_state.read
+  call_type: resolved
+- caller: src.ifuri_app.web.url_state.write
+  callee: src.ifuri_app.web.url_state.set
+  call_type: resolved
+- caller: src.ifuri_app.web.url_state.patch
+  callee: src.ifuri_app.web.url_state.write
+  call_type: resolved
+- caller: src.ifuri_app.web.url_state.patch
+  callee: src.ifuri_app.web.url_state.read
+  call_type: resolved
+- caller: src.ifuri_app.web.url_state.get
+  callee: src.ifuri_app.web.url_state.read
+  call_type: resolved
+- caller: src.ifuri_app.web.url_state.onPopState
+  callee: src.ifuri_app.web.url_state.read
+  call_type: resolved
+- caller: src.ifuri_app.web.url_state.withParams
+  callee: src.ifuri_app.web.url_state.read
+  call_type: resolved
+- caller: src.ifuri_app.web.url_state.withParams
+  callee: src.ifuri_app.web.url_state.set
+  call_type: resolved
+- caller: src.ifuri_app.web.url_state.base
+  callee: src.ifuri_app.web.url_state.set
+  call_type: resolved
+- caller: src.ifuri_app.web.url_state.cur
+  callee: src.ifuri_app.web.url_state.set
+  call_type: resolved
+- caller: src.ifuri_app.web.url_state.set
+  callee: src.ifuri_app.web.url_state.patch
+  call_type: resolved
+- caller: src.ifuri_app.voice_pipeline.run_voice_command
+  callee: src.ifuri_app.voice_planner.plan_voice_command
+  call_type: resolved
+- caller: src.ifuri_app.voice_pipeline.run_voice_command
+  callee: src.ifuri_app.urisys_client.node_voice_capabilities
+  call_type: resolved
+- caller: src.ifuri_app.voice_pipeline.run_voice_command
+  callee: src.ifuri_app.voice_pipeline._extract_stt_text
+  call_type: resolved
+- caller: src.ifuri_app.voice_pipeline.run_voice_command
+  callee: src.ifuri_app.flow_runner.run_flow_file
+  call_type: resolved
+- caller: src.ifuri_app.voice_pipeline.voice_capabilities
+  callee: src.ifuri_app.urisys_client.node_voice_capabilities
+  call_type: resolved
+- caller: src.ifuri_app.voice_pipeline.voice_capabilities
+  callee: src.ifuri_app.voice_pipeline.voice_pack_install_hint
+  call_type: resolved
+- caller: src.ifuri_app.voice_pipeline.voice_capabilities
+  callee: src.ifuri_app.voice_planner.voice_planner_mode
+  call_type: resolved
+- caller: src.ifuri_app.voice_pipeline.install_voice_packs
+  callee: src.ifuri_app.voice_pipeline.voice_pack_install_hint
+  call_type: resolved
+- caller: src.ifuri_app.voice_pipeline.install_voice_packs
+  callee: src.ifuri_app.flow_runner.run_flow_file
+  call_type: resolved
+- caller: src.ifuri_app.voice_pipeline.install_voice_packs
+  callee: src.ifuri_app.urisys_client.node_voice_capabilities
+  call_type: resolved
+- caller: src.ifuri_app.voice_pipeline.voice_pack_install_hint
+  callee: src.ifuri_app.urisys_client.node_voice_capabilities
+  call_type: resolved
+- caller: src.ifuri_app.packs.runtime.get_local_uri_runtime
+  callee: src.ifuri_app.packs.loader.load_local_registry
+  call_type: resolved
+- caller: src.ifuri_app.packs.runtime.dispatch_local_uri
+  callee: src.ifuri_app.packs.runtime.get_local_uri_runtime
+  call_type: resolved
+- caller: src.ifuri_app.packs.runtime.local_runtime_info
+  callee: src.ifuri_app.packs.runtime.get_local_uri_runtime
+  call_type: resolved
+- caller: src.ifuri_app.network_scan._collect_local_services
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.network_scan.scan_urisys_nodes
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.network_scan.scan_urisys_nodes
+  callee: src.ifuri_app.network_scan._local_ipv4
+  call_type: resolved
+- caller: src.ifuri_app.network_scan.scan_network
+  callee: src.ifuri_app.discovery.discover
+  call_type: resolved
+- caller: src.ifuri_app.network_scan.scan_network
+  callee: src.ifuri_app.network_scan.scan_urisys_nodes
+  call_type: resolved
+- caller: src.ifuri_app.network_scan.scan_network
+  callee: src.ifuri_app.network_scan.probe_urisys_node
+  call_type: resolved
+- caller: src.ifuri_app.network_scan.scan_network
+  callee: src.ifuri_app.network_scan._collect_local_services
+  call_type: resolved
+- caller: src.ifuri_app.network_scan.scan_network
+  callee: src.ifuri_app.web.url_state.set
+  call_type: resolved
+- caller: src.ifuri_app.network_scan.scan_network
+  callee: src.ifuri_app.network_scan.try_mdns_urisys
+  call_type: resolved
+- caller: src.ifuri_app.web.page.handlers.get_url_state
+  callee: src.ifuri_app.web.page.handlers.urlState
+  call_type: resolved
+- caller: src.ifuri_app.web.page.handlers.set_url_state
+  callee: src.ifuri_app.web.page.handlers.urlState
+  call_type: resolved
+- caller: src.ifuri_app.web.page.handlers.toggle_view
+  callee: src.ifuri_app.web.page.handlers.urlState
+  call_type: resolved
+- caller: src.ifuri_app.packs.loader.packages_root
+  callee: src.ifuri_app.paths.repo_root
+  call_type: resolved
+- caller: src.ifuri_app.packs.loader.discover_manifests
+  callee: src.ifuri_app.packs.loader.packages_root
+  call_type: resolved
+- caller: src.ifuri_app.packs.loader.load_local_registry
+  callee: src.ifuri_app.packs.loader.discover_manifests
+  call_type: resolved
+- caller: src.ifuri_app.packs.loader.load_local_registry
+  callee: src.ifuri_app.packs.loader._ensure_pack_path
+  call_type: resolved
+- caller: src.ifuri_app.packs.loader.pack_summary
+  callee: src.ifuri_app.packs.loader.discover_manifests
+  call_type: resolved
+- caller: src.ifuri_app.packs.loader.pack_summary
+  callee: src.ifuri_app.packs.loader.packages_root
+  call_type: resolved
+- caller: scripts.bootstrap-lenovo-packs.main
+  callee: scripts.bootstrap-lenovo-packs.call
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.screenTimer
+  callee: src.ifuri_app.web.voice.I
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.screenTimer
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.autoSendPending
+  callee: src.ifuri_app.web.voice.I
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.autoSendPending
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.lastChannelData
+  callee: src.ifuri_app.web.voice.I
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.lastChannelData
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.localApiUrl
+  callee: src.ifuri_app.web.voice.I
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.localApiUrl
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.webrtcSession
+  callee: src.ifuri_app.web.voice.I
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.webrtcSession
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.t
+  callee: src.ifuri_app.web.voice.I
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.groupLabels
+  callee: src.ifuri_app.web.voice.I
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.syncUrl
+  callee: src.ifuri_app.web.voice.U
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.promptSyncTimer
+  callee: src.ifuri_app.web.voice.syncUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.syncPromptToUrl
+  callee: src.ifuri_app.web.voice.syncUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.applyPromptFromUrl
+  callee: src.ifuri_app.web.voice.U
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.node
+  callee: src.ifuri_app.web.voice.refreshVoiceCapabilities
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.loadChannelHistory
+  callee: src.ifuri_app.web.voice.renderMessages
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.loadChannelHistory
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.loadChannelHistory
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.loadChannelHistory
+  callee: src.ifuri_app.web.voice.routerEndpoint
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.loadChannelHistory
+  callee: src.ifuri_app.web.voice.api
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.loadChannelHistory
+  callee: src.ifuri_app.web.voice.maybeAutoSendFromUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.ep
+  callee: src.ifuri_app.web.voice.api
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.data
+  callee: src.ifuri_app.web.voice.api
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.maybeAutoSendFromUrl
+  callee: src.ifuri_app.web.voice.U
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.maybeAutoSendFromUrl
+  callee: src.ifuri_app.web.voice.sendMessage
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.applyUiLanguage
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.applyUiLanguage
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.applyUiLanguage
+  callee: src.ifuri_app.web.voice.updateViewToggleLabel
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.applyViewFromUrl
+  callee: src.ifuri_app.web.voice.U
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.applyViewFromUrl
+  callee: src.ifuri_app.web.voice.updateViewToggleLabel
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.applyViewFromUrl
+  callee: src.ifuri_app.web.voice.refreshScreen
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.applyViewFromUrl
+  callee: src.ifuri_app.web.voice.setScreenAuto
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.view
+  callee: src.ifuri_app.web.voice.updateViewToggleLabel
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.view
+  callee: src.ifuri_app.web.voice.refreshScreen
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.showScreen
+  callee: src.ifuri_app.web.voice.updateViewToggleLabel
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.showScreen
+  callee: src.ifuri_app.web.voice.refreshScreen
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.dry
+  callee: src.ifuri_app.web.voice.setScreenAuto
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.auto
+  callee: src.ifuri_app.web.voice.setScreenAuto
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.updateViewToggleLabel
+  callee: src.ifuri_app.web.voice.U
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.updateViewToggleLabel
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.toggleView
+  callee: src.ifuri_app.web.voice._toggleViewDirect
+  call_type: resolved
+- caller: src.ifuri_app.web.voice._toggleViewDirect
+  callee: src.ifuri_app.web.voice.U
+  call_type: resolved
+- caller: src.ifuri_app.web.voice._toggleViewDirect
+  callee: src.ifuri_app.web.voice.syncUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice._toggleViewDirect
+  callee: src.ifuri_app.web.voice.applyViewFromUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.next
+  callee: src.ifuri_app.web.voice.syncUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.appendMessage
+  callee: src.ifuri_app.web.voice.renderMessages
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.renderMessages
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.renderMessages
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.thread
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.thread
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.selectChannel
+  callee: src.ifuri_app.web.voice.syncUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.selectChannel
+  callee: src.ifuri_app.web.voice.U
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.selectChannel
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.selectChannel
+  callee: src.ifuri_app.web.voice.disconnectWebRtc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.selectChannel
+  callee: src.ifuri_app.web.voice.applyViewFromUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.selectChannel
+  callee: src.ifuri_app.web.voice.refreshVoiceCapabilities
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.isNode
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.isWebRtc
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.renderChannelList
+  callee: src.ifuri_app.web.voice.groupLabels
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.renderChannelList
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.renderChannelList
+  callee: src.ifuri_app.web.voice.selectChannel
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.renderChannelList
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.renderChannelList
+  callee: src.ifuri_app.web.voice.U
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.labels
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.labels
+  callee: src.ifuri_app.web.voice.selectChannel
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.items
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.section
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.btn
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.hist
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.preview
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.urlChannel
+  callee: src.ifuri_app.web.voice.selectChannel
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.saved
+  callee: src.ifuri_app.web.voice.selectChannel
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.pick
+  callee: src.ifuri_app.web.voice.selectChannel
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshVoiceCapabilities
+  callee: src.ifuri_app.web.voice.api
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshVoiceCapabilities
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.installVoicePacks
+  callee: src.ifuri_app.web.voice.routerEndpoint
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.installVoicePacks
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.installVoicePacks
+  callee: src.ifuri_app.web.voice.api
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.installVoicePacks
+  callee: src.ifuri_app.web.voice.refreshVoiceCapabilities
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshChannels
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshChannels
+  callee: src.ifuri_app.web.voice.syncUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshChannels
+  callee: src.ifuri_app.web.voice.routerEndpoint
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshChannels
+  callee: src.ifuri_app.web.voice.api
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshChannels
+  callee: src.ifuri_app.web.voice.refreshVoiceCapabilities
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshChannels
+  callee: src.ifuri_app.web.voice.renderChannelList
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshChannels
+  callee: src.ifuri_app.web.voice.esc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.sendMessage
+  callee: src.ifuri_app.web.voice.syncUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.sendMessage
+  callee: src.ifuri_app.web.voice.appendMessage
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.sendMessage
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.sendMessage
+  callee: src.ifuri_app.web.voice.routerEndpoint
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.sendMessage
+  callee: src.ifuri_app.web.voice.api
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.text
+  callee: src.ifuri_app.web.voice.syncUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshScreen
+  callee: src.ifuri_app.web.voice.syncUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshScreen
+  callee: src.ifuri_app.web.voice.screenImageUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.refreshScreen
+  callee: src.ifuri_app.web.voice.blob
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.url
+  callee: src.ifuri_app.web.voice.blob
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.setScreenAuto
+  callee: src.ifuri_app.web.voice.syncUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.initSettingsFromUrl
+  callee: src.ifuri_app.web.voice.T
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.initSettingsFromUrl
+  callee: src.ifuri_app.web.voice.applyUiLanguage
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.prefs
+  callee: src.ifuri_app.web.voice.T
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.setWebRtcStatus
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.handleWebRtcEnvelope
+  callee: src.ifuri_app.web.voice.appendMessage
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.handleWebRtcEnvelope
+  callee: src.ifuri_app.web.voice.routerEndpoint
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.handleWebRtcEnvelope
+  callee: src.ifuri_app.web.voice.api
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.handleWebRtcEnvelope
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.channelId
+  callee: src.ifuri_app.web.voice.appendMessage
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.summary
+  callee: src.ifuri_app.web.voice.appendMessage
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.connectWebRtc
+  callee: src.ifuri_app.web.voice.disconnectWebRtc
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.connectWebRtc
+  callee: src.ifuri_app.web.voice.api
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.connectWebRtc
+  callee: src.ifuri_app.web.voice.setWebRtcStatus
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.connectWebRtc
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.connectWebRtc
+  callee: src.ifuri_app.web.voice.handleWebRtcEnvelope
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.localUrl
+  callee: src.ifuri_app.web.voice.setWebRtcStatus
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.remoteUrl
+  callee: src.ifuri_app.web.voice.setWebRtcStatus
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.room
+  callee: src.ifuri_app.web.voice.setWebRtcStatus
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.disconnectWebRtc
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.disconnectWebRtc
+  callee: src.ifuri_app.web.voice.setWebRtcStatus
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.SR
+  callee: src.ifuri_app.web.voice.appendMessage
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.SR
+  callee: src.ifuri_app.web.voice.t
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.rec
+  callee: src.ifuri_app.web.voice.syncPromptToUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.rec
+  callee: src.ifuri_app.web.voice.sendMessage
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.transcript
+  callee: src.ifuri_app.web.voice.syncPromptToUrl
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.cid
+  callee: src.ifuri_app.web.voice.selectChannel
+  call_type: resolved
+- caller: src.ifuri_app.web.voice.ch
+  callee: src.ifuri_app.web.voice.selectChannel
+  call_type: resolved
+- caller: src.ifuri_app.flow_engine.expand_flow
+  callee: src.ifuri_app.flow_compile.uri2flow_available
+  call_type: resolved
+- caller: src.ifuri_app.flow_engine.expand_flow
+  callee: src.ifuri_app.flow_engine._legacy_expand_flow
+  call_type: resolved
+- caller: src.ifuri_app.flow_engine.expand_flow
+  callee: src.ifuri_app.flow_compile.expand_flow_compiled
+  call_type: resolved
+- caller: src.ifuri_app.flow_engine._legacy_expand_flow
+  callee: src.ifuri_app.flow_engine.extract_steps
+  call_type: resolved
+- caller: src.ifuri_app.flow_engine._legacy_expand_flow
+  callee: src.ifuri_app.flow_engine.flow_id_from_text
+  call_type: resolved
+- caller: src.ifuri_app.flow_engine.extract_steps
+  callee: src.ifuri_app.flow_engine.clean_uri
+  call_type: resolved
+- caller: src.ifuri_app.flow_engine.extract_steps
+  callee: src.ifuri_app.flow_engine.uri_scheme
+  call_type: resolved
+- caller: src.ifuri_app.flow_engine.classify_route
+  callee: src.ifuri_app.flow_engine.uri_scheme
+  call_type: resolved
+- caller: src.ifuri_app.flow_engine.dry_run_uri
+  callee: src.ifuri_app.flow_engine.classify_route
+  call_type: resolved
+- caller: src.ifuri_app.flow_engine.dry_run_flow
+  callee: src.ifuri_app.flow_engine.expand_flow
+  call_type: resolved
+- caller: src.ifuri_app.flow_engine.dry_run_flow
+  callee: src.ifuri_app.flow_engine.dry_run_uri
+  call_type: resolved
+- caller: src.ifuri_app.runtime.format_port_in_use_error
+  callee: src.ifuri_app.runtime._port_listeners
+  call_type: resolved
+- caller: src.ifuri_app.runtime.find_free_port
+  callee: src.ifuri_app.runtime._port_available
+  call_type: resolved
+- caller: src.ifuri_app.runtime.find_free_port
+  callee: src.ifuri_app.runtime.format_port_in_use_error
+  call_type: resolved
+- caller: src.ifuri_app.runtime.bind_runtime_server
+  callee: src.ifuri_app.runtime.format_port_in_use_error
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.load
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.load
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.health
+  callee: src.ifuri_app.packs.runtime.local_runtime_info
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.health
+  callee: src.ifuri_app.urirun_bridge.urirun_info
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.health
+  callee: src.ifuri_app.flow_compile.uri2flow_available
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.call_uri
+  callee: src.ifuri_app.flow_engine.dry_run_uri
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.call_uri
+  callee: src.ifuri_app.storage.add_event
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.call_uri
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.call_uri
+  callee: src.ifuri_app.packs.runtime.dispatch_local_uri
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.call_uri
+  callee: src.ifuri_app.packs.runtime.get_local_uri_runtime
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.call_uri
+  callee: src.ifuri_app.urirun_bridge.default_urirun_registry
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.run_flow
+  callee: src.ifuri_app.flow_engine.expand_flow
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.run_flow
+  callee: src.ifuri_app.runtime._load_urirun_policy
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.run_flow
+  callee: src.ifuri_app.storage.add_event
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.run_flow
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeState.run_flow
+  callee: src.ifuri_app.flow_engine.dry_run_flow
+  call_type: resolved
+- caller: src.ifuri_app.runtime.make_handler
+  callee: src.ifuri_app.runtime.json_bytes
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeServer.__init__
+  callee: src.ifuri_app.runtime.bind_runtime_server
+  call_type: resolved
+- caller: src.ifuri_app.runtime.RuntimeServer.__init__
+  callee: src.ifuri_app.runtime.make_handler
+  call_type: resolved
+- caller: src.ifuri_app.url_params.voice_url
+  callee: src.ifuri_app.url_params.voice_query
+  call_type: resolved
+- caller: src.ifuri_app.flow_runner.resolve_flow_path
+  callee: src.ifuri_app.flow_runner.examples_root
+  call_type: resolved
+- caller: src.ifuri_app.flow_runner.load_flow_steps
+  callee: src.ifuri_app.flow_compile.flow_steps_from_document
+  call_type: resolved
+- caller: src.ifuri_app.flow_runner.load_flow_steps
+  callee: src.ifuri_app.flow_engine.extract_steps
+  call_type: resolved
+- caller: src.ifuri_app.flow_runner.run_flow_file
+  callee: src.ifuri_app.flow_runner.resolve_flow_path
+  call_type: resolved
+- caller: src.ifuri_app.flow_runner.run_flow_file
+  callee: src.ifuri_app.flow_runner.load_flow_steps
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.call_urirun
+  callee: src.ifuri_app.urirun_bridge.urirun_info
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.call_urirun
+  callee: src.ifuri_app.urirun_bridge.load_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.call_urirun
+  callee: src.ifuri_app.urirun_bridge.service_map_env
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.registry_summary
+  callee: src.ifuri_app.urirun_bridge.load_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.default_urirun_registry
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.dispatch_local
+  callee: src.ifuri_app.urirun_bridge.urirun_info
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.dispatch_local
+  callee: src.ifuri_app.urirun_bridge.load_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.dispatch_local
+  callee: src.ifuri_app.urirun_bridge.default_urirun_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.list_routes
+  callee: src.ifuri_app.urirun_bridge.urirun_info
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.list_routes
+  callee: src.ifuri_app.urirun_bridge.load_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.list_routes
+  callee: src.ifuri_app.urirun_bridge.default_urirun_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.serve_http
+  callee: src.ifuri_app.urirun_bridge.urirun_info
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.serve_http
+  callee: src.ifuri_app.urirun_bridge.load_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.serve_http
+  callee: src.ifuri_app.urirun_bridge.default_urirun_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.scan_project
+  callee: src.ifuri_app.urirun_bridge.urirun_info
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.mcp_tools
+  callee: src.ifuri_app.urirun_bridge.urirun_info
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.mcp_tools
+  callee: src.ifuri_app.urirun_bridge.load_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.mcp_tools
+  callee: src.ifuri_app.urirun_bridge.default_urirun_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.a2a_card
+  callee: src.ifuri_app.urirun_bridge.urirun_info
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.a2a_card
+  callee: src.ifuri_app.urirun_bridge.load_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.a2a_card
+  callee: src.ifuri_app.urirun_bridge.default_urirun_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.serve_mcp
+  callee: src.ifuri_app.urirun_bridge.urirun_info
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.serve_mcp
+  callee: src.ifuri_app.urirun_bridge.load_registry
+  call_type: resolved
+- caller: src.ifuri_app.urirun_bridge.serve_mcp
+  callee: src.ifuri_app.urirun_bridge.default_urirun_registry
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_init
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_init
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_init
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_init
+  callee: src.ifuri_app.network_scan.scan_urisys_nodes
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_init
+  callee: packages.ifuri-page.handlers.next
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_app
+  callee: src.ifuri_app.gui.launch_gui
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_serve
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_serve
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_serve
+  callee: src.ifuri_app.runtime.find_free_port
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_discover
+  callee: src.ifuri_app.discovery.discover
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_discover
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice
+  callee: src.ifuri_app.runtime.find_free_port
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_node_health
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_node_call
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_node_control_test
+  callee: src.ifuri_app.remote_screen.probe_remote_control
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_node_control_test
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_node_screen
+  callee: src.ifuri_app.remote_screen.capture_remote_screen
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_node_screen
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_flow_run
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_flow_run
+  callee: src.ifuri_app.flow_runner.run_flow_file
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice_plan
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice_plan
+  callee: src.ifuri_app.voice_planner.plan_voice_command
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice_catalog
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice_catalog
+  callee: src.ifuri_app.voice_planner.voice_planner_mode
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice_catalog
+  callee: src.ifuri_app.voice_planner.load_flow_catalog
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice_capabilities
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice_capabilities
+  callee: src.ifuri_app.voice_pipeline.voice_capabilities
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice_install_packs
+  callee: src.ifuri_app.voice_pipeline.install_voice_packs
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice_install_packs
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_webrtc_capabilities
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_webrtc_capabilities
+  callee: src.ifuri_app.webrtc_pipeline.webrtc_capabilities
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_webrtc_install_pack
+  callee: src.ifuri_app.webrtc_pipeline.install_webrtc_pack
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_webrtc_install_pack
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_webrtc_smoke
+  callee: src.ifuri_app.webrtc_pipeline.webrtc_smoke
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_webrtc_smoke
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice_run
+  callee: src.ifuri_app.voice_pipeline.run_voice_command
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_voice_run
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_chat_channels
+  callee: src.ifuri_app.chat_channels.list_chat_channels
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_chat_channels
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_chat_send
+  callee: src.ifuri_app.chat_channels.list_chat_channels
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_chat_send
+  callee: src.ifuri_app.chat_channels.send_chat_message_routed
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_chat_send
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_chat_send
+  callee: packages.ifuri-page.handlers.next
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_chat_migrate
+  callee: src.ifuri_app.chat_channels.migrate_local_chat_to_urisys
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_chat_migrate
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_chat_status
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_chat_status
+  callee: src.ifuri_app.chat_channels.urisys_chat_available
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_packs
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_packs
+  callee: src.ifuri_app.packs.loader.pack_summary
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_packs
+  callee: src.ifuri_app.packs.runtime.local_runtime_info
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_info
+  callee: src.ifuri_app.urirun_bridge.urirun_info
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_info
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_info
+  callee: src.ifuri_app.urirun_bridge.registry_summary
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_call
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_call
+  callee: src.ifuri_app.urirun_bridge.parse_json_object
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_call
+  callee: src.ifuri_app.urirun_bridge.call_urirun
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_call
+  callee: src.ifuri_app.urirun_bridge.dispatch_local
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_scan
+  callee: src.ifuri_app.urirun_bridge.scan_project
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_scan
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_serve
+  callee: src.ifuri_app.urirun_bridge.serve_http
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_serve
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_mcp
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_mcp
+  callee: src.ifuri_app.urirun_bridge.mcp_tools
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_mcp
+  callee: src.ifuri_app.urirun_bridge.a2a_card
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_urirun_mcp
+  callee: src.ifuri_app.urirun_bridge.serve_mcp
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_flow_validate
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_flow_validate
+  callee: src.ifuri_app.flow_compile.validate_flow_compiled
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_run
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_run
+  callee: src.ifuri_app.flow_engine.dry_run_flow
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_run
+  callee: src.ifuri_app.flow_engine.dry_run_uri
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_expand
+  callee: src.ifuri_app.cli.print_json
+  call_type: resolved
+- caller: src.ifuri_app.cli.cmd_expand
+  callee: src.ifuri_app.flow_engine.expand_flow
+  call_type: resolved
+- caller: src.ifuri_app.cli.main
+  callee: src.ifuri_app.cli.build_parser
+  call_type: resolved
+- caller: src.ifuri_app.cli.main
+  callee: src.ifuri_app.cli.cmd_app
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.channels_from_scan
+  callee: src.ifuri_app.web.url_state.set
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.list_chat_channels
+  callee: src.ifuri_app.network_scan.scan_network
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.list_chat_channels
+  callee: src.ifuri_app.webrtc_signal.local_peer_url
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.list_chat_channels
+  callee: src.ifuri_app.chat_channels.channels_from_scan
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.resolve_data_endpoint
+  callee: src.ifuri_app.urisys_client.default_node_endpoint
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.fetch_chat_history
+  callee: src.ifuri_app.chat_channels.resolve_data_endpoint
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.fetch_chat_history
+  callee: src.ifuri_app.chat_channels._local_chat_store
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.fetch_chat_history
+  callee: src.ifuri_app.chat_channels._urisys_chat_unavailable
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.fetch_chat_channel_index
+  callee: src.ifuri_app.chat_channels.resolve_data_endpoint
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.fetch_chat_channel_index
+  callee: src.ifuri_app.chat_channels._local_chat_store
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.persist_chat_turn
+  callee: src.ifuri_app.chat_channels.resolve_data_endpoint
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.persist_chat_turn
+  callee: src.ifuri_app.chat_channels._local_chat_store
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.urisys_chat_available
+  callee: src.ifuri_app.chat_channels.resolve_data_endpoint
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.urisys_chat_available
+  callee: src.ifuri_app.chat_channels._urisys_chat_unavailable
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.migrate_local_chat_to_urisys
+  callee: src.ifuri_app.chat_channels.urisys_chat_available
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.migrate_local_chat_to_urisys
+  callee: src.ifuri_app.chat_channels._local_chat_store
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.send_chat_message
+  callee: src.ifuri_app.chat_channels._payload_for_scheme
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.send_chat_message
+  callee: src.ifuri_app.voice_pipeline.run_voice_command
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.send_chat_message
+  callee: src.ifuri_app.chat_channels._format_voice_reply
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.send_chat_message_routed
+  callee: src.ifuri_app.chat_channels._payload_for_scheme
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels.send_chat_message_routed
+  callee: src.ifuri_app.chat_channels.send_chat_message
+  call_type: resolved
+- caller: src.ifuri_app.chat_channels._format_voice_reply
+  callee: src.ifuri_app.chat_channels._format_json_reply
+  call_type: resolved
+- caller: scripts.build-platform.run_pyinstaller
+  callee: scripts.build-platform.add_data_arg
+  call_type: resolved
+- caller: scripts.build-platform.main
+  callee: scripts.build-platform.read_version
+  call_type: resolved
+- caller: scripts.build-platform.main
+  callee: scripts.build-platform.platform_tag
+  call_type: resolved
+- caller: scripts.build-platform.main
+  callee: scripts.build-platform.run_pyinstaller
+  call_type: resolved
+- caller: scripts.build-platform.main
+  callee: scripts.build-platform.package_artifact
+  call_type: resolved
+- caller: scripts.gui_smoke.run_gui_smoke
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: scripts.gui_smoke.run_gui_smoke
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: scripts.gui_smoke.main
+  callee: scripts.gui_smoke.parse_args
+  call_type: resolved
+- caller: scripts.gui_smoke.main
+  callee: scripts.gui_smoke.run_gui_smoke
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.__init__
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.save_current_flow
+  callee: src.ifuri_app.storage.add_event
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow
+  callee: src.ifuri_app.flow_engine.dry_run_flow
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow
+  callee: src.ifuri_app.storage.add_event
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow
+  callee: src.ifuri_app.flow_engine.as_pretty_json
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.add_service
+  callee: src.ifuri_app.storage.add_event
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.start_runtime
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.open_voice_ui
+  callee: src.ifuri_app.url_params.voice_url
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.discover_peers
+  callee: src.ifuri_app.network_scan.scan_network
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.discover_peers
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.discover_peers
+  callee: src.ifuri_app.flow_engine.as_pretty_json
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop._on_device_select
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.refresh_log
+  callee: src.ifuri_app.storage.load_workspace
+  call_type: resolved
+- caller: src.ifuri_app.gui.IfuriDesktop.save_all
+  callee: src.ifuri_app.storage.save_workspace
+  call_type: resolved
+modules:
+  packages.ifuri-bridge.handlers.urisys_call:
+  - packages.ifuri-bridge.handlers.urisys_call._endpoint
+  - packages.ifuri-bridge.handlers.urisys_call.node_health
+  - packages.ifuri-bridge.handlers.urisys_call.urisys_call
+  packages.ifuri-page.handlers:
+  - packages.ifuri-page.handlers.get_url_state
+  - packages.ifuri-page.handlers.next
+  - packages.ifuri-page.handlers.set_url_state
+  - packages.ifuri-page.handlers.toggle_view
+  - packages.ifuri-page.handlers.urlState
+  packages.ifuri-voice.handlers.plan:
+  - packages.ifuri-voice.handlers.plan.plan
+  scripts.bootstrap-lenovo-packs:
+  - scripts.bootstrap-lenovo-packs.call
+  - scripts.bootstrap-lenovo-packs.main
+  scripts.build-platform:
+  - scripts.build-platform.add_data_arg
+  - scripts.build-platform.main
+  - scripts.build-platform.package_artifact
+  - scripts.build-platform.platform_tag
+  - scripts.build-platform.read_version
+  - scripts.build-platform.run_pyinstaller
+  scripts.gui_smoke:
+  - scripts.gui_smoke.main
+  - scripts.gui_smoke.parse_args
+  - scripts.gui_smoke.run_gui_smoke
+  src.ifuri_app.chat_channels:
+  - src.ifuri_app.chat_channels._format_json_reply
+  - src.ifuri_app.chat_channels._format_voice_reply
+  - src.ifuri_app.chat_channels._local_chat_store
+  - src.ifuri_app.chat_channels._payload_for_scheme
+  - src.ifuri_app.chat_channels._urisys_chat_unavailable
+  - src.ifuri_app.chat_channels.channels_from_scan
+  - src.ifuri_app.chat_channels.fetch_chat_channel_index
+  - src.ifuri_app.chat_channels.fetch_chat_history
+  - src.ifuri_app.chat_channels.list_chat_channels
+  - src.ifuri_app.chat_channels.migrate_local_chat_to_urisys
+  - src.ifuri_app.chat_channels.persist_chat_turn
+  - src.ifuri_app.chat_channels.resolve_data_endpoint
+  - src.ifuri_app.chat_channels.send_chat_message
+  - src.ifuri_app.chat_channels.send_chat_message_routed
+  - src.ifuri_app.chat_channels.urisys_chat_available
+  src.ifuri_app.chat_store:
+  - src.ifuri_app.chat_store.LocalChatStore.__init__
+  - src.ifuri_app.chat_store.chat_store_path
+  src.ifuri_app.cli:
+  - src.ifuri_app.cli.build_parser
+  - src.ifuri_app.cli.cmd_app
+  - src.ifuri_app.cli.cmd_chat_channels
+  - src.ifuri_app.cli.cmd_chat_migrate
+  - src.ifuri_app.cli.cmd_chat_send
+  - src.ifuri_app.cli.cmd_chat_status
+  - src.ifuri_app.cli.cmd_discover
+  - src.ifuri_app.cli.cmd_expand
+  - src.ifuri_app.cli.cmd_flow_run
+  - src.ifuri_app.cli.cmd_flow_validate
+  - src.ifuri_app.cli.cmd_init
+  - src.ifuri_app.cli.cmd_node_call
+  - src.ifuri_app.cli.cmd_node_control_test
+  - src.ifuri_app.cli.cmd_node_health
+  - src.ifuri_app.cli.cmd_node_screen
+  - src.ifuri_app.cli.cmd_packs
+  - src.ifuri_app.cli.cmd_run
+  - src.ifuri_app.cli.cmd_serve
+  - src.ifuri_app.cli.cmd_urirun_call
+  - src.ifuri_app.cli.cmd_urirun_info
+  - src.ifuri_app.cli.cmd_urirun_mcp
+  - src.ifuri_app.cli.cmd_urirun_scan
+  - src.ifuri_app.cli.cmd_urirun_serve
+  - src.ifuri_app.cli.cmd_voice
+  - src.ifuri_app.cli.cmd_voice_capabilities
+  - src.ifuri_app.cli.cmd_voice_catalog
+  - src.ifuri_app.cli.cmd_voice_install_packs
+  - src.ifuri_app.cli.cmd_voice_plan
+  - src.ifuri_app.cli.cmd_voice_run
+  - src.ifuri_app.cli.cmd_webrtc_capabilities
+  - src.ifuri_app.cli.cmd_webrtc_install_pack
+  - src.ifuri_app.cli.cmd_webrtc_smoke
+  - src.ifuri_app.cli.main
+  - src.ifuri_app.cli.print_json
+  src.ifuri_app.discovery:
+  - src.ifuri_app.discovery.DiscoveryResponder._loop
+  - src.ifuri_app.discovery.discover
+  - src.ifuri_app.discovery.local_descriptor
+  src.ifuri_app.flow_compile:
+  - src.ifuri_app.flow_compile._parse_flow_input
+  - src.ifuri_app.flow_compile.expand_flow_compiled
+  - src.ifuri_app.flow_compile.flow_steps_from_document
+  - src.ifuri_app.flow_compile.uri2flow_available
+  - src.ifuri_app.flow_compile.validate_flow_compiled
+  src.ifuri_app.flow_engine:
+  - src.ifuri_app.flow_engine._legacy_expand_flow
+  - src.ifuri_app.flow_engine.as_pretty_json
+  - src.ifuri_app.flow_engine.classify_route
+  - src.ifuri_app.flow_engine.clean_uri
+  - src.ifuri_app.flow_engine.dry_run_flow
+  - src.ifuri_app.flow_engine.dry_run_uri
+  - src.ifuri_app.flow_engine.expand_flow
+  - src.ifuri_app.flow_engine.extract_steps
+  - src.ifuri_app.flow_engine.flow_id_from_text
+  - src.ifuri_app.flow_engine.uri_scheme
+  src.ifuri_app.flow_runner:
+  - src.ifuri_app.flow_runner.examples_root
+  - src.ifuri_app.flow_runner.load_flow_steps
+  - src.ifuri_app.flow_runner.resolve_flow_path
+  - src.ifuri_app.flow_runner.run_flow_file
+  src.ifuri_app.gui:
+  - src.ifuri_app.gui.IfuriDesktop.__init__
+  - src.ifuri_app.gui.IfuriDesktop._on_device_select
+  - src.ifuri_app.gui.IfuriDesktop.add_service
+  - src.ifuri_app.gui.IfuriDesktop.discover_peers
+  - src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow
+  - src.ifuri_app.gui.IfuriDesktop.open_voice_ui
+  - src.ifuri_app.gui.IfuriDesktop.refresh_log
+  - src.ifuri_app.gui.IfuriDesktop.save_all
+  - src.ifuri_app.gui.IfuriDesktop.save_current_flow
+  - src.ifuri_app.gui.IfuriDesktop.start_runtime
+  - src.ifuri_app.gui.launch_gui
+  src.ifuri_app.gui_chat:
+  - src.ifuri_app.gui_chat.ChatTabMixin._load_chat_history_from_urisys
+  - src.ifuri_app.gui_chat.ChatTabMixin._on_chat_channel_select
+  - src.ifuri_app.gui_chat.ChatTabMixin._refresh_chat_channels
+  - src.ifuri_app.gui_chat.ChatTabMixin._router_endpoint
+  - src.ifuri_app.gui_chat.ChatTabMixin._sync_chat_prompt_url
+  src.ifuri_app.network_scan:
+  - src.ifuri_app.network_scan._collect_local_services
+  - src.ifuri_app.network_scan._local_ipv4
+  - src.ifuri_app.network_scan.probe_urisys_node
+  - src.ifuri_app.network_scan.scan_network
+  - src.ifuri_app.network_scan.scan_urisys_nodes
+  - src.ifuri_app.network_scan.try_mdns_urisys
+  src.ifuri_app.packs.loader:
+  - src.ifuri_app.packs.loader._ensure_pack_path
+  - src.ifuri_app.packs.loader.discover_manifests
+  - src.ifuri_app.packs.loader.load_local_registry
+  - src.ifuri_app.packs.loader.pack_summary
+  - src.ifuri_app.packs.loader.packages_root
+  src.ifuri_app.packs.runtime:
+  - src.ifuri_app.packs.runtime.dispatch_local_uri
+  - src.ifuri_app.packs.runtime.get_local_uri_runtime
+  - src.ifuri_app.packs.runtime.local_runtime_info
+  src.ifuri_app.paths:
+  - src.ifuri_app.paths.app_package_dir
+  - src.ifuri_app.paths.assets_dir
+  - src.ifuri_app.paths.packages_dir
+  - src.ifuri_app.paths.repo_root
+  - src.ifuri_app.paths.web_dir
+  src.ifuri_app.remote_screen:
+  - src.ifuri_app.remote_screen.capture_remote_screen
+  - src.ifuri_app.remote_screen.probe_remote_control
+  - src.ifuri_app.remote_screen.screen_uri
+  - src.ifuri_app.remote_screen.unwrap_result
+  src.ifuri_app.runtime:
+  - src.ifuri_app.runtime.RuntimeServer.__init__
+  - src.ifuri_app.runtime.RuntimeState.call_uri
+  - src.ifuri_app.runtime.RuntimeState.health
+  - src.ifuri_app.runtime.RuntimeState.load
+  - src.ifuri_app.runtime.RuntimeState.run_flow
+  - src.ifuri_app.runtime._load_urirun_policy
+  - src.ifuri_app.runtime._port_available
+  - src.ifuri_app.runtime._port_listeners
+  - src.ifuri_app.runtime.bind_runtime_server
+  - src.ifuri_app.runtime.find_free_port
+  - src.ifuri_app.runtime.format_port_in_use_error
+  - src.ifuri_app.runtime.json_bytes
+  - src.ifuri_app.runtime.make_handler
+  src.ifuri_app.sample_data:
+  - src.ifuri_app.sample_data.default_workspace
+  src.ifuri_app.storage:
+  - src.ifuri_app.storage.add_event
+  - src.ifuri_app.storage.app_home
+  - src.ifuri_app.storage.ensure_home
+  - src.ifuri_app.storage.load_workspace
+  - src.ifuri_app.storage.normalize_workspace
+  - src.ifuri_app.storage.now_iso
+  - src.ifuri_app.storage.save_workspace
+  - src.ifuri_app.storage.workspace_path
+  src.ifuri_app.urirun_bridge:
+  - src.ifuri_app.urirun_bridge.a2a_card
+  - src.ifuri_app.urirun_bridge.call_urirun
+  - src.ifuri_app.urirun_bridge.default_urirun_registry
+  - src.ifuri_app.urirun_bridge.dispatch_local
+  - src.ifuri_app.urirun_bridge.list_routes
+  - src.ifuri_app.urirun_bridge.load_registry
+  - src.ifuri_app.urirun_bridge.mcp_tools
+  - src.ifuri_app.urirun_bridge.parse_json_object
+  - src.ifuri_app.urirun_bridge.registry_summary
+  - src.ifuri_app.urirun_bridge.scan_project
+  - src.ifuri_app.urirun_bridge.serve_http
+  - src.ifuri_app.urirun_bridge.serve_mcp
+  - src.ifuri_app.urirun_bridge.service_map_env
+  - src.ifuri_app.urirun_bridge.urirun_info
+  src.ifuri_app.urisys_client:
+  - src.ifuri_app.urisys_client.UrisysNodeClient.__init__
+  - src.ifuri_app.urisys_client.default_node_endpoint
+  - src.ifuri_app.urisys_client.node_llm_available
+  - src.ifuri_app.urisys_client.node_voice_capabilities
+  - src.ifuri_app.urisys_client.node_webrtc_available
+  src.ifuri_app.url_params:
+  - src.ifuri_app.url_params.voice_query
+  - src.ifuri_app.url_params.voice_url
+  src.ifuri_app.voice_pipeline:
+  - src.ifuri_app.voice_pipeline._extract_stt_text
+  - src.ifuri_app.voice_pipeline.install_voice_packs
+  - src.ifuri_app.voice_pipeline.run_voice_command
+  - src.ifuri_app.voice_pipeline.voice_capabilities
+  - src.ifuri_app.voice_pipeline.voice_pack_install_hint
+  src.ifuri_app.voice_planner:
+  - src.ifuri_app.voice_planner._catalog_tokens
+  - src.ifuri_app.voice_planner._flow_plan
+  - src.ifuri_app.voice_planner._parse_llm_plan_json
+  - src.ifuri_app.voice_planner.load_flow_catalog
+  - src.ifuri_app.voice_planner.node_has_llm
+  - src.ifuri_app.voice_planner.plan_voice_command
+  - src.ifuri_app.voice_planner.plan_with_catalog
+  - src.ifuri_app.voice_planner.plan_with_llm
+  - src.ifuri_app.voice_planner.plan_with_regex
+  - src.ifuri_app.voice_planner.voice_planner_mode
+  src.ifuri_app.web.i18n:
+  - src.ifuri_app.web.i18n.t
+  - src.ifuri_app.web.i18n.val
+  src.ifuri_app.web.page.handlers:
+  - src.ifuri_app.web.page.handlers.get_url_state
+  - src.ifuri_app.web.page.handlers.set_url_state
+  - src.ifuri_app.web.page.handlers.toggle_view
+  - src.ifuri_app.web.page.handlers.urlState
+  src.ifuri_app.web.theme:
+  - src.ifuri_app.web.theme.applyLang
+  - src.ifuri_app.web.theme.applyTheme
+  - src.ifuri_app.web.theme.initFromUrl
+  - src.ifuri_app.web.theme.setLang
+  - src.ifuri_app.web.theme.setTheme
+  src.ifuri_app.web.url_state:
+  - src.ifuri_app.web.url_state.base
+  - src.ifuri_app.web.url_state.cur
+  - src.ifuri_app.web.url_state.get
+  - src.ifuri_app.web.url_state.onPopState
+  - src.ifuri_app.web.url_state.patch
+  - src.ifuri_app.web.url_state.read
+  - src.ifuri_app.web.url_state.set
+  - src.ifuri_app.web.url_state.withParams
+  - src.ifuri_app.web.url_state.write
+  src.ifuri_app.web.voice:
+  - src.ifuri_app.web.voice.I
+  - src.ifuri_app.web.voice.SR
+  - src.ifuri_app.web.voice.T
+  - src.ifuri_app.web.voice.U
+  - src.ifuri_app.web.voice._toggleViewDirect
+  - src.ifuri_app.web.voice.api
+  - src.ifuri_app.web.voice.appendMessage
+  - src.ifuri_app.web.voice.applyPromptFromUrl
+  - src.ifuri_app.web.voice.applyUiLanguage
+  - src.ifuri_app.web.voice.applyViewFromUrl
+  - src.ifuri_app.web.voice.auto
+  - src.ifuri_app.web.voice.autoSendPending
+  - src.ifuri_app.web.voice.blob
+  - src.ifuri_app.web.voice.btn
+  - src.ifuri_app.web.voice.ch
+  - src.ifuri_app.web.voice.channelId
+  - src.ifuri_app.web.voice.cid
+  - src.ifuri_app.web.voice.connectWebRtc
+  - src.ifuri_app.web.voice.data
+  - src.ifuri_app.web.voice.disconnectWebRtc
+  - src.ifuri_app.web.voice.dry
+  - src.ifuri_app.web.voice.ep
+  - src.ifuri_app.web.voice.esc
+  - src.ifuri_app.web.voice.groupLabels
+  - src.ifuri_app.web.voice.handleWebRtcEnvelope
+  - src.ifuri_app.web.voice.hist
+  - src.ifuri_app.web.voice.initSettingsFromUrl
+  - src.ifuri_app.web.voice.installVoicePacks
+  - src.ifuri_app.web.voice.isNode
+  - src.ifuri_app.web.voice.isWebRtc
+  - src.ifuri_app.web.voice.items
+  - src.ifuri_app.web.voice.labels
+  - src.ifuri_app.web.voice.lastChannelData
+  - src.ifuri_app.web.voice.loadChannelHistory
+  - src.ifuri_app.web.voice.localApiUrl
+  - src.ifuri_app.web.voice.localUrl
+  - src.ifuri_app.web.voice.maybeAutoSendFromUrl
+  - src.ifuri_app.web.voice.next
+  - src.ifuri_app.web.voice.node
+  - src.ifuri_app.web.voice.pick
+  - src.ifuri_app.web.voice.prefs
+  - src.ifuri_app.web.voice.preview
+  - src.ifuri_app.web.voice.promptSyncTimer
+  - src.ifuri_app.web.voice.rec
+  - src.ifuri_app.web.voice.refreshChannels
+  - src.ifuri_app.web.voice.refreshScreen
+  - src.ifuri_app.web.voice.refreshVoiceCapabilities
+  - src.ifuri_app.web.voice.remoteUrl
+  - src.ifuri_app.web.voice.renderChannelList
+  - src.ifuri_app.web.voice.renderMessages
+  - src.ifuri_app.web.voice.room
+  - src.ifuri_app.web.voice.routerEndpoint
+  - src.ifuri_app.web.voice.saved
+  - src.ifuri_app.web.voice.screenImageUrl
+  - src.ifuri_app.web.voice.screenTimer
+  - src.ifuri_app.web.voice.section
+  - src.ifuri_app.web.voice.selectChannel
+  - src.ifuri_app.web.voice.sendMessage
+  - src.ifuri_app.web.voice.setScreenAuto
+  - src.ifuri_app.web.voice.setWebRtcStatus
+  - src.ifuri_app.web.voice.showScreen
+  - src.ifuri_app.web.voice.summary
+  - src.ifuri_app.web.voice.syncPromptToUrl
+  - src.ifuri_app.web.voice.syncUrl
+  - src.ifuri_app.web.voice.t
+  - src.ifuri_app.web.voice.text
+  - src.ifuri_app.web.voice.thread
+  - src.ifuri_app.web.voice.toggleView
+  - src.ifuri_app.web.voice.transcript
+  - src.ifuri_app.web.voice.updateViewToggleLabel
+  - src.ifuri_app.web.voice.url
+  - src.ifuri_app.web.voice.urlChannel
+  - src.ifuri_app.web.voice.view
+  - src.ifuri_app.web.voice.webrtcSession
+  src.ifuri_app.web.webrtc_peer:
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._applySignal
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._dispatch
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._poll
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._setStatus
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession._wireChannel
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.answer
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.clearTimeout
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.isReady
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.offer
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.payload
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.posted
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.reject
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendEnvelope
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendVoiceReply
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendVoiceRequest
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.start
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.stop
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.t
+  - src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.timer
+  - src.ifuri_app.web.webrtc_peer.api
+  - src.ifuri_app.web.webrtc_peer.newId
+  - src.ifuri_app.web.webrtc_peer.postRemote
+  src.ifuri_app.webrtc_pipeline:
+  - src.ifuri_app.webrtc_pipeline.install_webrtc_pack
+  - src.ifuri_app.webrtc_pipeline.webrtc_capabilities
+  - src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint
+  - src.ifuri_app.webrtc_pipeline.webrtc_smoke
+  src.ifuri_app.webrtc_signal:
+  - src.ifuri_app.webrtc_signal._purge_room
+  - src.ifuri_app.webrtc_signal.local_peer_url
+  - src.ifuri_app.webrtc_signal.poll_signals
+  - src.ifuri_app.webrtc_signal.post_signal
+entry_points:
+- desktop.dev-server.health
+- desktop.src-tauri.build.main
+- desktop.src-tauri.src.main.main
+- desktop.src-tauri.src.run
+- docker.entrypoint-gui-test.start_xvfb
+- packages.ifuri-bridge.handlers.urisys_call.node_health
+- packages.ifuri-bridge.handlers.urisys_call.urisys_call
+- packages.ifuri-chat.handlers.messages.list_channels
+- packages.ifuri-chat.handlers.messages.list_messages
+- packages.ifuri-page.handlers.current
+- packages.ifuri-page.handlers.get_url_state
+- packages.ifuri-page.handlers.key
+- packages.ifuri-page.handlers.set_url_state
+- packages.ifuri-page.handlers.state
+- packages.ifuri-page.handlers.toggle_view
+- packages.ifuri-page.handlers.us
+- packages.ifuri-page.handlers.value
+- packages.ifuri-voice.handlers.plan.plan
+- scripts.bootstrap-lenovo-packs.main
+- scripts.build-platform.main
+- scripts.gui_smoke.main
+- scripts.upgrade-lenovo-node.probe
+- scripts.upgrade-lenovo-remote.main
+- src.ifuri_app.chat_store.LocalChatStore.__init__
+- src.ifuri_app.chat_store.LocalChatStore.append
+- src.ifuri_app.chat_store.LocalChatStore.list_channels
+- src.ifuri_app.chat_store.LocalChatStore.list_messages
+- src.ifuri_app.cli.cmd_chat_channels
+- src.ifuri_app.cli.cmd_chat_migrate
+- src.ifuri_app.cli.cmd_chat_send
+- src.ifuri_app.cli.cmd_chat_status
+- src.ifuri_app.cli.cmd_discover
+- src.ifuri_app.cli.cmd_expand
+- src.ifuri_app.cli.cmd_flow_run
+- src.ifuri_app.cli.cmd_flow_validate
+- src.ifuri_app.cli.cmd_init
+- src.ifuri_app.cli.cmd_node_call
+- src.ifuri_app.cli.cmd_node_control_test
+- src.ifuri_app.cli.cmd_node_health
+- src.ifuri_app.cli.cmd_node_screen
+- src.ifuri_app.cli.cmd_packs
+- src.ifuri_app.cli.cmd_run
+- src.ifuri_app.cli.cmd_serve
+- src.ifuri_app.cli.cmd_urirun_call
+- src.ifuri_app.cli.cmd_urirun_info
+- src.ifuri_app.cli.cmd_urirun_mcp
+- src.ifuri_app.cli.cmd_urirun_scan
+- src.ifuri_app.cli.cmd_urirun_serve
+- src.ifuri_app.cli.cmd_voice
+- src.ifuri_app.cli.cmd_voice_capabilities
+- src.ifuri_app.cli.cmd_voice_catalog
+- src.ifuri_app.cli.cmd_voice_install_packs
+- src.ifuri_app.cli.cmd_voice_plan
+- src.ifuri_app.cli.cmd_voice_run
+- src.ifuri_app.cli.cmd_webrtc_capabilities
+- src.ifuri_app.cli.cmd_webrtc_install_pack
+- src.ifuri_app.cli.cmd_webrtc_smoke
+- src.ifuri_app.cli.main
+- src.ifuri_app.discovery.DiscoveryResponder.__init__
+- src.ifuri_app.discovery.DiscoveryResponder._loop
+- src.ifuri_app.discovery.DiscoveryResponder.start
+- src.ifuri_app.discovery.DiscoveryResponder.stop
+- src.ifuri_app.gui.IfuriDesktop.__init__
+- src.ifuri_app.gui.IfuriDesktop._build_events_tab
+- src.ifuri_app.gui.IfuriDesktop._build_flows_tab
+- src.ifuri_app.gui.IfuriDesktop._build_network_tab
+- src.ifuri_app.gui.IfuriDesktop._build_services_tab
+- src.ifuri_app.gui.IfuriDesktop._build_style
+- src.ifuri_app.gui.IfuriDesktop._build_ui
+- src.ifuri_app.gui.IfuriDesktop._flows
+- src.ifuri_app.gui.IfuriDesktop._groups
+- src.ifuri_app.gui.IfuriDesktop._load_current_flow_text
+- src.ifuri_app.gui.IfuriDesktop._load_flows
+- src.ifuri_app.gui.IfuriDesktop._load_groups
+- src.ifuri_app.gui.IfuriDesktop._on_close
+- src.ifuri_app.gui.IfuriDesktop._on_device_select
+- src.ifuri_app.gui.IfuriDesktop._on_flow_select
+- src.ifuri_app.gui.IfuriDesktop._on_group_select
+- src.ifuri_app.gui.IfuriDesktop._refresh_network_views
+- src.ifuri_app.gui.IfuriDesktop._refresh_peers
+- src.ifuri_app.gui.IfuriDesktop._refresh_services
+- src.ifuri_app.gui.IfuriDesktop.add_service
+- src.ifuri_app.gui.IfuriDesktop.append_log
+- src.ifuri_app.gui.IfuriDesktop.discover_peers
+- src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow
+- src.ifuri_app.gui.IfuriDesktop.new_flow
+- src.ifuri_app.gui.IfuriDesktop.new_group
+- src.ifuri_app.gui.IfuriDesktop.open_voice_ui
+- src.ifuri_app.gui.IfuriDesktop.refresh_log
+- src.ifuri_app.gui.IfuriDesktop.save_all
+- src.ifuri_app.gui.IfuriDesktop.save_current_flow
+- src.ifuri_app.gui.IfuriDesktop.start_runtime
+- src.ifuri_app.gui.IfuriDesktop.stop_runtime
+- src.ifuri_app.gui_chat.ChatTabMixin._append_chat
+- src.ifuri_app.gui_chat.ChatTabMixin._apply_chat_channels
+- src.ifuri_app.gui_chat.ChatTabMixin._apply_chat_history
+- src.ifuri_app.gui_chat.ChatTabMixin._build_chat_tab
+- src.ifuri_app.gui_chat.ChatTabMixin._chat_prompt_text
+- src.ifuri_app.gui_chat.ChatTabMixin._finish_chat_reply
+- src.ifuri_app.gui_chat.ChatTabMixin._load_chat_history_from_urisys
+- src.ifuri_app.gui_chat.ChatTabMixin._on_chat_channel_select
+- src.ifuri_app.gui_chat.ChatTabMixin._open_chat_in_browser
+- src.ifuri_app.gui_chat.ChatTabMixin._refresh_chat_channels
+- src.ifuri_app.gui_chat.ChatTabMixin._render_chat_thread
+- src.ifuri_app.gui_chat.ChatTabMixin._router_endpoint
+- src.ifuri_app.gui_chat.ChatTabMixin._runtime_base_url
+- src.ifuri_app.gui_chat.ChatTabMixin._send_chat_message
+- src.ifuri_app.gui_chat.ChatTabMixin._sync_chat_prompt_url
+- src.ifuri_app.paths.assets_dir
+- src.ifuri_app.paths.packages_dir
+- src.ifuri_app.paths.web_dir
+- src.ifuri_app.runtime.RuntimeServer.__init__
+- src.ifuri_app.runtime.RuntimeServer.start
+- src.ifuri_app.runtime.RuntimeServer.stop
+- src.ifuri_app.runtime.RuntimeState.__init__
+- src.ifuri_app.runtime.RuntimeState.call_uri
+- src.ifuri_app.runtime.RuntimeState.health
+- src.ifuri_app.runtime.RuntimeState.load
+- src.ifuri_app.runtime.RuntimeState.run_flow
+- src.ifuri_app.urisys_client.UrisysNodeClient.__init__
+- src.ifuri_app.urisys_client.UrisysNodeClient._get
+- src.ifuri_app.urisys_client.UrisysNodeClient._post
+- src.ifuri_app.urisys_client.UrisysNodeClient.app_chat_append
+- src.ifuri_app.urisys_client.UrisysNodeClient.app_chat_channels
+- src.ifuri_app.urisys_client.UrisysNodeClient.app_chat_messages
+- src.ifuri_app.urisys_client.UrisysNodeClient.call_uri
+- src.ifuri_app.urisys_client.UrisysNodeClient.health
+- src.ifuri_app.url_params.merge_voice_url
+- src.ifuri_app.web.i18n.bag
+- src.ifuri_app.web.i18n.groupLabels
+- src.ifuri_app.web.i18n.t
+- src.ifuri_app.web.page.handlers.current
+- src.ifuri_app.web.page.handlers.get_url_state
+- src.ifuri_app.web.page.handlers.key
+- src.ifuri_app.web.page.handlers.next
+- src.ifuri_app.web.page.handlers.set_url_state
+- src.ifuri_app.web.page.handlers.state
+- src.ifuri_app.web.page.handlers.toggle_view
+- src.ifuri_app.web.page.handlers.us
+- src.ifuri_app.web.page.handlers.value
+- src.ifuri_app.web.page_runtime.registry
+- src.ifuri_app.web.page_runtime.runtime
+- src.ifuri_app.web.theme.U
+- src.ifuri_app.web.theme.initFromUrl
+- src.ifuri_app.web.theme.lang
+- src.ifuri_app.web.theme.setLang
+- src.ifuri_app.web.theme.setTheme
+- src.ifuri_app.web.theme.theme
+- src.ifuri_app.web.url_state.RESERVED
+- src.ifuri_app.web.url_state.base
+- src.ifuri_app.web.url_state.cur
+- src.ifuri_app.web.url_state.get
+- src.ifuri_app.web.url_state.onPopState
+- src.ifuri_app.web.url_state.params
+- src.ifuri_app.web.url_state.q
+- src.ifuri_app.web.url_state.qs
+- src.ifuri_app.web.url_state.url
+- src.ifuri_app.web.url_state.v
+- src.ifuri_app.web.url_state.withParams
+- src.ifuri_app.web.voice.SR
+- src.ifuri_app.web.voice.activeChannel
+- src.ifuri_app.web.voice.applyPromptFromUrl
+- src.ifuri_app.web.voice.auto
+- src.ifuri_app.web.voice.autoSendPending
+- src.ifuri_app.web.voice.btn
+- src.ifuri_app.web.voice.btnInstallVoicePacks
+- src.ifuri_app.web.voice.btnListen
+- src.ifuri_app.web.voice.btnRefresh
+- src.ifuri_app.web.voice.btnScreen
+- src.ifuri_app.web.voice.btnSend
+- src.ifuri_app.web.voice.btnViewToggle
+- src.ifuri_app.web.voice.btnWebRtcConnect
+- src.ifuri_app.web.voice.c
+- src.ifuri_app.web.voice.caps
+- src.ifuri_app.web.voice.ch
+- src.ifuri_app.web.voice.channelId
+- src.ifuri_app.web.voice.chatKindEl
+- src.ifuri_app.web.voice.chatListEl
+- src.ifuri_app.web.voice.chatSubtitleEl
+- src.ifuri_app.web.voice.chatTitleEl
+- src.ifuri_app.web.voice.cid
+- src.ifuri_app.web.voice.connectWebRtc
+- src.ifuri_app.web.voice.d
+- src.ifuri_app.web.voice.data
+- src.ifuri_app.web.voice.div
+- src.ifuri_app.web.voice.dry
+- src.ifuri_app.web.voice.dryRunEl
+- src.ifuri_app.web.voice.dryRunLabel
+- src.ifuri_app.web.voice.ep
+- src.ifuri_app.web.voice.groupChannels
+- src.ifuri_app.web.voice.groups
+- src.ifuri_app.web.voice.hint
+- src.ifuri_app.web.voice.hist
+- src.ifuri_app.web.voice.historyIndex
+- src.ifuri_app.web.voice.initSettingsFromUrl
+- src.ifuri_app.web.voice.inputEl
+- src.ifuri_app.web.voice.installVoicePacks
+- src.ifuri_app.web.voice.isNode
+- src.ifuri_app.web.voice.isWebRtc
+- src.ifuri_app.web.voice.items
+- src.ifuri_app.web.voice.labels
+- src.ifuri_app.web.voice.langSelect
+- src.ifuri_app.web.voice.last
+- src.ifuri_app.web.voice.lastChannelData
+- src.ifuri_app.web.voice.localApiUrl
+- src.ifuri_app.web.voice.localUrl
+- src.ifuri_app.web.voice.messagesEl
+- src.ifuri_app.web.voice.next
+- src.ifuri_app.web.voice.node
+- src.ifuri_app.web.voice.nodeId
+- src.ifuri_app.web.voice.onScreen
+- src.ifuri_app.web.voice.pick
+- src.ifuri_app.web.voice.prefs
+- src.ifuri_app.web.voice.preview
+- src.ifuri_app.web.voice.prompt
+- src.ifuri_app.web.voice.promptSyncTimer
+- src.ifuri_app.web.voice.qs
+- src.ifuri_app.web.voice.rec
+- src.ifuri_app.web.voice.refreshChannels
+- src.ifuri_app.web.voice.remoteScreenEl
+- src.ifuri_app.web.voice.remoteUrl
+- src.ifuri_app.web.voice.reply
+- src.ifuri_app.web.voice.res
+- src.ifuri_app.web.voice.room
+- src.ifuri_app.web.voice.saved
+- src.ifuri_app.web.voice.scanStatus
+- src.ifuri_app.web.voice.screenAutoEl
+- src.ifuri_app.web.voice.screenAutoLabel
+- src.ifuri_app.web.voice.screenAutoWrap
+- src.ifuri_app.web.voice.screenPanel
+- src.ifuri_app.web.voice.screenTimer
+- src.ifuri_app.web.voice.section
+- src.ifuri_app.web.voice.showScreen
+- src.ifuri_app.web.voice.summary
+- src.ifuri_app.web.voice.text
+- src.ifuri_app.web.voice.themeSelect
+- src.ifuri_app.web.voice.thread
+- src.ifuri_app.web.voice.time
+- src.ifuri_app.web.voice.toggleView
+- src.ifuri_app.web.voice.transcript
+- src.ifuri_app.web.voice.url
+- src.ifuri_app.web.voice.urlChannel
+- src.ifuri_app.web.voice.view
+- src.ifuri_app.web.voice.voicePackBanner
+- src.ifuri_app.web.voice.voicePackText
+- src.ifuri_app.web.voice.webrtcRemoteAudio
+- src.ifuri_app.web.voice.webrtcSession
+- src.ifuri_app.web.voice.webrtcStatusEl
+- src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.answer
+- src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.id
+- src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.offer
+- src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.payload
+- src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.posted
+- src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.sendVoiceRequest
+- src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.start
+- src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.stop
+- src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.stream
+- src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.t
+- src.ifuri_app.web.webrtc_peer.WebRtcPeerSession.timer
+- src.ifuri_app.web.webrtc_peer.base
+- src.ifuri_app.webrtc_signal.is_webrtc_initiator
+- src.ifuri_app.webrtc_signal.room_stats

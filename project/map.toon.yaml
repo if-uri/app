@@ -1,0 +1,492 @@
+# app | 83f 9350L | python:58,shell:10,javascript:10,rust:3,less:1,css:1 | 2026-06-19
+# stats: 279 func | 13 cls | 83 mod | CC̄=4.6 | critical:25 | cycles:0
+# alerts[5]: CC channels_from_scan=34; CC run_voice_command=23; CC cmd_chat_send=19; CC send_chat_message=18; CC send_chat_message_routed=17
+# hotspots[5]: make_handler fan=76; run_gui_smoke fan=35; serve_http fan=27; test_urirun_serve_http fan=22; send_chat_message fan=20
+# evolution: baseline
+# Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
+M[83]:
+  app.doql.less,230
+  desktop/dev-server.sh,39
+  desktop/src-tauri/build.rs,4
+  desktop/src-tauri/src/lib.rs,17
+  desktop/src-tauri/src/main.rs,7
+  docker/entrypoint-gui-test.sh,65
+  docker/install-gui-deps.sh,40
+  packages/ifuri-bridge/handlers/__init__.py,2
+  packages/ifuri-bridge/handlers/urisys_call.py,60
+  packages/ifuri-chat/handlers/__init__.py,2
+  packages/ifuri-chat/handlers/messages.py,30
+  packages/ifuri-page/handlers.js,52
+  packages/ifuri-page/manifest.js,36
+  packages/ifuri-voice/handlers/__init__.py,2
+  packages/ifuri-voice/handlers/plan.py,24
+  project.sh,63
+  scripts/bootstrap-lenovo-packs.py,58
+  scripts/build-platform.py,142
+  scripts/cd-github.sh,53
+  scripts/gui_smoke.py,170
+  scripts/ifuri_app_entry.py,7
+  scripts/run-ifuri-app.sh,4
+  scripts/test-gui-docker.sh,48
+  scripts/upgrade-lenovo-node.sh,56
+  scripts/upgrade-lenovo-remote.py,35
+  scripts/vendor-uricore-js.sh,21
+  src/ifuri_app/__init__.py,7
+  src/ifuri_app/__main__.py,5
+  src/ifuri_app/chat_channels.py,529
+  src/ifuri_app/chat_store.py,88
+  src/ifuri_app/cli.py,658
+  src/ifuri_app/discovery.py,124
+  src/ifuri_app/flow_compile.py,152
+  src/ifuri_app/flow_engine.py,128
+  src/ifuri_app/flow_runner.py,88
+  src/ifuri_app/gui.py,432
+  src/ifuri_app/gui_chat.py,288
+  src/ifuri_app/network_scan.py,225
+  src/ifuri_app/packs/__init__.py,14
+  src/ifuri_app/packs/loader.py,75
+  src/ifuri_app/packs/runtime.py,61
+  src/ifuri_app/paths.py,34
+  src/ifuri_app/remote_screen.py,114
+  src/ifuri_app/runtime.py,784
+  src/ifuri_app/sample_data.py,77
+  src/ifuri_app/storage.py,95
+  src/ifuri_app/urirun_bridge.py,413
+  src/ifuri_app/urisys_client.py,156
+  src/ifuri_app/url_params.py,41
+  src/ifuri_app/voice_pipeline.py,195
+  src/ifuri_app/voice_planner.py,287
+  src/ifuri_app/web/i18n.js,112
+  src/ifuri_app/web/page/handlers.js,52
+  src/ifuri_app/web/page/manifest.js,36
+  src/ifuri_app/web/page_runtime.js,21
+  src/ifuri_app/web/theme.js,40
+  src/ifuri_app/web/url_state.js,68
+  src/ifuri_app/web/voice.css,364
+  src/ifuri_app/web/voice.js,639
+  src/ifuri_app/web/webrtc_peer.js,230
+  src/ifuri_app/webrtc_pipeline.py,130
+  src/ifuri_app/webrtc_signal.py,105
+  tests/e2e/test_voice_playwright.py,60
+  tests/test_api_runtime.py,206
+  tests/test_chat_channels.py,36
+  tests/test_chat_history.py,37
+  tests/test_chat_migrate.py,42
+  tests/test_chat_store.py,48
+  tests/test_cli_chat.py,15
+  tests/test_flow_compile.py,41
+  tests/test_gui_smoke.py,25
+  tests/test_ifuri_app.py,128
+  tests/test_packs_loader.py,46
+  tests/test_packs_runtime.py,28
+  tests/test_urirun_bridge.py,36
+  tests/test_urirun_integration.py,225
+  tests/test_url_params.py,24
+  tests/test_voice_capabilities.py,49
+  tests/test_voice_pack_hint.py,19
+  tests/test_voice_planner.py,68
+  tests/test_webrtc_pipeline.py,45
+  tests/test_webrtc_signal.py,36
+  tree.sh,2
+D:
+  packages/ifuri-bridge/handlers/__init__.py:
+  packages/ifuri-bridge/handlers/urisys_call.py:
+    e: _endpoint,urisys_call,node_health
+    _endpoint(payload;context)
+    urisys_call(payload;context)
+    node_health(payload;context)
+  packages/ifuri-chat/handlers/__init__.py:
+  packages/ifuri-chat/handlers/messages.py:
+    e: list_messages,list_channels
+    list_messages(payload;context)
+    list_channels(payload;context)
+  packages/ifuri-voice/handlers/__init__.py:
+  packages/ifuri-voice/handlers/plan.py:
+    e: plan
+    plan(payload;context)
+  scripts/bootstrap-lenovo-packs.py:
+    e: call,main
+    call(uri;payload)
+    main()
+  scripts/build-platform.py:
+    e: read_version,platform_tag,add_data_arg,run_pyinstaller,package_artifact,main
+    read_version()
+    platform_tag()
+    add_data_arg(src;dest)
+    run_pyinstaller()
+    package_artifact(binary;version;tag)
+    main(argv)
+  scripts/gui_smoke.py:
+    e: parse_args,take_screenshot,run_gui_smoke,main
+    parse_args()
+    take_screenshot(path)
+    run_gui_smoke(out;urisys_endpoint;timeout)
+    main()
+  scripts/ifuri_app_entry.py:
+  scripts/upgrade-lenovo-remote.py:
+    e: main
+    main()
+  src/ifuri_app/__init__.py:
+  src/ifuri_app/__main__.py:
+  src/ifuri_app/chat_channels.py:
+    e: _channel_id,channels_from_scan,list_chat_channels,resolve_data_endpoint,_urisys_chat_unavailable,_local_chat_store,fetch_chat_history,fetch_chat_channel_index,persist_chat_turn,urisys_chat_available,migrate_local_chat_to_urisys,send_chat_message,send_chat_message_routed,_payload_for_scheme,_short_json,_format_json_reply,_format_voice_reply
+    _channel_id(kind;key)
+    channels_from_scan(scan)
+    list_chat_channels()
+    resolve_data_endpoint()
+    _urisys_chat_unavailable(data)
+    _local_chat_store()
+    fetch_chat_history(channel_id)
+    fetch_chat_channel_index()
+    persist_chat_turn(channel_id;user_text;assistant_text)
+    urisys_chat_available()
+    migrate_local_chat_to_urisys()
+    send_chat_message(channel;text)
+    send_chat_message_routed(channel;text)
+    _payload_for_scheme(kind;text)
+    _short_json(obj;limit)
+    _format_json_reply(data)
+    _format_voice_reply(result)
+  src/ifuri_app/chat_store.py:
+    e: chat_store_path,LocalChatStore
+    LocalChatStore: __init__(1),append(3),list_messages(1),list_channels(0)
+    chat_store_path()
+  src/ifuri_app/cli.py:
+    e: print_json,cmd_init,cmd_app,cmd_serve,cmd_discover,cmd_voice,cmd_node_health,cmd_node_call,cmd_node_control_test,cmd_node_screen,cmd_flow_run,cmd_voice_plan,cmd_voice_catalog,cmd_voice_capabilities,cmd_voice_install_packs,cmd_webrtc_capabilities,cmd_webrtc_install_pack,cmd_webrtc_smoke,cmd_voice_run,cmd_chat_channels,cmd_chat_send,cmd_chat_migrate,cmd_chat_status,cmd_packs,cmd_urirun_info,cmd_urirun_call,cmd_urirun_scan,cmd_urirun_serve,cmd_urirun_mcp,cmd_flow_validate,cmd_run,cmd_expand,build_parser,main
+    print_json(data)
+    cmd_init(args)
+    cmd_app(_args)
+    cmd_serve(args)
+    cmd_discover(args)
+    cmd_voice(args)
+    cmd_node_health(args)
+    cmd_node_call(args)
+    cmd_node_control_test(args)
+    cmd_node_screen(args)
+    cmd_flow_run(args)
+    cmd_voice_plan(args)
+    cmd_voice_catalog(_args)
+    cmd_voice_capabilities(args)
+    cmd_voice_install_packs(args)
+    cmd_webrtc_capabilities(args)
+    cmd_webrtc_install_pack(args)
+    cmd_webrtc_smoke(args)
+    cmd_voice_run(args)
+    cmd_chat_channels(args)
+    cmd_chat_send(args)
+    cmd_chat_migrate(args)
+    cmd_chat_status(args)
+    cmd_packs(_args)
+    cmd_urirun_info(args)
+    cmd_urirun_call(args)
+    cmd_urirun_scan(args)
+    cmd_urirun_serve(args)
+    cmd_urirun_mcp(args)
+    cmd_flow_validate(args)
+    cmd_run(args)
+    cmd_expand(args)
+    build_parser()
+    main(argv)
+  src/ifuri_app/discovery.py:
+    e: local_descriptor,discover,DiscoveryResponder
+    DiscoveryResponder: __init__(2),start(0),stop(0),_loop(0)
+    local_descriptor(api_port)
+    discover(timeout;api_port;discovery_port)
+  src/ifuri_app/flow_compile.py:
+    e: uri2flow_available,_parse_flow_input,expand_flow_compiled,flow_steps_from_document,validate_flow_compiled,_scheme,FlowCompileError
+    FlowCompileError:  # Flow text could not be compiled.
+    uri2flow_available()
+    _parse_flow_input(flow)
+    expand_flow_compiled(flow)
+    flow_steps_from_document(flow)
+    validate_flow_compiled(flow)
+    _scheme(uri)
+  src/ifuri_app/flow_engine.py:
+    e: expand_flow,_legacy_expand_flow,clean_uri,uri_scheme,extract_steps,flow_id_from_text,classify_route,dry_run_uri,dry_run_flow,as_pretty_json
+    expand_flow(flow_text;flow_id)
+    _legacy_expand_flow(flow_text;flow_id)
+    clean_uri(value)
+    uri_scheme(uri)
+    extract_steps(flow_text)
+    flow_id_from_text(flow_text;default)
+    classify_route(uri)
+    dry_run_uri(uri;payload)
+    dry_run_flow(flow_text)
+    as_pretty_json(data)
+  src/ifuri_app/flow_runner.py:
+    e: examples_root,resolve_flow_path,load_flow_steps,run_flow_file
+    examples_root()
+    resolve_flow_path(ref)
+    load_flow_steps(flow_path)
+    run_flow_file(flow_ref)
+  src/ifuri_app/gui.py:
+    e: launch_gui,IfuriDesktop
+    IfuriDesktop: __init__(0),_build_style(0),_build_ui(0),_build_flows_tab(0),_build_services_tab(0),_build_network_tab(0),_build_events_tab(0),_groups(0),_flows(0),_load_groups(0),_load_flows(0),_load_current_flow_text(0),_on_group_select(0),_on_flow_select(0),new_group(0),new_flow(0),save_current_flow(0),dry_run_current_flow(0),_refresh_services(0),add_service(0),start_runtime(0),open_voice_ui(0),stop_runtime(0),discover_peers(0),_refresh_network_views(1),_on_device_select(1),_refresh_peers(0),refresh_log(0),append_log(1),save_all(0),_on_close(0)
+    launch_gui()
+  src/ifuri_app/gui_chat.py:
+    e: ChatTabMixin
+    ChatTabMixin: _build_chat_tab(0),_router_endpoint(0),_runtime_base_url(0),_chat_prompt_text(0),_sync_chat_prompt_url(0),_open_chat_in_browser(0),_refresh_chat_channels(0),_apply_chat_channels(1),_on_chat_channel_select(1),_load_chat_history_from_urisys(1),_apply_chat_history(2),_render_chat_thread(0),_append_chat(2),_send_chat_message(0),_finish_chat_reply(2)  # Mixin for IfuriDesktop — call _build_chat_tab() from _build_
+  src/ifuri_app/network_scan.py:
+    e: _local_ipv4,_subnet_hosts,probe_urisys_node,probe_ifuri_peer,_collect_local_services,_services_from_peers,scan_urisys_nodes,scan_network,try_mdns_urisys
+    _local_ipv4()
+    _subnet_hosts(ip)
+    probe_urisys_node(host;port)
+    probe_ifuri_peer(api_url)
+    _collect_local_services()
+    _services_from_peers(peers)
+    scan_urisys_nodes()
+    scan_network()
+    try_mdns_urisys(timeout)
+  src/ifuri_app/packs/__init__.py:
+  src/ifuri_app/packs/loader.py:
+    e: packages_root,discover_manifests,_ensure_pack_path,load_local_registry,pack_summary
+    packages_root()
+    discover_manifests(root)
+    _ensure_pack_path(pack_dir)
+    load_local_registry(manifest_paths)
+    pack_summary(root)
+  src/ifuri_app/packs/runtime.py:
+    e: get_local_uri_runtime,dispatch_local_uri,local_runtime_info
+    get_local_uri_runtime()
+    dispatch_local_uri(uri;payload)
+    local_runtime_info()
+  src/ifuri_app/paths.py:
+    e: app_package_dir,web_dir,assets_dir,repo_root,packages_dir
+    app_package_dir()
+    web_dir()
+    assets_dir()
+    repo_root()
+    packages_dir()
+  src/ifuri_app/remote_screen.py:
+    e: unwrap_result,screen_uri,capture_remote_screen,probe_remote_control
+    unwrap_result(response)
+    screen_uri()
+    capture_remote_screen(client)
+    probe_remote_control(client)
+  src/ifuri_app/runtime.py:
+    e: _port_listeners,format_port_in_use_error,_port_available,find_free_port,bind_runtime_server,_load_urirun_policy,json_bytes,make_handler,PortInUseError,ThreadingHTTPServer,RuntimeState,RuntimeServer
+    PortInUseError:  # HTTP bind failed because the port is already taken.
+    ThreadingHTTPServer:
+    RuntimeState: __init__(2),load(0),health(0),call_uri(3),run_flow(2)
+    RuntimeServer: __init__(2),url(0),start(0),stop(0)
+    _port_listeners(port)
+    format_port_in_use_error(host;port)
+    _port_available(host;port)
+    find_free_port(host;start)
+    bind_runtime_server(host;port;handler)
+    _load_urirun_policy(data;approved)
+    json_bytes(data)
+    make_handler(state)
+  src/ifuri_app/sample_data.py:
+    e: default_workspace
+    default_workspace()
+  src/ifuri_app/storage.py:
+    e: app_home,workspace_path,ensure_home,now_iso,load_workspace,normalize_workspace,save_workspace,add_event
+    app_home()
+    workspace_path()
+    ensure_home()
+    now_iso()
+    load_workspace()
+    normalize_workspace(data)
+    save_workspace(data)
+    add_event(data;event_type)
+  src/ifuri_app/urirun_bridge.py:
+    e: urirun_info,load_registry,service_map_env,parse_json_object,call_urirun,registry_summary,default_urirun_registry,dispatch_local,list_routes,serve_http,scan_project,mcp_tools,a2a_card,serve_mcp
+    urirun_info()
+    load_registry(path)
+    service_map_env(service_map)
+    parse_json_object(value)
+    call_urirun(uri;payload)
+    registry_summary(path)
+    default_urirun_registry()
+    dispatch_local(uri;payload)
+    list_routes(registry_path)
+    serve_http()
+    scan_project(path)
+    mcp_tools(registry_path)
+    a2a_card(registry_path)
+    serve_mcp()
+  src/ifuri_app/urisys_client.py:
+    e: default_node_endpoint,node_llm_available,node_webrtc_available,node_voice_capabilities,UrisysNodeClient
+    UrisysNodeClient: __init__(1),health(0),call_uri(2),app_chat_messages(1),app_chat_channels(0),app_chat_append(3),_get(1),_post(2)
+    default_node_endpoint()
+    node_llm_available(client)
+    node_webrtc_available(client)
+    node_voice_capabilities(client)
+  src/ifuri_app/url_params.py:
+    e: voice_query,voice_url,merge_voice_url
+    voice_query()
+    voice_url(base)
+    merge_voice_url(url)
+  src/ifuri_app/voice_pipeline.py:
+    e: _extract_stt_text,run_voice_command,voice_capabilities,install_voice_packs,voice_pack_install_hint,_connection_hint
+    _extract_stt_text(stt)
+    run_voice_command(text)
+    voice_capabilities(client)
+    install_voice_packs()
+    voice_pack_install_hint(client)
+    _connection_hint(result;endpoint)
+  src/ifuri_app/voice_planner.py:
+    e: voice_planner_mode,load_flow_catalog,node_has_llm,_flow_plan,plan_with_regex,_catalog_tokens,plan_with_catalog,_parse_llm_plan_json,_unwrap_llm_result,plan_with_llm,plan_voice_command
+    voice_planner_mode()
+    load_flow_catalog()
+    node_has_llm(client)
+    _flow_plan(flow_ref;text)
+    plan_with_regex(text)
+    _catalog_tokens(item)
+    plan_with_catalog(text;catalog)
+    _parse_llm_plan_json(raw;text)
+    _unwrap_llm_result(resp)
+    plan_with_llm(text;client;catalog)
+    plan_voice_command(text)
+  src/ifuri_app/webrtc_pipeline.py:
+    e: webrtc_capabilities,install_webrtc_pack,webrtc_smoke,webrtc_pack_install_hint
+    webrtc_capabilities(client)
+    install_webrtc_pack()
+    webrtc_smoke()
+    webrtc_pack_install_hint(client)
+  src/ifuri_app/webrtc_signal.py:
+    e: local_peer_url,webrtc_room_id,is_webrtc_initiator,_purge_room,post_signal,poll_signals,room_stats
+    local_peer_url()
+    webrtc_room_id(local_url;remote_url)
+    is_webrtc_initiator(local_url;remote_url)
+    _purge_room(room;entry)
+    post_signal(room)
+    poll_signals(room)
+    room_stats()
+  tests/e2e/test_voice_playwright.py:
+    e: voice_server,test_voice_page_loads_and_lang_toggle,test_voice_static_i18n_bundle
+    voice_server(tmp_path_factory)
+    test_voice_page_loads_and_lang_toggle(voice_server)
+    test_voice_static_i18n_bundle(voice_server)
+  tests/test_api_runtime.py:
+    e: server,_get,_post,test_health,test_voice_page,test_static_assets,test_api_packs,test_api_urirun_status,test_api_urirun_call_contract,test_uri_call_voice_plan,test_flow_validate,test_flow_expand,test_flow_expand_missing_text,test_chat_channels,test_chat_history,test_network_scan,test_voice_plan,test_chat_send_empty,test_concurrent_health,test_not_found,test_webrtc_signal_api
+    server(tmp_path_factory)
+    _get(url)
+    _post(url;payload)
+    test_health(server)
+    test_voice_page(server)
+    test_static_assets(server)
+    test_api_packs(server)
+    test_api_urirun_status(server)
+    test_api_urirun_call_contract(server)
+    test_uri_call_voice_plan(server)
+    test_flow_validate(server)
+    test_flow_expand(server)
+    test_flow_expand_missing_text(server)
+    test_chat_channels(server)
+    test_chat_history(server)
+    test_network_scan(server)
+    test_voice_plan(server)
+    test_chat_send_empty(server)
+    test_concurrent_health(server)
+    test_not_found(server)
+    test_webrtc_signal_api(server)
+  tests/test_chat_channels.py:
+    e: test_channels_from_scan_groups_endpoints,test_send_empty_message
+    test_channels_from_scan_groups_endpoints()
+    test_send_empty_message()
+  tests/test_chat_history.py:
+    e: test_fetch_chat_history_from_node,test_persist_chat_turn
+    test_fetch_chat_history_from_node()
+    test_persist_chat_turn()
+  tests/test_chat_migrate.py:
+    e: test_chat_available_false_on_404,test_migrate_skips_when_unavailable,test_migrate_uploads_local_messages
+    test_chat_available_false_on_404()
+    test_migrate_skips_when_unavailable()
+    test_migrate_uploads_local_messages(tmp_path;monkeypatch)
+  tests/test_chat_store.py:
+    e: local_store,test_local_store_roundtrip,test_fetch_history_falls_back_on_404,test_persist_falls_back_on_404
+    local_store(tmp_path;monkeypatch)
+    test_local_store_roundtrip(local_store)
+    test_fetch_history_falls_back_on_404(local_store)
+    test_persist_falls_back_on_404(local_store)
+  tests/test_cli_chat.py:
+    e: test_cli_chat_status_calls_urisys_chat_available
+    test_cli_chat_status_calls_urisys_chat_available()
+  tests/test_flow_compile.py:
+    e: test_uri2flow_available,test_expand_flow_uses_uri2flow,test_expand_flow_compiled_graph_edges,test_flow_steps_from_kvm_linkedin_flow
+    test_uri2flow_available()
+    test_expand_flow_uses_uri2flow()
+    test_expand_flow_compiled_graph_edges()
+    test_flow_steps_from_kvm_linkedin_flow()
+  tests/test_gui_smoke.py:
+    e: test_gui_module_imports,test_gui_smoke_script_parse
+    test_gui_module_imports()
+    test_gui_smoke_script_parse()
+  tests/test_ifuri_app.py:
+    e: test_plan_linkedin_flow,test_plan_health_flow,test_plan_voice_fallback,test_expand_flow_extracts_uris,test_scan_network_structure,test_node_voice_capabilities_without_voice_packs,test_node_voice_capabilities_with_stt_pack,test_screen_uri,test_unwrap_result_nested,test_capture_remote_screen_mock,test_connection_hint_on_refused
+    test_plan_linkedin_flow()
+    test_plan_health_flow()
+    test_plan_voice_fallback()
+    test_expand_flow_extracts_uris()
+    test_scan_network_structure()
+    test_node_voice_capabilities_without_voice_packs()
+    test_node_voice_capabilities_with_stt_pack()
+    test_screen_uri()
+    test_unwrap_result_nested()
+    test_capture_remote_screen_mock()
+    test_connection_hint_on_refused()
+  tests/test_packs_loader.py:
+    e: test_packages_root_exists,test_discover_manifests_finds_bridge_voice_chat,test_pack_summary_lists_js_page_pack,test_load_local_registry_when_uricore_available
+    test_packages_root_exists()
+    test_discover_manifests_finds_bridge_voice_chat()
+    test_pack_summary_lists_js_page_pack()
+    test_load_local_registry_when_uricore_available()
+  tests/test_packs_runtime.py:
+    e: test_local_runtime_info,test_voice_plan_local_pack
+    test_local_runtime_info()
+    test_voice_plan_local_pack()
+  tests/test_urirun_bridge.py:
+    e: test_urirun_info_shape,test_call_without_installed_urirun,test_parse_json_object_rejects_arrays,test_service_map_env_restores_previous
+    test_urirun_info_shape()
+    test_call_without_installed_urirun(monkeypatch)
+    test_parse_json_object_rejects_arrays()
+    test_service_map_env_restores_previous(monkeypatch)
+  tests/test_urirun_integration.py:
+    e: _registry,test_dispatch_local_unknown_route_returns_none,test_dispatch_local_dry_run_uses_urirun,test_dispatch_local_execute_with_policy,test_dispatch_local_without_registry_returns_none,test_scan_project_builds_registry,test_run_flow_routes_via_urirun,test_urirun_serve_http,test_cli_urirun_call_in_process_execute,test_mcp_tools_and_a2a_card
+    _registry()
+    test_dispatch_local_unknown_route_returns_none()
+    test_dispatch_local_dry_run_uses_urirun()
+    test_dispatch_local_execute_with_policy()
+    test_dispatch_local_without_registry_returns_none(monkeypatch)
+    test_scan_project_builds_registry(tmp_path)
+    test_run_flow_routes_via_urirun(tmp_path;monkeypatch)
+    test_urirun_serve_http(tmp_path)
+    test_cli_urirun_call_in_process_execute(tmp_path)
+    test_mcp_tools_and_a2a_card()
+  tests/test_url_params.py:
+    e: test_voice_url_builds_prompt,test_voice_query_skips_empty,test_merge_voice_url
+    test_voice_url_builds_prompt()
+    test_voice_query_skips_empty()
+    test_merge_voice_url()
+  tests/test_voice_capabilities.py:
+    e: server,test_voice_capabilities_structure,test_install_skips_when_packs_present,test_api_voice_capabilities,FakeClient
+    FakeClient: health(0)
+    server(tmp_path_factory)
+    test_voice_capabilities_structure()
+    test_install_skips_when_packs_present()
+    test_api_voice_capabilities(server)
+  tests/test_voice_pack_hint.py:
+    e: test_voice_pack_hint_when_no_stt
+    test_voice_pack_hint_when_no_stt()
+  tests/test_voice_planner.py:
+    e: test_regex_health,test_catalog_loads_examples,test_catalog_matches_description_keywords,test_auto_planner_fallback,test_llm_planner_flow_json
+    test_regex_health()
+    test_catalog_loads_examples()
+    test_catalog_matches_description_keywords()
+    test_auto_planner_fallback()
+    test_llm_planner_flow_json()
+  tests/test_webrtc_pipeline.py:
+    e: test_node_voice_capabilities_includes_webrtc,test_webrtc_capabilities_when_loaded,test_webrtc_pack_hint_when_missing,test_install_skips_when_webrtc_present,FakeClient,MissingWebRtcClient
+    FakeClient: health(0)
+    MissingWebRtcClient: health(0)
+    test_node_voice_capabilities_includes_webrtc()
+    test_webrtc_capabilities_when_loaded()
+    test_webrtc_pack_hint_when_missing()
+    test_install_skips_when_webrtc_present()
+  tests/test_webrtc_signal.py:
+    e: test_webrtc_room_id_is_symmetric,test_initiator_is_lexicographically_smaller_url,test_signal_post_and_poll
+    test_webrtc_room_id_is_symmetric()
+    test_initiator_is_lexicographically_smaller_url()
+    test_signal_post_and_poll()

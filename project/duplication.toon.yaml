@@ -1,0 +1,83 @@
+# redup/duplication | 7 groups | 38f 5799L | 2026-06-19
+
+SUMMARY:
+  files_scanned: 38
+  total_lines:   5799
+  dup_groups:    7
+  dup_fragments: 14
+  saved_lines:   50
+  scan_ms:       2101
+
+HOTSPOTS[5] (files with most duplication):
+  src/ifuri_app/cli.py  dup=44L  groups=4  frags=8  (0.8%)
+  src/ifuri_app/urirun_bridge.py  dup=30L  groups=1  frags=2  (0.5%)
+  src/ifuri_app/urisys_client.py  dup=14L  groups=1  frags=2  (0.2%)
+  src/ifuri_app/flow_compile.py  dup=4L  groups=1  frags=1  (0.1%)
+  src/ifuri_app/flow_engine.py  dup=4L  groups=1  frags=1  (0.1%)
+
+DUPLICATES[7] (ranked by impact):
+  [71b0c91d36991313]   STRU  list_routes  L=17 N=2 saved=17 sim=1.00
+      src/ifuri_app/urirun_bridge.py:213-229  (list_routes)
+      src/ifuri_app/urirun_bridge.py:363-375  (mcp_tools)
+  [0de8715c258857c0]   STRU  cmd_flow_run  L=10 N=2 saved=10 sim=1.00
+      src/ifuri_app/cli.py:200-209  (cmd_flow_run)
+      src/ifuri_app/cli.py:212-221  (cmd_voice_plan)
+  [befabce1a989deb4]   STRU  node_llm_available  L=7 N=2 saved=7 sim=1.00
+      src/ifuri_app/urisys_client.py:36-42  (node_llm_available)
+      src/ifuri_app/urisys_client.py:45-51  (node_webrtc_available)
+  [47d5a29ae4df3970]   STRU  cmd_voice_install_packs  L=5 N=2 saved=5 sim=1.00
+      src/ifuri_app/cli.py:237-241  (cmd_voice_install_packs)
+      src/ifuri_app/cli.py:250-254  (cmd_webrtc_install_pack)
+  [bc6e3b103bbf2be5]   STRU  cmd_voice_capabilities  L=4 N=2 saved=4 sim=1.00
+      src/ifuri_app/cli.py:231-234  (cmd_voice_capabilities)
+      src/ifuri_app/cli.py:244-247  (cmd_webrtc_capabilities)
+  [4626c3d55952124f]   STRU  _scheme  L=4 N=2 saved=4 sim=1.00
+      src/ifuri_app/flow_compile.py:148-151  (_scheme)
+      src/ifuri_app/flow_engine.py:58-61  (uri_scheme)
+  [81b8d023ddbd7602]   EXAC  _stop  L=3 N=2 saved=3 sim=1.00
+      src/ifuri_app/cli.py:103-105  (_stop)
+      src/ifuri_app/cli.py:144-146  (_stop)
+
+REFACTOR[7] (ranked by priority):
+  [1] ○ extract_function   → src/ifuri_app/utils/list_routes.py
+      WHY: 2 occurrences of 17-line block across 1 files — saves 17 lines
+      FILES: src/ifuri_app/urirun_bridge.py
+  [2] ○ extract_function   → src/ifuri_app/utils/cmd_flow_run.py
+      WHY: 2 occurrences of 10-line block across 1 files — saves 10 lines
+      FILES: src/ifuri_app/cli.py
+  [3] ○ extract_function   → src/ifuri_app/utils/node_llm_available.py
+      WHY: 2 occurrences of 7-line block across 1 files — saves 7 lines
+      FILES: src/ifuri_app/urisys_client.py
+  [4] ○ extract_function   → src/ifuri_app/utils/cmd_voice_install_packs.py
+      WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
+      FILES: src/ifuri_app/cli.py
+  [5] ○ extract_function   → src/ifuri_app/utils/cmd_voice_capabilities.py
+      WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
+      FILES: src/ifuri_app/cli.py
+  [6] ○ extract_function   → src/ifuri_app/utils/_scheme.py
+      WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
+      FILES: src/ifuri_app/flow_compile.py, src/ifuri_app/flow_engine.py
+  [7] ○ extract_function   → src/ifuri_app/utils/_stop.py
+      WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
+      FILES: src/ifuri_app/cli.py
+
+QUICK_WINS[3] (low risk, high savings — do first):
+  [1] extract_function   saved=17L  → src/ifuri_app/utils/list_routes.py
+      FILES: urirun_bridge.py
+  [2] extract_function   saved=10L  → src/ifuri_app/utils/cmd_flow_run.py
+      FILES: cli.py
+  [3] extract_function   saved=7L  → src/ifuri_app/utils/node_llm_available.py
+      FILES: urisys_client.py
+
+EFFORT_ESTIMATE (total ≈ 1.7h):
+  medium list_routes                         saved=17L  ~34min
+  easy   cmd_flow_run                        saved=10L  ~20min
+  easy   node_llm_available                  saved=7L  ~14min
+  easy   cmd_voice_install_packs             saved=5L  ~10min
+  easy   cmd_voice_capabilities              saved=4L  ~8min
+  easy   _scheme                             saved=4L  ~8min
+  easy   _stop                               saved=3L  ~6min
+
+METRICS-TARGET:
+  dup_groups:  7 → 0
+  saved_lines: 50 lines recoverable
