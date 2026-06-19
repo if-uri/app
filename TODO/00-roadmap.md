@@ -8,6 +8,11 @@ Cross-repo plan for the ifURI ecosystem. One file per area; check items as done.
 - **Brand**: unified palette (indigo/emerald/slate) + theme-aware logo; copy buttons on code; PWA, SEO (sitemap/robots), 404, a11y, contact+privacy.
 - **urirun**: renamed `tellmesh/urirun`; v1/v2 runtime; integrated into the app
   (`ifuri-app urirun-info|scan|call|serve`, urirun-first dispatch).
+- **urirun connector authoring**: `urirun.v2.connector_bindings()` exists, so connector
+  packages can expose JSON-serializable bindings from `@uri_command` decorators.
+- **Full E2E lab**: `if-uri/examples/12-full_e2e_connect_lab` verifies get.ifuri.com,
+  two urirun nodes, connector install, registry runtime, flow execution, MCP tools
+  and A2A skills.
 - **App CI**: `ci.yml` (pytest 3.10–3.13 + wheel) and `build-release.yml`
   (PyInstaller binaries for linux/windows/macos-arm64 → GitHub Release).
 
@@ -18,6 +23,24 @@ Cross-repo plan for the ifURI ecosystem. One file per area; check items as done.
   [10-app-desktop](10-app-desktop.md), [20-get-node](20-get-node.md).
 - **P1** — seed the connector hub with real integrations: [30-connect-connectors](30-connect-connectors.md).
 - **P2** — broaden reuse / integrations to other platforms: [60-reuse](60-reuse.md).
+
+## Execution order
+1. **Make installs reproducible**: tag/release `tellmesh/urirun`, then update
+   `get.ifuri.com/node.sh`, app extras and connector dependencies to pin a tag or
+   release wheel instead of `@main`.
+2. **Automate the proven E2E path**: move the passing full Docker lab into CI as a
+   manual/nightly workflow, because it validates the actual user path across repos.
+3. **Harden connector distribution**: validate hub manifests in CI, keep the catalog
+   generated, and migrate new connector packages to `@uri_command` +
+   `connector_bindings()`.
+4. **Then package UX**: first-run wizard, service install, and Tauri shell only after
+   the runtime/install path is reproducible.
+
+## Do not execute blindly
+- Do not run generated `TODO.md` fixes against `build/lib/*`; those are build
+  artifacts and should be cleaned/excluded instead.
+- Do not auto-run `prefact -a --execute-todos` across the repo. It mixes low-value
+  style noise with real behavior changes.
 
 ## Files
 - [10-app-desktop.md](10-app-desktop.md) — ifURI desktop app (packaging, Tauri, updates)

@@ -22,6 +22,8 @@
 ### Connectors (connect.ifuri.com)
 - [ ] Validate connector manifests against `schema/*.json` on PR.
 - [ ] Build/publish `registry.json` + `search.json` artifacts.
+- [ ] Add a manual/nightly full connector lab workflow running
+  `if-uri/examples/12-full_e2e_connect_lab make test`.
 
 ### Site deploys (ifuri-com, examples, docs, logo, get, connect)
 - [ ] Optional **GitHub Actions deploy on push to main** running each repo's
@@ -34,5 +36,6 @@
 - [ ] (Optional) VS Code extension build, MCP server image — see [60-reuse](60-reuse.md).
 
 ## Recommendation
-P0: checksums + **urirun release.yml** (so get/app pin a real version) + site auto-deploy.
-P1: signing/notarization + Tauri job. P2: Docker/extension images.
+P0: tag/release **urirun**, pin get/app/connectors to that release, and add the
+full connector lab as manual/nightly CI.
+P1: site auto-deploy + signing/notarization + Tauri job. P2: Docker/extension images.
