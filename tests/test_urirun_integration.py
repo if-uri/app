@@ -190,3 +190,23 @@ def test_urirun_serve_http(tmp_path):
     run = _post("/run", {"uri": "sys://local/echo/hello", "execute": True})
     assert run["ok"] is True
     assert run["result"]["stdout"].strip() == "served-by-urirun"
+
+
+def test_cli_urirun_call_in_process_execute(tmp_path):
+    """ifuri-app urirun-call runs a local-registry URI in-process (no service)."""
+    import json as _json, subprocess, sys
+    (tmp_path / "urirun.bindings.v2.json").write_text(
+        _json.dumps({"version": "urirun.bindings.v2", "bindings": {
+            "sys://local/echo/hello": {"kind": "command", "adapter": "argv-template",
+                                       "argv": ["echo", "hello-cli"]}}}),
+        encoding="utf-8")
+    reg = tmp_path / "registry.json"
+    subprocess.run([sys.executable, "-m", "ifuri_app.cli", "urirun-scan", str(tmp_path),
+                    "--registry-out", str(reg)], check=True, capture_output=True)
+    out = subprocess.run([sys.executable, "-m", "ifuri_app.cli", "urirun-call",
+                          "sys://local/echo/hello", "--registry", str(reg), "--execute"],
+                         capture_output=True, text=True)
+    data = _json.loads(out.stdout)
+    assert data["ok"] is True
+    assert data["via"] == "urirun"
+    assert data["result"]["stdout"].strip() == "hello-cli"
