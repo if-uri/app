@@ -10,9 +10,9 @@
 - [x] **Integrity**: `node.sh.sha256` published + `sha256sum -c` verify instructions (README); `--no-start`/`--dry-run` to preview before running.
 - [ ] **Windows / macOS**: `get.ifuri.com/node.ps1` (PowerShell) and a `brew`/`pipx` path; document each.
 - [ ] **Service install**: `--service` flag → systemd (Linux) / launchd (macOS) / NSSM (Windows) so the node survives reboot.
-- [ ] **Idempotent upgrade**: `node.sh --upgrade` reuses venv, bumps urirun, restarts.
+- [x] **Idempotent upgrade**: `node.sh --upgrade` reuses venv, bumps urirun, recompiles, restarts running node.
 - [x] **App shortcut**: `get.ifuri.com/app` → 302 to latest desktop release (.htaccess + app/).
-- [ ] **Health after install**: hit `/health` and print the node's URI routes + LAN address.
+- [x] **Health after install**: background installs poll `/health` and print URI routes + LAN address.
 - [ ] No telemetry; print exactly what it installs and where.
 
 ## Verify
