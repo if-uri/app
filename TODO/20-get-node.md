@@ -7,11 +7,11 @@
 
 ## Tasks
 - [x] **Pin versions**: default to released urirun tag `v0.3.12` (see [40-urirun](40-urirun.md)) instead of `@main`, with `URIRUN_REF` override — reproducible installs.
-- [ ] **Integrity**: publish + check a SHA-256 of `node.sh` (and print "verify with: …"); avoid blind `curl|bash` foot-gun (offer `--dry-run` / download-then-run).
+- [x] **Integrity**: `node.sh.sha256` published + `sha256sum -c` verify instructions (README); `--no-start`/`--dry-run` to preview before running.
 - [ ] **Windows / macOS**: `get.ifuri.com/node.ps1` (PowerShell) and a `brew`/`pipx` path; document each.
 - [ ] **Service install**: `--service` flag → systemd (Linux) / launchd (macOS) / NSSM (Windows) so the node survives reboot.
 - [ ] **Idempotent upgrade**: `node.sh --upgrade` reuses venv, bumps urirun, restarts.
-- [ ] **App shortcut**: `get.ifuri.com/app` → redirect to latest desktop release (GitHub Releases).
+- [x] **App shortcut**: `get.ifuri.com/app` → 302 to latest desktop release (.htaccess + app/).
 - [ ] **Health after install**: hit `/health` and print the node's URI routes + LAN address.
 - [ ] No telemetry; print exactly what it installs and where.
 
