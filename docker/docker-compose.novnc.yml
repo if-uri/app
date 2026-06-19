@@ -1,0 +1,22 @@
+# Interactive ifURI desktop GUI in the browser via noVNC.
+#
+#   docker compose -f docker/docker-compose.novnc.yml up --build
+#   open http://localhost:6080/vnc.html?autoconnect=1&resize=remote
+#
+# (or: make run-gui-novnc)
+services:
+  ifuri-gui-novnc:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.gui-novnc
+    image: ifuri-gui-novnc:latest
+    container_name: ifuri-gui-novnc
+    ports:
+      - "6080:6080"   # noVNC (browser)
+      - "8765:8765"   # ifURI runtime API (optional)
+    environment:
+      IFURI_GUI_GEOMETRY: ${IFURI_GUI_GEOMETRY:-1280x800x24}
+      URISYS_NODE_ENDPOINT: ${URISYS_NODE_ENDPOINT:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    shm_size: "256m"

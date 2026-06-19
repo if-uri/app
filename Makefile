@@ -75,6 +75,10 @@ test-gui:
 test-gui-docker:
 	bash scripts/test-gui-docker.sh
 
+run-gui-novnc:
+	docker compose -f docker/docker-compose.novnc.yml up --build
+	@echo "open http://localhost:6080/vnc.html?autoconnect=1&resize=remote"
+
 run:
 	PYTHONPATH=src $(PYTHON) -m ifuri_app $(ARGS)
 
