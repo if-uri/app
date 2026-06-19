@@ -5,13 +5,13 @@
 - JS adapter in `adapters/js/`, C adapter in `adapters/c/`.
 - CI: `.github/workflows/ci.yml` → `make test` (py3.12).
 - Docs say: PyPI optional; install from GitHub or GitHub Release wheels.
-- Consumers now pin `v0.3.5` by default (app extra, get/node.sh, connector deps, connect catalog).
+- Consumers now pin `v0.3.11` by default (app extra, get/node.sh, connector deps, connect catalog).
 - `release.yml` builds wheel + sdist + `sha256sums.txt` on `v*` tags.
 - `urirun.v2.connector_bindings()` is available for connector packages that generate
   bindings from decorators.
 
 ## Tasks
-- [x] **Pinned consumers** to released tag `v0.3.5` (app extra, get/node.sh, connector deps, connect catalog and docs).
+- [x] **Pinned consumers** to released tag `v0.3.11` (app extra, get/node.sh, connector deps, connect catalog and docs).
 - [x] **Release workflow** (`release.yml`): on tag `v*` → build wheel + sdist (`adapters/python`),
   attach to GitHub Release (+ `sha256sums.txt`). This is what `get`/app should pin to.
 - [x] **Version source of truth**: bump `adapters/python/pyproject.toml` (currently 0.3.x) on release;
@@ -25,7 +25,7 @@
 - [x] Tag the first post-helper release and update consumers away from `@main`.
 
 ## Verify
-- Tag `v0.3.5` → Release contains `urirun-X.Y.Z-py3-none-any.whl` + `*.tar.gz` + `sha256sums.txt`.
+- Tag `v0.3.11` → Release contains `urirun-X.Y.Z-py3-none-any.whl` + `*.tar.gz` + `sha256sums.txt`.
 - `pip install <release wheel>` works; `urirun --help`, `urirun scan`, `urirun run`.
 - Fresh GitHub install of `urirun-connector-http-check` pulls `urirun` and generates
   bindings through `connector_bindings()`.
