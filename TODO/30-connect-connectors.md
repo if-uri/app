@@ -22,8 +22,7 @@ kvm, llm, …) → bridges into a **urirun binding/registry** the app/flows can 
 - [x] **Validation in CI**: `scripts/validate_connectors.py` validates manifests + catalog against `schema/*.json` (see [50-cicd](50-cicd.md)).
 - [ ] **Submit flow**: harden `POST /validate-connector`; rate-limit; spam guard for `/submit`.
 - [ ] **Signing/trust**: optional signed manifests + a "verified" badge.
-- [ ] **Discovery**: project the catalog to **MCP tools/list** and an **A2A agent card**
-  (`registry.json` already machine-readable) so agents can find connectors.
+- [x] **Discovery**: catalog projected to MCP tools (`/mcp.json`) + A2A card (`/a2a.json`, `/.well-known/agent.json`) so agents can find connectors.
 - [ ] **SEO**: confirm `sitemap.php`/`robots.php` output; link from ifuri.com.
 - [ ] Cache `data/` catalog; document the `data/` directory (kept on deploy).
 
