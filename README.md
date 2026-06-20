@@ -153,6 +153,16 @@ Override: `IFURI_HOME`, `IFURI_CHAT_STORE`
 
 [TODO.md](TODO.md) · [CHANGELOG.md](CHANGELOG.md)
 
+## Related ifURI projects
+
+- Runtime: [tellmesh/urirun](https://github.com/tellmesh/urirun)
+- Public docs: [if-uri/docs](https://github.com/if-uri/docs)
+- Examples and Docker/noVNC flows: [if-uri/examples](https://github.com/if-uri/examples)
+- Connector hub: [connect.ifuri.com](https://connect.ifuri.com)
+- Installer: [get.ifuri.com](https://get.ifuri.com)
+- Current cross-repository summary:
+  [work-summary-2026-06-20](https://github.com/if-uri/docs/blob/main/work-summary-2026-06-20.md)
+
 ## License
 
 Licensed under Apache-2.0.

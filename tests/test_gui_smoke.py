@@ -12,9 +12,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 def test_gui_module_imports():
     import tkinter  # noqa: F401
 
-    from ifuri_app.gui import IfuriDesktop, launch_gui  # noqa: F401
+    from ifuri_app.gui import IfuriDesktop, TREE_ROW_HEIGHT, launch_gui  # noqa: F401
 
     assert callable(launch_gui)
+    assert TREE_ROW_HEIGHT >= 28
 
 
 def test_gui_smoke_script_parse():

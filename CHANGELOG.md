@@ -114,10 +114,15 @@
 - build-release matrix gained **macos-x86_64** (`macos-13`) alongside linux/windows/macos-arm64
 - systemd/launchd/NSSM node service units for the local runtime: `systemd/ifuri-runtime-user.service`, `com.ifuri.runtime.plist`, `ifuri-runtime.env.example` (+ `systemd/README.md`)
 - Tauri desktop scaffold (`desktop/`, `make run-tauri-dev`) — native WebView for `/voice`
+- Cross-repository links to `urirun`, docs, examples, connector hub and installer.
+- Manual project TODO section for app-level `urirun`/connector/noVNC follow-up work.
 
 ### Changed
 - `ifuri-app urirun-call` runs local registries in-process for dry-run/execute (no HTTP service required)
 - Pin `urirun` extra to released tag **v0.3.12** (`git+…@v0.3.12`) instead of `@main` for reproducible installs
+
+### Fixed
+- Improve the desktop GUI service table readability for long URI route values.
 
 ## [0.2.10] - 2026-06-17
 

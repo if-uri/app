@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import shutil
+from pathlib import Path
 
 import pytest
 
@@ -12,10 +13,19 @@ from ifuri_app.runtime import RuntimeServer, find_free_port
 pytest.importorskip("playwright.sync_api")
 from playwright.sync_api import sync_playwright  # noqa: E402
 
-pytestmark = pytest.mark.skipif(
-    shutil.which("playwright") is None,
-    reason="playwright CLI missing — run: playwright install chromium",
-)
+def launch_chromium(playwright):
+    for candidate in (
+        os.environ.get("CHROME_BIN"),
+        "google-chrome",
+        "google-chrome-stable",
+        "chromium",
+        "chromium-browser",
+    ):
+        if candidate and shutil.which(candidate):
+            return playwright.chromium.launch(headless=True, executable_path=shutil.which(candidate))
+    if Path(playwright.chromium.executable_path).is_file():
+        return playwright.chromium.launch(headless=True)
+    pytest.skip("Chromium missing; run `make install-e2e` or set CHROME_BIN")
 
 
 @pytest.fixture(scope="module")
@@ -32,7 +42,7 @@ def voice_server(tmp_path_factory):
 def test_voice_page_loads_and_lang_toggle(voice_server):
     base = voice_server.url
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = launch_chromium(p)
         page = browser.new_page()
         page.goto(f"{base}/voice?lang=pl")
         page.wait_for_selector("#chatTitle")

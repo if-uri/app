@@ -21,7 +21,7 @@ help:
 	@echo "  install-dev      editable install + flows extra + pytest"
 	@echo "  test             run pytest (unit + API)"
 	@echo "  test-api         API smoke tests only"
-	@echo "  test-e2e         Playwright /voice UI (uv sync --group e2e && make install-e2e)"
+	@echo "  test-e2e         Playwright /voice UI"
 	@echo "  test-gui-docker  Docker GUI smoke (debian/ubuntu/fedora)"
 	@echo ""
 	@echo "  run ARGS='...'   run arbitrary ifuri-app CLI command"
@@ -63,11 +63,11 @@ test-api:
 	PYTHONPATH=src $(PYTHON) -m pytest tests/test_api_runtime.py -q
 
 test-e2e:
-	PYTHONPATH=src uv run --group e2e pytest tests/e2e -q
+	PYTHONPATH=src $(PYTHON) -m pytest tests/e2e -q
 
 install-e2e:
-	uv sync --group e2e
-	uv run --group e2e python -m playwright install chromium
+	$(PYTHON) -m pip install pytest-playwright playwright
+	$(PYTHON) -m playwright install chromium
 
 test-gui:
 	PYTHONPATH=src $(PYTHON) -m pytest tests/test_gui_smoke.py -q

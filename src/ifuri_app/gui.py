@@ -20,6 +20,11 @@ from .gui_chat import ChatTabMixin
 from .url_params import voice_url
 
 
+TREE_FONT = ("TkDefaultFont", 11)
+TREE_HEADING_FONT = ("TkDefaultFont", 11, "bold")
+TREE_ROW_HEIGHT = 30
+
+
 class IfuriDesktop(ChatTabMixin, tk.Tk):
     def __init__(self):
         super().__init__()
@@ -44,8 +49,12 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         except tk.TclError:
             pass
         style.configure("TNotebook", padding=4)
+        style.configure("TNotebook.Tab", padding=(8, 4))
         style.configure("TButton", padding=7)
         style.configure("Header.TLabel", font=("TkDefaultFont", 18, "bold"))
+        style.configure("Treeview", font=TREE_FONT, rowheight=TREE_ROW_HEIGHT)
+        style.configure("Treeview.Heading", font=TREE_HEADING_FONT, padding=(8, 5))
+        style.map("Treeview", background=[("selected", "#3f5f78")], foreground=[("selected", "#ffffff")])
 
     def _build_ui(self) -> None:
         top = ttk.Frame(self, padding=(12, 10))
@@ -112,20 +121,37 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         tab.rowconfigure(0, weight=1)
         tab.columnconfigure(0, weight=1)
         cols = ("scheme", "name", "uri", "scope", "enabled")
-        self.services_tree = ttk.Treeview(tab, columns=cols, show="headings")
+        tree_frame = ttk.Frame(tab)
+        tree_frame.grid(row=0, column=0, sticky="nsew")
+        tree_frame.rowconfigure(0, weight=1)
+        tree_frame.columnconfigure(0, weight=1)
+        self.services_tree = ttk.Treeview(tree_frame, columns=cols, show="headings", height=12)
+        service_columns = {
+            "scheme": {"width": 120, "minwidth": 90, "anchor": "w", "stretch": False},
+            "name": {"width": 230, "minwidth": 150, "anchor": "w", "stretch": True},
+            "uri": {"width": 520, "minwidth": 260, "anchor": "w", "stretch": True},
+            "scope": {"width": 120, "minwidth": 90, "anchor": "center", "stretch": False},
+            "enabled": {"width": 100, "minwidth": 80, "anchor": "center", "stretch": False},
+        }
         for col in cols:
             self.services_tree.heading(col, text=col)
-            self.services_tree.column(col, width=160 if col != "uri" else 440)
+            self.services_tree.column(col, **service_columns[col])
+        yscroll = ttk.Scrollbar(tree_frame, orient="vertical", command=self.services_tree.yview)
+        xscroll = ttk.Scrollbar(tree_frame, orient="horizontal", command=self.services_tree.xview)
+        self.services_tree.configure(yscrollcommand=yscroll.set, xscrollcommand=xscroll.set)
         self.services_tree.grid(row=0, column=0, sticky="nsew")
+        yscroll.grid(row=0, column=1, sticky="ns")
+        xscroll.grid(row=1, column=0, sticky="ew")
         controls = ttk.Frame(tab)
         controls.grid(row=1, column=0, sticky="ew", pady=8)
+        controls.columnconfigure(1, weight=1)
         self.service_name = tk.StringVar()
         self.service_uri = tk.StringVar(value="mcp://filesystem/list")
         self.service_scope = tk.StringVar(value="private")
-        ttk.Entry(controls, textvariable=self.service_name, width=24).pack(side="left", padx=(0, 6))
-        ttk.Entry(controls, textvariable=self.service_uri, width=52).pack(side="left", padx=(0, 6))
-        ttk.Combobox(controls, textvariable=self.service_scope, values=["private", "shared", "public"], width=10).pack(side="left", padx=(0, 6))
-        ttk.Button(controls, text="Add service", command=self.add_service).pack(side="left")
+        ttk.Entry(controls, textvariable=self.service_name, width=24).grid(row=0, column=0, sticky="ew", padx=(0, 6))
+        ttk.Entry(controls, textvariable=self.service_uri).grid(row=0, column=1, sticky="ew", padx=(0, 6))
+        ttk.Combobox(controls, textvariable=self.service_scope, values=["private", "shared", "public"], width=10).grid(row=0, column=2, sticky="ew", padx=(0, 6))
+        ttk.Button(controls, text="Add service", command=self.add_service).grid(row=0, column=3, sticky="e")
 
         srv = ttk.LabelFrame(tab, text="urirun-serve · registry HTTP (/health · /routes · POST /run)", padding=8)
         srv.grid(row=2, column=0, sticky="ew", pady=(8, 0))
@@ -403,8 +429,28 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
             return
         vals = self.device_tree.item(sel[0], "values")
         if len(vals) >= 3 and vals[0] == "urisys-node":
-            self.workspace.setdefault("urisys", {})["endpoint"] = vals[2]
-            save_workspace(self.workspace)
+            self._apply_node_endpoint(vals[2])
+
+    def _apply_node_endpoint(self, endpoint: str) -> None:
+        """Persist the chosen urirun node endpoint.
+
+        Shared by the device picker and the first-run wizard so both write the
+        same workspace key (urisys.endpoint), refresh the chat URL and log it.
+        """
+        endpoint = (endpoint or "").strip()
+        if not endpoint:
+            return
+        self.workspace.setdefault("urisys", {})["endpoint"] = endpoint
+        save_workspace(self.workspace)
+        if hasattr(self, "_sync_chat_prompt_url"):
+            self._sync_chat_prompt_url()
+        self.append_log(f"Node endpoint set: {endpoint}")
+
+    def _maybe_first_run(self) -> None:
+        """Show the first-run wizard once (until the user saves or skips it)."""
+        if self.workspace.get("setup_done"):
+            return
+        FirstRunWizard(self)
 
     def _refresh_peers(self) -> None:
         if not hasattr(self, "peer_tree"):
@@ -493,6 +539,108 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         self.destroy()
 
 
+class FirstRunWizard(tk.Toplevel):
+    """First-run setup: scan the LAN, pick (or type) a urirun node endpoint, save it.
+
+    Self-contained modal launched once from launch_gui() (not __init__, so the
+    headless GUI smoke / tests that build IfuriDesktop directly never trigger it).
+    """
+
+    def __init__(self, app: IfuriDesktop) -> None:
+        super().__init__(app)
+        self.app = app
+        self._endpoints: list[str] = []
+        self.title("ifURI — pierwsze uruchomienie")
+        self.geometry("540x440")
+        self.transient(app)
+        self.resizable(False, False)
+
+        frm = ttk.Frame(self, padding=16)
+        frm.pack(fill="both", expand=True)
+        ttk.Label(frm, text="Witaj w ifURI", font=("TkDefaultFont", 16, "bold")).pack(anchor="w")
+        ttk.Label(
+            frm,
+            text="Wskaż węzeł urirun w sieci LAN (lub wpisz adres ręcznie).\n"
+            "Możesz pominąć i ustawić później w zakładce „Sieć lokalna”.",
+            foreground="#5d6d7e",
+            justify="left",
+        ).pack(anchor="w", pady=(2, 10))
+
+        bar = ttk.Frame(frm)
+        bar.pack(fill="x")
+        self._scan_btn = ttk.Button(bar, text="Skanuj sieć LAN", command=self._scan)
+        self._scan_btn.pack(side="left")
+        self._status = tk.StringVar(value="")
+        ttk.Label(bar, textvariable=self._status, foreground="#5d6d7e").pack(side="left", padx=10)
+
+        self._list = tk.Listbox(frm, height=8)
+        self._list.pack(fill="both", expand=True, pady=10)
+        self._list.bind("<<ListboxSelect>>", self._on_pick)
+
+        row = ttk.Frame(frm)
+        row.pack(fill="x")
+        ttk.Label(row, text="Endpoint").pack(side="left")
+        self._endpoint = tk.StringVar(value="http://127.0.0.1:8765")
+        ttk.Entry(row, textvariable=self._endpoint).pack(side="left", fill="x", expand=True, padx=8)
+
+        btns = ttk.Frame(frm)
+        btns.pack(fill="x", pady=(12, 0))
+        ttk.Button(btns, text="Zapisz i zacznij", command=self._save).pack(side="right")
+        ttk.Button(btns, text="Pomiń", command=self._skip).pack(side="right", padx=8)
+
+        self.protocol("WM_DELETE_WINDOW", self._skip)
+        self.after(100, self.grab_set)
+
+    def _scan(self) -> None:
+        self._scan_btn.config(state="disabled")
+        self._status.set("Skanowanie…")
+
+        def work() -> None:
+            try:
+                result = scan_network(timeout=1.5, scan_subnet=True)
+            except Exception as exc:  # noqa: BLE001 - surface any scan failure
+                self.after(0, lambda e=exc: self._scan_done(None, str(e)))
+                return
+            self.after(0, lambda: self._scan_done(result, None))
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def _scan_done(self, result: dict[str, Any] | None, error: str | None) -> None:
+        self._scan_btn.config(state="normal")
+        if error:
+            self._status.set(f"Błąd skanu: {error}")
+            return
+        nodes = [n for n in ((result or {}).get("urisys_nodes") or []) if n.get("endpoint")]
+        self._endpoints = [n["endpoint"] for n in nodes]
+        self._list.delete(0, "end")
+        for node in nodes:
+            label = node.get("node_id") or node.get("host") or "urisys-node"
+            self._list.insert("end", f"{label}  —  {node['endpoint']}")
+        self._status.set(f"Znaleziono {len(self._endpoints)} węzłów")
+
+    def _on_pick(self, _event=None) -> None:
+        sel = self._list.curselection()
+        if sel and sel[0] < len(self._endpoints):
+            self._endpoint.set(self._endpoints[sel[0]])
+
+    def _save(self) -> None:
+        self.app._apply_node_endpoint(self._endpoint.get())
+        self._finish()
+
+    def _skip(self) -> None:
+        self._finish()
+
+    def _finish(self) -> None:
+        self.app.workspace["setup_done"] = True
+        save_workspace(self.app.workspace)
+        try:
+            self.grab_release()
+        except tk.TclError:
+            pass
+        self.destroy()
+
+
 def launch_gui() -> None:
     app = IfuriDesktop()
+    app.after(250, app._maybe_first_run)
     app.mainloop()
