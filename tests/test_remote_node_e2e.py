@@ -29,6 +29,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from ifuri_app import connectors  # noqa: E402
 from ifuri_app.network_scan import probe_urisys_node, scan_urisys_nodes  # noqa: E402
 
+
+@pytest.fixture(autouse=True)
+def isolated_home(tmp_path, monkeypatch):
+    """Keep scan_urisys_nodes off the real ~/.ifuri workspace.
+
+    Otherwise it adds the saved urisys.endpoint host to the scan; an unresolvable
+    hostname there makes urlopen block in getaddrinfo (DNS ignores the socket
+    timeout), stalling the whole scan for ~90s. An empty home keeps it hermetic.
+    """
+    monkeypatch.setenv("IFURI_HOME", str(tmp_path))
+
+
 NODE_HEALTH = {
     "ok": True,
     "node_id": "e2e-node",

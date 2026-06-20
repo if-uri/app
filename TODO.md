@@ -8,11 +8,17 @@
 - [x] Expose installed connectors and available URI routes in the GUI as a
       first-class view, grouped by node and URI scheme. (Konektory tab — fetches
       each node's /routes via ifuri_app.connectors, groups by node + scheme.)
-- [ ] Add a GUI path for installing connector packages from `connect.ifuri.com`.
-- [ ] Implement IFURI-017: consume the hub catalog, install selected connector
+- [~] Add a GUI path for installing connector packages from `connect.ifuri.com`.
+      (Scaffold: "Connect" tab + ifuri_app.connect_store with a PROVISIONAL,
+      swappable catalog contract. Needs the real connect.ifuri.com API to finalise.)
+- [~] Implement IFURI-017: consume the hub catalog, install selected connector
       packages, refresh local registry and show payload forms before run.
-- [ ] Add a GUI smoke that proves connector route tables, payload forms and
-      result/log panels render correctly in noVNC.
+      (Done in scaffold: catalog fetch/normalise, pip install plan/run, payload
+      forms from route metadata. Pending: real API + local registry refresh.)
+- [x] Add a GUI smoke that proves connector route tables, payload forms and
+      result/log panels render correctly. (Headless xvfb tests in
+      tests/test_gui_smoke.py cover Konektory route tables, Connect payload forms
+      and the install result/log panel. noVNC Docker GUI smoke remains separate.)
 - [x] Add an end-to-end app test that calls a remote `urirun node` and verifies
       MCP/A2A/URI route discovery. (tests/test_remote_node_e2e.py — fake node
       HTTP server, probe -> scan_urisys_nodes -> connectors route discovery.)
