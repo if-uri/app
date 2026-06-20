@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Voice command planning: catalog → regex → llm:// → voice:// fallback."""
 
 from __future__ import annotations

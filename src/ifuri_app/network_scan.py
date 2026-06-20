@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """LAN discovery: ifURI peers, urisys-node hosts, MCP/agent services."""
 
 from __future__ import annotations

@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """End-to-end: discover a remote urirun node and its MCP/A2A/URI routes.
 
 Spins up a lightweight HTTP server that mimics a real urirun node (``GET

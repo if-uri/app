@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Chat channels: each urisys-node :8790, MCP, A2A/agent, ifURI peer is a chat thread."""
 
 from __future__ import annotations

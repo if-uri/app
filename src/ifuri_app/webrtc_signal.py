@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """In-memory WebRTC signaling inbox (SDP / ICE relay between ifURI peers)."""
 
 from __future__ import annotations

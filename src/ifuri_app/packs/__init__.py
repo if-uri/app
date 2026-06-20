@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Discover and load ifURI URI packs from packages/."""
 
 from .loader import discover_manifests, load_local_registry, packages_root

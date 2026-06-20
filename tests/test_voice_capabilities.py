@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Tests for voice capabilities and install-packs API."""
 
 from __future__ import annotations

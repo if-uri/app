@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Desktop chat tab — each :8790 / MCP / A2A endpoint as a thread."""
 
 from __future__ import annotations

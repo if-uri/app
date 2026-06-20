@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Load YAML URI packs from repo packages/ into uricore CapabilityRegistry."""
 
 from __future__ import annotations

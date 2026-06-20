@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Voice command pipeline: speech text → plan → stt/tts/voice URIs → flow."""
 
 from __future__ import annotations

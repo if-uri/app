@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Launch helper for the ``if-uri/examples/11-novnc_lan_flow`` Docker/noVNC demo.
 
 The example runs Chromium desktops inside noVNC containers driven by a URI flow,

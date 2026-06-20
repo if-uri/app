@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Optional bridge to the urirun Python runtime.
 
 ifURI must work without urirun installed, but when the package is available this

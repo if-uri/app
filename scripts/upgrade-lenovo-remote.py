@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Upgrade lenovo urisys-node over URI (no SSH) — enables /app/chat/* for ifURI."""
 
 from __future__ import annotations

@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """HTTP client for urisys-node (local slave or remote host)."""
 
 from __future__ import annotations

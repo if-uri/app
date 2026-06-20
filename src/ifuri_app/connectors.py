@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Connectors & URI routes — fetch and normalise a urirun node's ``/routes``.
 
 A urirun node exposes ``GET /routes`` (see :mod:`ifuri_app.urirun_bridge`). The

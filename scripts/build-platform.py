@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Build native ifURI binary for the current OS (PyInstaller)."""
 
 from __future__ import annotations

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Headless smoke test for ifURI Tkinter desktop GUI (run under Xvfb)."""
 
 from __future__ import annotations

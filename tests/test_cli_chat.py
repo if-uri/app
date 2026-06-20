@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """CLI smoke tests for chat commands."""
 
 from __future__ import annotations

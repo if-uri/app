@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """GUI smoke helpers (no display required for import checks)."""
 
 from __future__ import annotations

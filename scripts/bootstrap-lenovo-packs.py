@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Install KVM flow packs on lenovo from dev wheel server (one-shot bootstrap)."""
 
 from __future__ import annotations

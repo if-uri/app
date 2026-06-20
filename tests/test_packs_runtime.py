@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Tests for local uricore pack runtime."""
 
 from __future__ import annotations

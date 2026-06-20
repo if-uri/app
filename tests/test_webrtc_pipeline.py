@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Tests for WebRTC pack install and capabilities."""
 
 from __future__ import annotations

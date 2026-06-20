@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Playwright E2E tests for /voice UI (optional: uv sync --group e2e && playwright install chromium)."""
 
 from __future__ import annotations

@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Local uricore runtime backed by packages/*/manifest.yaml."""
 
 from __future__ import annotations

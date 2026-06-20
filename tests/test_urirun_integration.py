@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """urirun as the primary local runtime (replacement for the shell urisys-node).
 
 These tests verify the in-process urirun dispatch path. They skip when the

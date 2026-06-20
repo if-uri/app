@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Compile compact URI flows via uri2flow (with legacy shape compat)."""
 
 from __future__ import annotations

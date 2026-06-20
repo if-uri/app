@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Remote screen capture via urisys-node screen:// / kvm://."""
 
 from __future__ import annotations

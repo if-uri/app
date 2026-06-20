@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Unit tests for ifuri_app.connectors route normalisation."""
 
 from __future__ import annotations

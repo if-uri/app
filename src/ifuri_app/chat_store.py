@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Local chat history when urisys-node has no /app/chat/* endpoints."""
 
 from __future__ import annotations

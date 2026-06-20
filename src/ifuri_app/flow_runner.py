@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Load *.uri.flow.yaml steps and execute them via urisys-node."""
 
 from __future__ import annotations

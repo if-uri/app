@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """HTTP API smoke tests for ifURI runtime."""
 
 from __future__ import annotations
