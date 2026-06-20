@@ -122,6 +122,34 @@ def test_payload_form_fields_dedup():
     assert [f["name"] for f in cs.payload_form_fields(route)] == ["node"]
 
 
+def test_payload_form_fields_from_example_payload():
+    """Connector examples are the richest source of run-payload fields."""
+    route = {"uri": "task://host/ticket/command/create", "params": []}
+    examples = [
+        {"title": "Create a ticket", "uri": "task://host/ticket/command/create",
+         "payload": {"project": ".", "name": "Check DNS", "queue": "ops"}},
+        {"title": "Other", "uri": "task://host/tickets/query/list", "payload": {"sprint": "all"}},
+    ]
+    fields = cs.payload_form_fields(route, examples)
+    assert [f["name"] for f in fields] == ["project", "name", "queue"]
+    # example values are carried through to pre-fill the form
+    assert {f["name"]: f["example"] for f in fields} == {"project": ".", "name": "Check DNS", "queue": "ops"}
+    assert all(f["required"] is False for f in fields)  # example-derived fields are optional
+
+
+def test_payload_form_no_example_match_falls_back():
+    route = {"uri": "task://host/ticket/command/create"}
+    examples = [{"uri": "task://other", "payload": {"x": 1}}]
+    assert cs.payload_form_fields(route, examples) == []  # no placeholders, no match → empty
+
+
+def test_example_payload_for():
+    examples = [{"uri": "a://b", "payload": {"k": "v"}}]
+    assert cs.example_payload_for("a://b", examples) == {"k": "v"}
+    assert cs.example_payload_for("a://missing", examples) is None
+    assert cs.example_payload_for("a://b", None) is None
+
+
 class _CatalogHandler(BaseHTTPRequestHandler):
     def log_message(self, *_a):
         pass
