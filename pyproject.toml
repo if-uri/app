@@ -70,7 +70,7 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-ifuri_app = ["assets/*.svg", "web/*", "web/**/*"]
+ifuri_app = ["assets/*.svg", "assets/*.png", "assets/*.ico", "web/*", "web/**/*"]
 
 [tool.uv]
 default-groups = ["dev", "tellmesh"]

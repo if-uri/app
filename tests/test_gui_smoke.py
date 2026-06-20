@@ -140,6 +140,18 @@ _CONNECT_PKGS = {
 }
 
 
+def test_app_icon_asset_present():
+    from ifuri_app.paths import assets_dir
+
+    icon = assets_dir() / "icon.png"
+    assert icon.is_file(), "brand-kit window icon should be bundled in assets/"
+
+
+def test_app_icon_set_on_window(app):
+    # _set_app_icon keeps a PhotoImage ref so Tk doesn't garbage-collect it
+    assert getattr(app, "_app_icon", None) is not None
+
+
 def test_connect_tab_present(app):
     tabs = [app.notebook.tab(i, "text") for i in range(len(app.notebook.tabs()))]
     assert "Connect" in tabs

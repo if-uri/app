@@ -27,6 +27,7 @@ from .discovery import DiscoveryResponder
 from .flow_engine import as_pretty_json, dry_run_flow
 from .network_scan import scan_network
 from .novnc_demo import compose_args, dashboard_url, demo_dir, docker_available
+from .paths import assets_dir
 from .runtime import PortInUseError, RuntimeServer
 from .storage import add_event, load_workspace, save_workspace
 from .gui_chat import ChatTabMixin
@@ -50,10 +51,22 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         self.runtime: RuntimeServer | None = None
         self.discovery_responder: DiscoveryResponder | None = None
         self._urirun_serve: subprocess.Popen | None = None
+        self._set_app_icon()
         self._build_style()
         self._build_ui()
         self._load_groups()
         self.protocol("WM_DELETE_WINDOW", self._on_close)
+
+    def _set_app_icon(self) -> None:
+        """Set the window icon from the brand kit (assets/icon.png). Best-effort."""
+        icon = assets_dir() / "icon.png"
+        if not icon.is_file():
+            return
+        try:
+            self._app_icon = tk.PhotoImage(file=str(icon))  # keep a ref so Tk doesn't GC it
+            self.iconphoto(True, self._app_icon)
+        except tk.TclError:
+            pass  # headless / unsupported image — harmless
 
     def _build_style(self) -> None:
         style = ttk.Style(self)

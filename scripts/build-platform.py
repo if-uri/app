@@ -78,6 +78,11 @@ def run_pyinstaller(*, onefile: bool) -> Path:
         "--hidden-import",
         "yaml",
     ]
+    # Executable icon from the brand kit. PyInstaller embeds .ico on Windows and
+    # .icns on macOS; Linux has no exe icon (the window icon is set at runtime).
+    icon = PKG / "assets" / ("icon.ico" if platform.system() == "Windows" else "icon.icns")
+    if icon.is_file():
+        cmd += ["--icon", str(icon)]
     if onefile:
         cmd.append("--onefile")
     else:
