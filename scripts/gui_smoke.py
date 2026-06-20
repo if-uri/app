@@ -11,6 +11,7 @@ import json
 import subprocess
 import sys
 import threading
+import time
 from pathlib import Path
 
 # Allow running from repo without install
@@ -116,14 +117,62 @@ def run_gui_smoke(out: Path, urisys_endpoint: str, timeout: float) -> dict:
             from ifuri_app.urisys_client import UrisysNodeClient
 
             probe = probe_remote_control(UrisysNodeClient(urisys_endpoint), node_id="lenovo")
+            # soft check: not every node is a lenovo remote-control node (e.g. the
+            # noVNC demo nodes aren't), so record the result without failing the smoke.
             result["checks"]["remote_control"] = {
                 "ok": probe.get("ok"),
                 "screen": (probe.get("checks") or {}).get("screen"),
             }
-            if not probe.get("ok"):
-                fail(f"remote control probe failed: {probe.get('error') or probe.get('checks')}")
         except Exception as exc:
-            fail(f"remote control: {exc}")
+            result["checks"]["remote_control"] = {"ok": False, "error": str(exc)}
+
+    def exercise_connectors() -> None:
+        """Route table from a live urirun/noVNC node — pump the loop until it fills."""
+        if not urisys_endpoint:
+            return
+        try:
+            for t in app.notebook.tabs():
+                if app.notebook.tab(t, "text") == "Konektory":
+                    app.notebook.select(t)
+                    break
+            app.refresh_connectors()
+            deadline = time.time() + min(timeout, 10.0)
+            while time.time() < deadline and not app.connectors_tree.get_children():
+                app.update()
+                time.sleep(0.1)
+            nodes = app.connectors_tree.get_children()
+            schemes = set()
+            for n in nodes:
+                for s in app.connectors_tree.get_children(n):
+                    schemes.add(app.connectors_tree.item(s, "text").split("://")[0])
+            result["checks"]["connector_nodes"] = len(nodes)
+            result["checks"]["connector_schemes"] = sorted(schemes)
+            if not nodes:
+                fail("connectors: no route table from node")
+        except Exception as exc:
+            fail(f"connectors: {exc}")
+
+    def verify_logs_and_workflow() -> None:
+        """Run log panel has content, and a dry-run produces a workflow graph."""
+        try:
+            app.append_log("gui-smoke: probe")
+            app.update_idletasks()
+            log_len = len(app.log_text.get("1.0", "end").strip())
+            result["checks"]["run_log_chars"] = log_len
+            if log_len == 0:
+                fail("run log panel empty")
+
+            from ifuri_app.flow_engine import dry_run_flow
+
+            graph = dry_run_flow("do:\n  - sys://local/echo/hello\n")
+            compiled = graph.get("graph") or {}
+            wg = compiled.get("workflow_graph") or compiled.get("graph") or {}
+            nodes = wg.get("nodes") or graph.get("steps") or []
+            result["checks"]["workflow_nodes"] = len(nodes)
+            if not nodes:
+                fail("dry-run produced no workflow graph")
+        except Exception as exc:
+            fail(f"logs/workflow: {exc}")
 
     def finish() -> None:
         try:
@@ -131,6 +180,8 @@ def run_gui_smoke(out: Path, urisys_endpoint: str, timeout: float) -> dict:
             exercise_network_tab()
             exercise_runtime()
             exercise_remote_control()
+            exercise_connectors()
+            verify_logs_and_workflow()
             take_screenshot(out / "gui.png")
             result["checks"]["screenshot"] = str(out / "gui.png")
         except Exception as exc:

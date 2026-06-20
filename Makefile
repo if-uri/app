@@ -9,7 +9,7 @@ PORT ?= 8766
 URISYS ?= http://192.168.188.201:8790
 VENV ?= .venv
 
-.PHONY: help install install-dev test test-api test-e2e install-e2e test-gui test-gui-docker \
+.PHONY: help install install-dev test test-api test-e2e install-e2e test-gui test-gui-docker smoke-novnc \
 	run run-gui run-voice run-voice-bg run-tauri-dev stop health api-smoke chat-status chat-migrate \
 	voice-capabilities voice-install-packs webrtc-capabilities webrtc-install-pack webrtc-smoke \
 	urirun-info vendor-uricore-js wheel build clean
@@ -23,6 +23,7 @@ help:
 	@echo "  test-api         API smoke tests only"
 	@echo "  test-e2e         Playwright /voice UI"
 	@echo "  test-gui-docker  Docker GUI smoke (debian/ubuntu/fedora)"
+	@echo "  smoke-novnc      bring up noVNC demo + drive GUI against a live node"
 	@echo ""
 	@echo "  run ARGS='...'   run arbitrary ifuri-app CLI command"
 	@echo "  run-gui          Tkinter desktop (flows + czaty + LAN)"
@@ -80,6 +81,14 @@ test-gui:
 
 test-gui-docker:
 	bash scripts/test-gui-docker.sh
+
+# App + noVNC GUI smoke: brings up examples/11-novnc_lan_flow, then drives the GUI
+# headless against a live node and checks the route table, logs and workflow graph.
+# NODE defaults to the demo's pc1 API; override with NODE=http://host:port.
+NODE ?= http://127.0.0.1:9001
+smoke-novnc:
+	$(MAKE) -C ../examples/11-novnc_lan_flow up
+	PYTHONPATH=src xvfb-run -a $(PYTHON) scripts/gui_smoke.py --urisys-endpoint $(NODE) --out dist/gui-smoke --timeout 30
 
 run-gui-novnc:
 	docker compose -f docker/docker-compose.novnc.yml up --build
