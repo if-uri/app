@@ -126,3 +126,48 @@ def test_novnc_precheck_missing_docker(app, monkeypatch, tmp_path):
     monkeypatch.setattr(gui, "docker_available", lambda: False)
     assert app._novnc_precheck() is None
     assert "docker" in app.novnc_status.get().lower()
+
+
+_CONNECT_PKGS = {
+    "ok": True,
+    "packages": [
+        {"name": "browser-control", "version": "0.3.1", "scheme": "browser", "summary": "Drive Chromium",
+         "install": {"kind": "pip", "spec": "git+https://example/bc.git"},
+         "routes": [{"uri": "browser://{node}/page/command/open", "params": [{"name": "url", "required": True}]}]},
+        {"name": "time-tools", "version": "0.1.0", "scheme": "time", "summary": "",
+         "install": {"kind": "manual", "spec": ""}, "routes": ["time://local/now"]},
+    ],
+}
+
+
+def test_connect_tab_present(app):
+    tabs = [app.notebook.tab(i, "text") for i in range(len(app.notebook.tabs()))]
+    assert "Connect" in tabs
+    assert hasattr(app, "packages_tree")
+
+
+def test_connect_catalog_and_payload_form(app):
+    app._catalog_done(_CONNECT_PKGS)
+    rows = app.packages_tree.get_children()
+    assert len(rows) == 2
+    app.packages_tree.selection_set(rows[0])  # browser-control
+    app._on_package_select()
+    assert "pip install" in app.connect_install_plan.get()
+    assert set(app._payload_vars) == {"url", "node"}  # params + placeholder
+
+
+def test_connect_install_manual_no_subprocess(app, monkeypatch):
+    from ifuri_app import gui
+
+    # if a subprocess were spawned for a manual package, this would explode the test
+    monkeypatch.setattr(gui.subprocess, "run", lambda *a, **k: (_ for _ in ()).throw(AssertionError("no subprocess for manual")))
+    app._catalog_done(_CONNECT_PKGS)
+    app.packages_tree.selection_set(app.packages_tree.get_children()[1])  # time-tools (manual)
+    app.install_selected_connector()
+    assert "ręczna" in app.connect_log.get("1.0", "end")
+
+
+def test_connect_catalog_error(app):
+    app._catalog_done({"ok": False, "error": "refused", "packages": []})
+    assert "Błąd katalogu" in app.connect_status.get()
+    assert app.packages_tree.get_children() == ()

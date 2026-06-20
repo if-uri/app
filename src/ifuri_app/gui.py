@@ -15,6 +15,7 @@ from tkinter import messagebox, simpledialog, ttk
 from typing import Any
 
 from . import DEFAULT_PORT
+from .connect_store import catalog_url, fetch_catalog, install_command, payload_form_fields
 from .connectors import fetch_node_routes, group_by_scheme
 from .discovery import DiscoveryResponder
 from .flow_engine import as_pretty_json, dry_run_flow
@@ -76,6 +77,7 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         self._build_flows_tab()
         self._build_services_tab()
         self._build_connectors_tab()
+        self._build_connect_tab()
         self._build_events_tab()
 
     def _build_flows_tab(self) -> None:
@@ -325,6 +327,147 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
             self.connectors_tree.item(node, open=expand)
             for child in self.connectors_tree.get_children(node):
                 self.connectors_tree.item(child, open=expand)
+
+    def _build_connect_tab(self) -> None:
+        """IFURI-017 scaffold: browse the connect.ifuri.com hub, install packages, preview run payloads.
+
+        The catalog HTTP contract is provisional (see ifuri_app.connect_store) — this
+        tab drives everything through that module so only it changes when the real
+        connect.ifuri.com API lands.
+        """
+        tab = ttk.Frame(self.notebook, padding=10)
+        self.notebook.add(tab, text="Connect")
+        tab.columnconfigure(0, weight=1)
+        tab.rowconfigure(1, weight=1)
+        self._catalog_packages: list[dict[str, Any]] = []
+        self._payload_vars: dict[str, tk.StringVar] = {}
+
+        top = ttk.Frame(tab)
+        top.grid(row=0, column=0, sticky="ew")
+        top.columnconfigure(1, weight=1)
+        ttk.Label(top, text="Katalog").grid(row=0, column=0, padx=(0, 6))
+        self.catalog_url_var = tk.StringVar(value=catalog_url())
+        ttk.Entry(top, textvariable=self.catalog_url_var).grid(row=0, column=1, sticky="ew", padx=(0, 6))
+        ttk.Button(top, text="Pobierz katalog", command=self.refresh_catalog).grid(row=0, column=2)
+        self.connect_status = tk.StringVar(value="Sklep konektorów (connect.ifuri.com) — kontrakt API tymczasowy.")
+        ttk.Label(top, textvariable=self.connect_status, foreground="#5d6d7e").grid(row=1, column=0, columnspan=3, sticky="w", pady=(4, 0))
+
+        body = ttk.PanedWindow(tab, orient="horizontal")
+        body.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
+        pkg_cols = ("version", "scheme")
+        self.packages_tree = ttk.Treeview(body, columns=pkg_cols, show="tree headings", height=12)
+        self.packages_tree.heading("#0", text="Pakiet konektora")
+        self.packages_tree.column("#0", width=220, stretch=True)
+        for col, w in (("version", 90), ("scheme", 100)):
+            self.packages_tree.heading(col, text=col)
+            self.packages_tree.column(col, width=w, stretch=False)
+        self.packages_tree.bind("<<TreeviewSelect>>", self._on_package_select)
+        body.add(self.packages_tree, weight=2)
+
+        detail = ttk.Frame(body)
+        detail.columnconfigure(0, weight=1)
+        detail.rowconfigure(3, weight=1)
+        self.connect_summary = tk.StringVar(value="Wybierz pakiet, aby zobaczyć szczegóły, plan instalacji i formularz payloadu.")
+        ttk.Label(detail, textvariable=self.connect_summary, wraplength=460, justify="left").grid(row=0, column=0, sticky="ew")
+        self.connect_install_plan = tk.StringVar(value="")
+        ttk.Label(detail, textvariable=self.connect_install_plan, foreground="#5d6d7e", wraplength=460, justify="left").grid(row=1, column=0, sticky="ew", pady=(4, 6))
+        ttk.Button(detail, text="Zainstaluj pakiet", command=self.install_selected_connector).grid(row=2, column=0, sticky="w")
+        self.payload_form = ttk.LabelFrame(detail, text="Payload pierwszej trasy (przed uruchomieniem)", padding=8)
+        self.payload_form.grid(row=3, column=0, sticky="nsew", pady=(8, 0))
+        self.payload_form.columnconfigure(1, weight=1)
+        self.connect_log = tk.Text(detail, height=6, wrap="word", font=("Consolas" if sys.platform.startswith("win") else "Menlo", 9))
+        self.connect_log.grid(row=4, column=0, sticky="ew", pady=(8, 0))
+        body.add(detail, weight=3)
+
+    def refresh_catalog(self) -> None:
+        url = self.catalog_url_var.get().strip()
+        self.connect_status.set(f"Pobieranie katalogu z {url}…")
+
+        def work() -> None:
+            result = fetch_catalog(url)
+            self.after(0, lambda: self._catalog_done(result))
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def _catalog_done(self, result: dict[str, Any]) -> None:
+        self.packages_tree.delete(*self.packages_tree.get_children())
+        if not result.get("ok"):
+            self.connect_status.set(f"Błąd katalogu: {result.get('error')}")
+            self._catalog_packages = []
+            return
+        self._catalog_packages = result.get("packages") or []
+        for pkg in self._catalog_packages:
+            self.packages_tree.insert("", tk.END, text=pkg["name"], values=(pkg["version"], pkg["scheme"]))
+        self.connect_status.set(f"Pakietów w katalogu: {len(self._catalog_packages)}")
+
+    def _selected_package(self) -> dict[str, Any] | None:
+        sel = self.packages_tree.selection()
+        if not sel:
+            return None
+        idx = self.packages_tree.index(sel[0])
+        return self._catalog_packages[idx] if idx < len(self._catalog_packages) else None
+
+    def _on_package_select(self, _event=None) -> None:
+        pkg = self._selected_package()
+        if not pkg:
+            return
+        self.connect_summary.set(f"{pkg['name']} {pkg['version']} · {pkg['scheme']}://\n{pkg['summary']}")
+        cmd = install_command(pkg)
+        self.connect_install_plan.set("Instalacja: " + (" ".join(cmd) if cmd else "ręczna (brak automatycznego planu pip)"))
+        self._render_payload_form(pkg)
+
+    def _render_payload_form(self, pkg: dict[str, Any]) -> None:
+        for child in self.payload_form.winfo_children():
+            child.destroy()
+        self._payload_vars = {}
+        routes = pkg.get("routes") or []
+        if not routes:
+            ttk.Label(self.payload_form, text="(brak tras w pakiecie)").grid(row=0, column=0, sticky="w")
+            return
+        route = routes[0]
+        ttk.Label(self.payload_form, text=route["uri"], foreground="#3f5f78").grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 4))
+        fields = payload_form_fields(route)
+        if not fields:
+            ttk.Label(self.payload_form, text="(brak pól payloadu)").grid(row=1, column=0, sticky="w")
+            return
+        for i, field in enumerate(fields, start=1):
+            label = field["name"] + (" *" if field["required"] else "")
+            ttk.Label(self.payload_form, text=label).grid(row=i, column=0, sticky="w", padx=(0, 8), pady=2)
+            var = tk.StringVar()
+            self._payload_vars[field["name"]] = var
+            ttk.Entry(self.payload_form, textvariable=var).grid(row=i, column=1, sticky="ew", pady=2)
+
+    def install_selected_connector(self) -> None:
+        pkg = self._selected_package()
+        if not pkg:
+            self.connect_status.set("Najpierw wybierz pakiet z katalogu.")
+            return
+        cmd = install_command(pkg)
+        if not cmd:
+            self._connect_log(f"{pkg['name']}: instalacja ręczna — brak planu pip ({pkg['install'].get('kind') or '?'}).")
+            return
+        self._connect_log(f"{pkg['name']}: docker/pip install → {' '.join(cmd)}")
+        self.connect_status.set(f"Instalowanie {pkg['name']}…")
+
+        def work() -> None:
+            try:
+                proc = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+                ok = proc.returncode == 0
+                tail = (proc.stdout or proc.stderr or "").strip().splitlines()[-1:] or [""]
+            except Exception as exc:  # noqa: BLE001 - surface install failure to the user
+                ok, tail = False, [str(exc)]
+            self.after(0, lambda: self._install_done(pkg["name"], ok, tail[0]))
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def _install_done(self, name: str, ok: bool, tail: str) -> None:
+        self.connect_status.set(f"{name}: {'zainstalowano' if ok else 'błąd instalacji'}")
+        self._connect_log(f"{name}: {'OK' if ok else 'FAILED'} {tail}")
+
+    def _connect_log(self, msg: str) -> None:
+        self.connect_log.insert("end", msg + "\n")
+        self.connect_log.see("end")
+        self.append_log(f"connect: {msg}")
 
     def _build_events_tab(self) -> None:
         tab = ttk.Frame(self.notebook, padding=10)
