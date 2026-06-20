@@ -1,3 +1,6 @@
+// Author: Tom Sapletta · https://tom.sapletta.com
+// Part of the ifURI solution.
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()

@@ -1,3 +1,6 @@
+// Author: Tom Sapletta · https://tom.sapletta.com
+// Part of the ifURI solution.
+
 /**
  * page:// handlers — mirror url_state.js for uricore-js registry.
  * Requires IfuriUrlState (web/url_state.js) on window.

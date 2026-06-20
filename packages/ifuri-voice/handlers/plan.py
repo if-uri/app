@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Map spoken/text commands to urisys-examples flow references."""
 
 from __future__ import annotations

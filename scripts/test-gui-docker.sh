@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 # Run ifURI desktop GUI smoke tests in Docker on Debian, Ubuntu, and Fedora.
 #
 # Optional:

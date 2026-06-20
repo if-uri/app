@@ -1,3 +1,6 @@
+// Author: Tom Sapletta · https://tom.sapletta.com
+// Part of the ifURI solution.
+
 /**
  * Browser-side page:// handlers for /voice (uricore-js).
  * Import in web/voice.js when @uricore/js is wired.

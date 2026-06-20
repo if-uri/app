@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 # Upgrade urisys-node on a remote host to get /app/chat/* endpoints (>= 0.1.15).
 #
 # Usage (on lenovo or via SSH when port 22 is open):

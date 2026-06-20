@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 # Xvfb -> x11vnc -> noVNC -> ifURI Tkinter GUI. Open http://localhost:6080/vnc.html
 set -Eeuo pipefail
 

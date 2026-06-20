@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 # Install Tkinter + Xvfb deps for Debian/Ubuntu/Fedora/Alpine base images.
 set -euo pipefail
 

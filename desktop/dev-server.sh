@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 # Start ifURI voice HTTP server for Tauri dev (idempotent).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

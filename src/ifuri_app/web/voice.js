@@ -1,3 +1,6 @@
+// Author: Tom Sapletta · https://tom.sapletta.com
+// Part of the ifURI solution.
+
 const U = () => window.IfuriUrlState;
 const T = () => window.IfuriTheme;
 const I = () => window.IfuriI18n;

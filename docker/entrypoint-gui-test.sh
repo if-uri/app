@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 # Headless desktop GUI smoke: Xvfb → ifuri IfuriDesktop → screenshot + API checks.
 set -euo pipefail
 

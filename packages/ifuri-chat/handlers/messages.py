@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Local JSONL chat store queries (fallback when urisys-node lacks /app/chat)."""
 
 from __future__ import annotations

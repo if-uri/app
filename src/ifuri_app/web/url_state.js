@@ -1,3 +1,6 @@
+// Author: Tom Sapletta · https://tom.sapletta.com
+// Part of the ifURI solution.
+
 /**
  * Persistent URL state — lang, theme, view and app-specific params.
  * Updates use pushState on user actions; shareable/bookmarkable links.

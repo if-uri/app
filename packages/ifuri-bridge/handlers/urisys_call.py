@@ -1,3 +1,6 @@
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 """Proxy app:// commands to urisys-node (local dry-run envelope or real call)."""
 
 from __future__ import annotations

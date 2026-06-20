@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 # Local CD: test → wheel + native app → GitHub Release (tag vVERSION)
 set -euo pipefail
 

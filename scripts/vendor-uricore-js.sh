@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 # Vendor @uricore/js into ifURI static web/ for browser ES modules.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

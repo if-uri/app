@@ -1,3 +1,6 @@
+// Author: Tom Sapletta · https://tom.sapletta.com
+// Part of the ifURI solution.
+
 /**
  * WebRTC peer session — HTTP signaling + duplex audio + voice data channel.
  */
