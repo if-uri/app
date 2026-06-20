@@ -52,6 +52,39 @@ def test_compose_args():
         nv.compose_args("bogus")
 
 
+def test_read_env_file(tmp_path):
+    (tmp_path / ".env").write_text(
+        "# comment\nDASHBOARD_PORT=18192\nPC1_NOVNC_PORT=17901\n\nQUOTED=\"19001\"\n",
+        encoding="utf-8",
+    )
+    values = nv.read_env_file(tmp_path)
+    assert values["DASHBOARD_PORT"] == "18192"
+    assert values["PC1_NOVNC_PORT"] == "17901"
+    assert values["QUOTED"] == "19001"  # quotes stripped
+    assert nv.read_env_file(tmp_path / "missing") == {}
+    assert nv.read_env_file(None) == {}
+
+
+def test_dashboard_ports_reads_dotenv(tmp_path, monkeypatch):
+    # .env declares the +10000 port set; no shell overrides present
+    (tmp_path / ".env").write_text("DASHBOARD_PORT=18192\nPC1_NOVNC_PORT=17901\n", encoding="utf-8")
+    for env, _key, _default in nv._PORT_SPEC:
+        monkeypatch.delenv(env, raising=False)
+    ports = nv.dashboard_ports(tmp_path)
+    assert ports["DASHBOARD_PORT"] == "18192"  # from .env
+    assert ports["PC1_NOVNC_PORT"] == "17901"  # from .env
+    assert ports["PC2_NOVNC_PORT"] == "7902"   # default (not in .env)
+    url = nv.dashboard_url(directory=tmp_path)
+    assert url.startswith("http://127.0.0.1:18192/?")
+    assert "pc1NovncPort=17901" in url
+
+
+def test_shell_env_overrides_dotenv(tmp_path, monkeypatch):
+    (tmp_path / ".env").write_text("DASHBOARD_PORT=18192\n", encoding="utf-8")
+    monkeypatch.setenv("DASHBOARD_PORT", "28192")  # shell wins over .env
+    assert nv.dashboard_ports(tmp_path)["DASHBOARD_PORT"] == "28192"
+
+
 def test_demo_dir_env_override(monkeypatch, tmp_path):
     monkeypatch.setenv("IFURI_NOVNC_DEMO_DIR", str(tmp_path))
     assert nv.demo_dir() == tmp_path

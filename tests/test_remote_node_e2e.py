@@ -119,6 +119,57 @@ def test_route_discovery_covers_uri_mcp_a2a(remote_node):
     assert echo["detail"] == "echo hi"
 
 
+class _NoVncHandler(BaseHTTPRequestHandler):
+    """Mimics the noVNC example node: /health uses node/routes (not node_id/routes_count)."""
+
+    def log_message(self, *_args):
+        pass
+
+    def do_GET(self):  # noqa: N802
+        if self.path in ("/", "/health"):
+            body = json.dumps({"ok": True, "node": "pc1", "selenium": "http://pc1-browser:4444", "routes": 6})
+        elif self.path == "/routes":
+            body = json.dumps({"ok": True, "node": "pc1", "routes": [
+                {"uri": "browser://pc1/page/command/open", "kind": "command"},
+                {"uri": "log://pc1/session/query/recent", "kind": "query"},
+                {"uri": "app://pc1/notes/command/add", "kind": "command"},
+            ]})
+        else:
+            self.send_response(404)
+            self.end_headers()
+            return
+        data = body.encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+
+def test_probe_tolerates_novnc_health_schema():
+    """probe_urisys_node must normalise node->node_id and routes->routes_count."""
+    httpd = HTTPServer(("127.0.0.1", 0), _NoVncHandler)
+    host, port = httpd.server_address
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    base = f"http://{host}:{port}"
+    for _ in range(50):
+        try:
+            urllib.request.urlopen(base + "/health", timeout=1)
+            break
+        except Exception:
+            time.sleep(0.05)
+    try:
+        node = probe_urisys_node(host, port, timeout=1.0)
+        assert node is not None
+        assert node["node_id"] == "pc1"       # mapped from "node"
+        assert node["routes_count"] == 6        # mapped from "routes"
+        routes = connectors.fetch_node_routes(base, timeout=2.0)["routes"]
+        assert {r["scheme"] for r in routes} == {"browser", "log", "app"}
+    finally:
+        httpd.shutdown()
+        httpd.server_close()
+
+
 def test_end_to_end_node_then_routes(remote_node):
     """The full app path: find the node, then enumerate its routes by scheme."""
     host, port = remote_node

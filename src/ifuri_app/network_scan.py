@@ -47,9 +47,11 @@ def probe_urisys_node(host: str, port: int = 8790, *, timeout: float = 0.35) -> 
             "host": host,
             "port": port,
             "endpoint": f"http://{host}:{port}",
-            "node_id": data.get("node_id"),
+            # Accept both schemas: urisys-node uses node_id/routes_count, while the
+            # noVNC example nodes report node/routes — normalise to one shape.
+            "node_id": data.get("node_id") or data.get("node"),
             "him_driver": data.get("him_driver"),
-            "routes_count": data.get("routes_count"),
+            "routes_count": data.get("routes_count") if data.get("routes_count") is not None else data.get("routes"),
             "packs_loaded": data.get("packs_loaded") or [],
             "health": data,
         }

@@ -46,14 +46,41 @@ def demo_dir() -> Path | None:
     return candidate if candidate.is_dir() else None
 
 
-def dashboard_ports() -> dict[str, str]:
-    """Effective ports, env overrides applied over the example defaults."""
-    return {env: os.environ.get(env, default) for env, _key, default in _PORT_SPEC}
+def read_env_file(directory: Path | None) -> dict[str, str]:
+    """Parse ``KEY=VALUE`` lines from the demo's ``.env`` (docker compose reads it too)."""
+    if directory is None:
+        return {}
+    env_path = directory / ".env"
+    if not env_path.is_file():
+        return {}
+    values: dict[str, str] = {}
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, val = line.partition("=")
+        values[key.strip()] = val.strip().strip('"').strip("'")
+    return values
 
 
-def dashboard_url(ports: dict[str, str] | None = None) -> str:
+def dashboard_ports(directory: Path | None = None) -> dict[str, str]:
+    """Effective ports with docker compose precedence: shell env > .env file > default.
+
+    ``directory`` defaults to :func:`demo_dir` so the URL the app opens matches the
+    ports ``docker compose`` actually publishes from the example's ``.env``.
+    """
+    if directory is None:
+        directory = demo_dir()
+    file_env = read_env_file(directory)
+    return {
+        env: os.environ.get(env) or file_env.get(env) or default
+        for env, _key, default in _PORT_SPEC
+    }
+
+
+def dashboard_url(ports: dict[str, str] | None = None, *, directory: Path | None = None) -> str:
     """Build the dashboard URL (with noVNC/API port query params)."""
-    ports = ports or dashboard_ports()
+    ports = ports or dashboard_ports(directory)
     dash = ports.get("DASHBOARD_PORT", "8192")
     query = "&".join(
         f"{key}={ports.get(env, default)}"
