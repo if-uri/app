@@ -11,6 +11,7 @@ from tkinter import messagebox, simpledialog, ttk
 from typing import Any
 
 from . import DEFAULT_PORT
+from .connectors import fetch_node_routes, group_by_scheme
 from .discovery import DiscoveryResponder, discover
 from .flow_engine import as_pretty_json, dry_run_flow
 from .network_scan import scan_network
@@ -69,6 +70,7 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         self._build_network_tab()
         self._build_flows_tab()
         self._build_services_tab()
+        self._build_connectors_tab()
         self._build_events_tab()
 
     def _build_flows_tab(self) -> None:
@@ -210,6 +212,105 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         self.peer_tree.grid(row=7, column=0, sticky="nsew", pady=4)
         self._last_scan: dict[str, Any] = {}
         self._refresh_peers()
+
+    def _build_connectors_tab(self) -> None:
+        tab = ttk.Frame(self.notebook, padding=10)
+        self.notebook.add(tab, text="Konektory")
+        tab.columnconfigure(0, weight=1)
+        tab.rowconfigure(1, weight=1)
+
+        top = ttk.Frame(tab)
+        top.grid(row=0, column=0, sticky="ew")
+        ttk.Button(top, text="Odśwież trasy", command=self.refresh_connectors).pack(side="left")
+        ttk.Button(top, text="Zwiń / rozwiń", command=self._toggle_connectors).pack(side="left", padx=6)
+        self.connectors_status = tk.StringVar(value="Konektory i trasy URI z węzłów urirun — kliknij „Odśwież trasy”.")
+        ttk.Label(top, textvariable=self.connectors_status, foreground="#5d6d7e").pack(side="left", padx=10)
+
+        tree_frame = ttk.Frame(tab)
+        tree_frame.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
+        tree_frame.rowconfigure(0, weight=1)
+        tree_frame.columnconfigure(0, weight=1)
+        cols = ("kind", "adapter", "detail")
+        self.connectors_tree = ttk.Treeview(tree_frame, columns=cols, show="tree headings", height=14)
+        self.connectors_tree.heading("#0", text="Węzeł · schemat · URI")
+        self.connectors_tree.column("#0", width=460, minwidth=240, stretch=True)
+        conn_columns = {
+            "kind": {"width": 120, "minwidth": 80, "anchor": "w", "stretch": False},
+            "adapter": {"width": 150, "minwidth": 90, "anchor": "w", "stretch": False},
+            "detail": {"width": 320, "minwidth": 160, "anchor": "w", "stretch": True},
+        }
+        for col in cols:
+            self.connectors_tree.heading(col, text=col)
+            self.connectors_tree.column(col, **conn_columns[col])
+        yscroll = ttk.Scrollbar(tree_frame, orient="vertical", command=self.connectors_tree.yview)
+        xscroll = ttk.Scrollbar(tree_frame, orient="horizontal", command=self.connectors_tree.xview)
+        self.connectors_tree.configure(yscrollcommand=yscroll.set, xscrollcommand=xscroll.set)
+        self.connectors_tree.grid(row=0, column=0, sticky="nsew")
+        yscroll.grid(row=0, column=1, sticky="ns")
+        xscroll.grid(row=1, column=0, sticky="ew")
+
+    def _connector_endpoints(self) -> list[str]:
+        """Unique urirun endpoints to query: saved node, discovered nodes, local serve."""
+        endpoints: list[str] = []
+        saved = (self.workspace.get("urisys") or {}).get("endpoint")
+        if saved:
+            endpoints.append(saved)
+        for node in (self._last_scan or {}).get("urisys_nodes") or []:
+            ep = node.get("endpoint")
+            if ep:
+                endpoints.append(ep)
+        if getattr(self, "_urirun_serve", None) and self._urirun_serve.poll() is None:
+            endpoints.append(f"http://127.0.0.1:{int(self.urirun_serve_port.get())}")
+        # de-duplicate, preserve order
+        seen: set[str] = set()
+        return [e for e in endpoints if not (e in seen or seen.add(e))]
+
+    def refresh_connectors(self) -> None:
+        endpoints = self._connector_endpoints()
+        if not endpoints:
+            self.connectors_status.set("Brak znanych węzłów — przeskanuj LAN albo uruchom urirun-serve.")
+            return
+        self.connectors_status.set(f"Pobieranie tras z {len(endpoints)} węzłów…")
+
+        def work() -> None:
+            results = [fetch_node_routes(ep) for ep in endpoints]
+            self.after(0, lambda: self._connectors_done(results))
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def _connectors_done(self, results: list[dict[str, Any]]) -> None:
+        tree = self.connectors_tree
+        tree.delete(*tree.get_children())
+        total_routes = 0
+        ok_nodes = 0
+        for res in results:
+            endpoint = res.get("endpoint", "?")
+            if not res.get("ok"):
+                tree.insert("", tk.END, text=f"⚠ {endpoint}", values=("", "", res.get("error") or "błąd"))
+                continue
+            ok_nodes += 1
+            rows = res.get("routes") or []
+            total_routes += len(rows)
+            node_id = tree.insert("", tk.END, text=f"{endpoint}  ({len(rows)})", open=True, values=("", "", ""))
+            for scheme, scheme_rows in group_by_scheme(rows).items():
+                scheme_id = tree.insert(node_id, tk.END, text=f"{scheme}://  ({len(scheme_rows)})", open=True, values=("", "", ""))
+                for row in scheme_rows:
+                    tree.insert(
+                        scheme_id,
+                        tk.END,
+                        text=row["uri"],
+                        values=(row["kind"], row["adapter"], row["detail"]),
+                    )
+        self.connectors_status.set(f"{ok_nodes}/{len(results)} węzłów · {total_routes} tras")
+
+    def _toggle_connectors(self) -> None:
+        nodes = self.connectors_tree.get_children()
+        # collapse if any top-level node is open, otherwise expand all
+        expand = not any(self.connectors_tree.item(n, "open") for n in nodes)
+        for node in nodes:
+            self.connectors_tree.item(node, open=expand)
+            for child in self.connectors_tree.get_children(node):
+                self.connectors_tree.item(child, open=expand)
 
     def _build_events_tab(self) -> None:
         tab = ttk.Frame(self.notebook, padding=10)

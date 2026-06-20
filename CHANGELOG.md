@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- `ifuri-app run` can now switch from preview to real execution with
+  `--execute`; URI targets also accept a JSON `--payload`.
+
 ## [0.1.10] - 2026-06-19
 
 ### Fixed

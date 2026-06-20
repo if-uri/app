@@ -109,6 +109,8 @@ ifuri-app chat-send "status" --endpoint http://192.168.188.201:8790
 ifuri-app chat-status --endpoint http://192.168.188.201:8790
 ifuri-app chat-migrate --endpoint http://192.168.188.201:8790
 ifuri-app packs
+ifuri-app run tool://local/report/render --payload '{"format":"html"}' --dry-run
+ifuri-app run tool://local/report/render --payload '{"format":"html"}' --execute
 ifuri-app urirun-info
 ifuri-app urirun-call tool://local/report/render --registry generated/registry.json --payload '{"format":"html"}'
 ifuri-app urirun-scan . --out generated/bindings.json

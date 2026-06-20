@@ -17,7 +17,7 @@ from .discovery import DiscoveryResponder, discover
 from .flow_engine import dry_run_flow, dry_run_uri, expand_flow
 from .flow_runner import run_flow_file
 from .gui import launch_gui
-from .runtime import PortInUseError, RuntimeServer, _port_available, find_free_port
+from .runtime import PortInUseError, RuntimeServer, RuntimeState, _port_available, find_free_port
 from .storage import load_workspace, save_workspace, workspace_path
 from .packs.loader import pack_summary
 from .packs.runtime import local_runtime_info
@@ -436,11 +436,21 @@ def cmd_flow_validate(args) -> int:
 
 def cmd_run(args) -> int:
     target = args.target
+    try:
+        payload = parse_json_object(args.payload, name="payload")
+    except Exception as exc:  # noqa: BLE001 - keep CLI error compact
+        print_json({"ok": False, "error": str(exc)})
+        return 2
     if Path(target).exists():
         text = Path(target).read_text(encoding="utf-8")
-        result = dry_run_flow(text) if args.dry_run else dry_run_flow(text)
+        result = dry_run_flow(text) if args.dry_run else RuntimeState().run_flow(text, dry_run=False, approved=True)
     elif "://" in target:
-        result = dry_run_uri(target)
+        result = dry_run_uri(target, payload) if args.dry_run else RuntimeState().call_uri(
+            target,
+            payload,
+            dry_run=False,
+            approved=True,
+        )
     else:
         print(f"not a file or URI: {target}", file=sys.stderr)
         return 2
@@ -633,9 +643,12 @@ def build_parser() -> argparse.ArgumentParser:
     p_disc.add_argument("--port", type=int, default=DEFAULT_PORT)
     p_disc.set_defaults(func=cmd_discover)
 
-    p_run = sub.add_parser("run", help="dry-run URI or .uri.flow.yaml file")
+    p_run = sub.add_parser("run", help="run or dry-run URI / .uri.flow.yaml file")
     p_run.add_argument("target")
-    p_run.add_argument("--dry-run", action="store_true", default=True)
+    p_run.add_argument("--payload", default="{}", help="JSON object payload for a URI target")
+    run_mode = p_run.add_mutually_exclusive_group()
+    run_mode.add_argument("--dry-run", dest="dry_run", action="store_true", default=True, help="preview without execution")
+    run_mode.add_argument("--execute", dest="dry_run", action="store_false", help="execute through local runtime/urirun")
     p_run.set_defaults(func=cmd_run)
 
     p_expand = sub.add_parser("expand", help="expand compact URI flow to workflow_graph")

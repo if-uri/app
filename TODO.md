@@ -4,8 +4,9 @@
 
 - [ ] Add a launcher in the desktop app for the `if-uri/examples/11-novnc_lan_flow`
       Docker/noVNC scenario.
-- [ ] Expose installed connectors and available URI routes in the GUI as a
-      first-class view, grouped by node and URI scheme.
+- [x] Expose installed connectors and available URI routes in the GUI as a
+      first-class view, grouped by node and URI scheme. (Konektory tab — fetches
+      each node's /routes via ifuri_app.connectors, groups by node + scheme.)
 - [ ] Add a GUI path for installing connector packages from `connect.ifuri.com`.
 - [ ] Add an end-to-end app test that calls a remote `urirun node` and verifies
       MCP/A2A/URI route discovery.

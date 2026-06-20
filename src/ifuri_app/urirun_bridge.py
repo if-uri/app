@@ -19,7 +19,7 @@ from typing import Any
 
 
 INSTALL_HINT = (
-    'python -m pip install "git+https://github.com/tellmesh/urirun.git@v0.3.12'
+    'python -m pip install "git+https://github.com/tellmesh/urirun.git@v0.3.14'
     '#subdirectory=adapters/python"'
 )
 

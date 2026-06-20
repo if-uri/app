@@ -212,6 +212,60 @@ def test_cli_urirun_call_in_process_execute(tmp_path):
     assert data["result"]["stdout"].strip() == "hello-cli"
 
 
+def test_cli_run_execute_uses_runtime_state(tmp_path, monkeypatch):
+    """ifuri-app run --execute must not fall back to dry_run_flow."""
+    import json as _json, subprocess, sys
+
+    (tmp_path / "urirun.bindings.v2.json").write_text(
+        _json.dumps(
+            {
+                "version": "urirun.bindings.v2",
+                "bindings": {
+                    "util://local/echo/say": {
+                        "kind": "command",
+                        "adapter": "argv-template",
+                        "inputSchema": {
+                            "type": "object",
+                            "properties": {"text": {"type": "string"}},
+                            "required": ["text"],
+                        },
+                        "argv": ["echo", "{text}"],
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    reg = tmp_path / "registry.json"
+    subprocess.run(
+        [sys.executable, "-m", "ifuri_app.cli", "urirun-scan", str(tmp_path), "--registry-out", str(reg)],
+        check=True,
+        capture_output=True,
+    )
+
+    monkeypatch.setenv("IFURI_URIRUN_REGISTRY", str(reg))
+    monkeypatch.setenv("IFURI_HOME", str(tmp_path / "home"))
+    out = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "ifuri_app.cli",
+            "run",
+            "util://local/echo/say",
+            "--payload",
+            '{"text":"hello-run"}',
+            "--execute",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    data = _json.loads(out.stdout)
+    assert data["ok"] is True
+    assert data["via"] == "urirun"
+    assert data["mode"] == "execute"
+    assert data["result"]["stdout"].strip() == "hello-run"
+
+
 def test_mcp_tools_and_a2a_card():
     reg = _registry()
     t = ub.mcp_tools(registry=reg)
