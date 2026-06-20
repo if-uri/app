@@ -1,40 +1,35 @@
 # Author: Tom Sapletta · https://tom.sapletta.com
 # Part of the ifURI solution.
 
-"""Connector hub store (IFURI-017) — fetch a connect.ifuri.com catalog, plan
+"""Connector hub store (IFURI-017) — fetch the connect.ifuri.com catalog, plan
 package installs, and derive payload forms.
 
-PROVISIONAL CONTRACT
---------------------
-The real connect.ifuri.com catalog API is not finalised, so the wire shapes
-below are an explicit, swappable assumption — grounded in the existing
-``if-uri/urirun-connector-*`` repos that such a hub would serve. When the real
-spec lands, only :func:`normalize_packages` and :func:`install_command` should
-need to change; the GUI and tests drive everything through this module.
-
-Assumed ``GET {catalog_url}`` response::
+REAL CONTRACT (connect.ifuri.com ``GET /connectors.json``)
+----------------------------------------------------------
+Matches the live hub (``if-uri/connect.ifuri.com``, ``data/connectors.json`` /
+``hub_catalog()``). Catalog shape::
 
     {
-      "ok": true,
-      "packages": [
+      "version": "ifuri.connectors.v1",
+      "connectors": [
         {
-          "name": "browser-control",
-          "version": "0.3.1",
-          "scheme": "browser",
-          "summary": "Drive Chromium via browser:// URIs",
-          "install": {"kind": "pip",
-                      "spec": "git+https://github.com/if-uri/urirun-connector-browser-control.git"},
-          "routes": [
-            {"uri": "browser://{node}/page/command/open",
-             "params": [{"name": "url", "required": true}]}
-          ]
+          "id": "planfile",
+          "name": "Planfile Tasks",
+          "status": "available",
+          "category": "Planning",
+          "summary": "...",
+          "uriSchemes": ["task", "planfile"],
+          "routes": ["task://host/tickets/query/list", ...],   # plain URI strings
+          "install": {"mode": "urirun-extra",
+                      "pipSpec": "urirun-connector-planfile @ git+https://github.com/if-uri/urirun-connector-planfile.git@v0.1.1"}
         }
       ]
     }
 
-Kept stdlib-only and side-effect free apart from the HTTP GET in
-:func:`fetch_catalog`, so normalisation and form/command derivation are unit
-testable without a live hub.
+:func:`normalize_packages` flattens this (and the older ``packages``/``scheme``/
+``install.spec`` shape, kept for back-compat) into one stable row shape the GUI
+and tests consume. Stdlib-only and side-effect free apart from the HTTP GET in
+:func:`fetch_catalog`.
 """
 
 from __future__ import annotations
@@ -45,8 +40,9 @@ import re
 import urllib.request
 from typing import Any
 
-DEFAULT_CATALOG_URL = "https://connect.ifuri.com/api/catalog"
+DEFAULT_CATALOG_URL = "https://connect.ifuri.com/connectors.json"
 _PLACEHOLDER_RE = re.compile(r"\{([a-zA-Z_][a-zA-Z0-9_]*)\}")
+_VERSION_RE = re.compile(r"@(v[0-9][\w.\-]*)")
 
 
 def catalog_url() -> str:
@@ -68,26 +64,54 @@ def _normalize_route(route: Any) -> dict[str, Any]:
     return {}
 
 
+def _normalize_install(install: dict[str, Any]) -> dict[str, Any]:
+    """Map either the hub shape ({mode, pipSpec}) or the legacy {kind, spec}."""
+    spec = (install.get("pipSpec") or install.get("spec") or "").strip()
+    # hub install is always pip-based (mode urirun-extra/...); legacy carried kind explicitly
+    kind = "pip" if spec else str(install.get("kind") or "")
+    return {"kind": kind, "spec": spec, "mode": str(install.get("mode") or "")}
+
+
+def _version_of(install: dict[str, Any], pkg: dict[str, Any]) -> str:
+    if pkg.get("version"):
+        return str(pkg["version"])
+    match = _VERSION_RE.search(install.get("spec") or "")
+    return match.group(1) if match else ""
+
+
 def normalize_packages(payload: Any) -> list[dict[str, Any]]:
-    """Flatten a catalog payload into a stable list of connector-package dicts."""
-    packages = payload.get("packages", payload) if isinstance(payload, dict) else payload
+    """Flatten a catalog payload into a stable list of connector-package dicts.
+
+    Accepts the live hub shape (``{connectors: [...]}`` with ``id``/``uriSchemes``/
+    ``install.pipSpec``) and the older ``{packages: [...]}``/``scheme`` shape.
+    """
+    if isinstance(payload, dict):
+        packages = payload.get("connectors") or payload.get("packages") or []
+    else:
+        packages = payload
     if not isinstance(packages, (list, tuple)):
         return []
     out: list[dict[str, Any]] = []
     for pkg in packages:
-        if not isinstance(pkg, dict) or not pkg.get("name"):
+        name = pkg.get("name") or pkg.get("id") if isinstance(pkg, dict) else None
+        if not isinstance(pkg, dict) or not name:
             continue
-        install = pkg.get("install") if isinstance(pkg.get("install"), dict) else {}
+        install = _normalize_install(pkg.get("install") if isinstance(pkg.get("install"), dict) else {})
+        schemes = pkg.get("uriSchemes") or ([pkg["scheme"]] if pkg.get("scheme") else [])
         routes = [r for r in (_normalize_route(r) for r in (pkg.get("routes") or [])) if r]
         out.append({
-            "name": str(pkg["name"]),
-            "version": str(pkg.get("version") or ""),
-            "scheme": str(pkg.get("scheme") or ""),
+            "id": str(pkg.get("id") or name),
+            "name": str(name),
+            "version": _version_of(install, pkg),
+            "scheme": str(schemes[0]) if schemes else "",
+            "schemes": [str(s) for s in schemes],
             "summary": str(pkg.get("summary") or pkg.get("description") or ""),
-            "install": {"kind": str(install.get("kind") or ""), "spec": str(install.get("spec") or "")},
+            "category": str(pkg.get("category") or ""),
+            "status": str(pkg.get("status") or ""),
+            "install": install,
             "routes": routes,
         })
-    out.sort(key=lambda p: p["name"])
+    out.sort(key=lambda p: p["name"].lower())
     return out
 
 

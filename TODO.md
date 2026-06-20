@@ -8,13 +8,15 @@
 - [x] Expose installed connectors and available URI routes in the GUI as a
       first-class view, grouped by node and URI scheme. (Konektory tab — fetches
       each node's /routes via ifuri_app.connectors, groups by node + scheme.)
-- [~] Add a GUI path for installing connector packages from `connect.ifuri.com`.
-      (Scaffold: "Connect" tab + ifuri_app.connect_store with a PROVISIONAL,
-      swappable catalog contract. Needs the real connect.ifuri.com API to finalise.)
-- [~] Implement IFURI-017: consume the hub catalog, install selected connector
+- [x] Add a GUI path for installing connector packages from `connect.ifuri.com`.
+      ("Connect" tab + ifuri_app.connect_store, matched to the real hub contract
+      GET /connectors.json. Verified against the live PHP hub — 13 connectors.)
+- [x] Implement IFURI-017: consume the hub catalog, install selected connector
       packages, refresh local registry and show payload forms before run.
-      (Done in scaffold: catalog fetch/normalise, pip install plan/run, payload
-      forms from route metadata. Pending: real API + local registry refresh.)
+      (Catalog fetch/normalise (real {connectors,uriSchemes,install.pipSpec}),
+      pip install from install.pipSpec, payload forms from route metadata.
+      Note: local registry refresh still TODO; hub routes lack param schemas so
+      run-forms only derive URI {placeholders}.)
 - [x] Add a GUI smoke that proves connector route tables, payload forms and
       result/log panels render correctly. (Headless xvfb tests in
       tests/test_gui_smoke.py cover Konektory route tables, Connect payload forms

@@ -13,6 +13,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
@@ -47,14 +48,50 @@ def test_catalog_url_env_override(monkeypatch):
     assert cs.catalog_url() == "http://localhost:9999/c"
 
 
+# Real connect.ifuri.com hub shape: connectors[] with id / uriSchemes / install.pipSpec.
+HUB_SAMPLE = {
+    "version": "ifuri.connectors.v1",
+    "connectors": [
+        {
+            "id": "planfile",
+            "name": "Planfile Tasks",
+            "status": "available",
+            "category": "Planning",
+            "summary": "Plan tasks via task:// URIs.",
+            "uriSchemes": ["task", "planfile"],
+            "routes": ["task://host/tickets/query/list", "planfile://host/dsl/command/run"],
+            "install": {"mode": "urirun-extra",
+                        "pipSpec": "urirun-connector-planfile @ git+https://github.com/if-uri/urirun-connector-planfile.git@v0.1.1"},
+        }
+    ],
+}
+
+
 def test_normalize_packages_shapes():
     pkgs = cs.normalize_packages(SAMPLE)
     assert [p["name"] for p in pkgs] == ["browser-control", "time-tools"]  # sorted
     bc = pkgs[0]
-    assert bc["install"] == {"kind": "pip", "spec": "git+https://github.com/if-uri/urirun-connector-browser-control.git"}
+    assert bc["install"]["kind"] == "pip"
+    assert bc["install"]["spec"] == "git+https://github.com/if-uri/urirun-connector-browser-control.git"
     assert bc["routes"][0]["params"] == [{"name": "url", "required": True}]
     # string route normalised to dict with empty params
     assert pkgs[1]["routes"][0] == {"uri": "time://local/now", "params": []}
+
+
+def test_normalize_real_hub_shape():
+    pkgs = cs.normalize_packages(HUB_SAMPLE)
+    assert len(pkgs) == 1
+    p = pkgs[0]
+    assert p["id"] == "planfile" and p["name"] == "Planfile Tasks"
+    assert p["schemes"] == ["task", "planfile"] and p["scheme"] == "task"
+    assert p["category"] == "Planning" and p["status"] == "available"
+    assert p["version"] == "v0.1.1"  # parsed from the pipSpec @v0.1.1
+    assert p["install"]["spec"].startswith("urirun-connector-planfile @ git+")
+    assert cs.install_command(p) == [
+        "python", "-m", "pip", "install",
+        "urirun-connector-planfile @ git+https://github.com/if-uri/urirun-connector-planfile.git@v0.1.1",
+    ]
+    assert [r["uri"] for r in p["routes"]] == ["task://host/tickets/query/list", "planfile://host/dsl/command/run"]
 
 
 def test_normalize_skips_invalid_and_accepts_bare_list():
@@ -121,3 +158,24 @@ def test_fetch_catalog_live_mock():
 def test_fetch_catalog_unreachable():
     out = cs.fetch_catalog("http://127.0.0.1:1/catalog", timeout=0.2)
     assert out["ok"] is False and out["packages"] == [] and out["error"]
+
+
+# Path to the real hub catalog in the sibling connect.ifuri.com repo.
+_REAL_CATALOG = Path(__file__).resolve().parents[2] / "connect.ifuri.com" / "data" / "connectors.json"
+
+
+@pytest.mark.skipif(not _REAL_CATALOG.is_file(), reason="connect.ifuri.com/data/connectors.json not present")
+def test_normalize_against_real_catalog_file():
+    """Normalise the actual hub catalog — proves the contract matches the live data."""
+    payload = json.loads(_REAL_CATALOG.read_text(encoding="utf-8"))
+    pkgs = cs.normalize_packages(payload)
+    assert len(pkgs) >= 5, "real catalog should list several connectors"
+    # every package has the keys the GUI relies on
+    for p in pkgs:
+        assert p["id"] and p["name"]
+        assert isinstance(p["schemes"], list)
+        assert set(p["install"]) == {"kind", "spec", "mode"}
+    # at least one connector installs via pip and yields a runnable command
+    installable = [p for p in pkgs if cs.install_command(p)]
+    assert installable, "expected at least one pip-installable connector"
+    assert installable[0]["install"]["spec"]
