@@ -2,7 +2,8 @@
 
 Derived from `TODO/*.md` + recon (2026-06). Status corrected against the real repos.
 Repos local: `if-uri/app`, `if-uri/get`, `if-uri/connect.ifuri.com`, `if-uri/ifuri-com`.
-`tellmesh/urirun` is NOT cloned locally.
+`tellmesh/urirun` lives locally as `/home/tom/github/tellmesh/urihandler` and pushes to
+`git@github.com:tellmesh/urirun.git`.
 
 Legend: ✅ done · 🟢 safe to do now (code/config) · 🟡 needs decision/clone · 🔴 owner-only (creds/publish/security)
 
@@ -10,23 +11,30 @@ Legend: ✅ done · 🟢 safe to do now (code/config) · 🟡 needs decision/clo
 
 ---
 
-## 20 · get-node (`if-uri/get`) — 🟢 (deploy changes get.ifuri.com)
-Current: `node.sh` pins `@main`; has `/health`; no `--upgrade`/`--service`/`node.ps1`.
-- [ ] Pin urirun version: `URIRUN_REF` override; default to a released tag (blocked by 40 → temporary `main`).
-- [ ] `--upgrade`: reuse venv, `pip install -U`, restart runner.
-- [ ] `--service`: systemd --user (Linux) / launchd plist (macOS).
-- [ ] `node.ps1` (PowerShell) + section in `index.html`.
-- [ ] `/app` redirect → latest desktop release.
+## 20 · get-node (`if-uri/get`) — 🟢
+Current: `node.sh` and `node.ps1` default to `URIRUN_REF=v0.3.14`; `/health`,
+`--dry-run`, `--no-start`, `--upgrade`, `/app` redirect and route printing are in place.
+- [x] Pin urirun version with `URIRUN_REF` override; default to released tag `v0.3.14`.
+- [x] `--upgrade`: reuse venv, `pip install -U`, recompile, restart running node.
+- [x] `--service`: systemd --user (Linux), launchd plist (macOS), Windows Scheduled Task.
+- [x] `node.ps1` (PowerShell) exists; keep parity tested when Windows runner is available.
+- [x] `/app` redirect → latest desktop release.
 - Verify: `bash node.sh --help`, `--dry-run`, post-install `curl 127.0.0.1:8765/health`.
-- Risk: low (script); deploy via `deploy-plesk.sh` → verify with curl.
+- Verified in Docker full E2E: `pc1` and `pc2` installed from `https://get.ifuri.com/node.sh`
+  and exposed 7 URI routes each.
+- Verified locally: `make service-smoke` created a temporary systemd --user unit,
+  checked `/health`, and removed the unit.
 
-## 30 · connect (`if-uri/connect.ifuri.com`) — 🟢 (seed already done: 8 manifests + schemas + ci-deploy.yml)
-- [ ] CI manifest validation: `.github/workflows/validate-connectors.yml` — validate every `data/connectors/*/manifest.json` vs `schema/*.json`.
-- [ ] Manifest ↔ urirun bridge: `connector.schema` → `urirun.bindings.v2` mapping, used by `install.php?connectors=…`. Files: `lib/hub.php`, `install.php`.
-- [ ] MCP/A2A projection: `registry.json` → `tools/list` + A2A card. Files: `lib/hub.php`, `api/`.
+## 30 · connect (`if-uri/connect.ifuri.com`) — 🟢
+- [x] CI/local manifest validation: every `data/connectors/*/manifest.json` validates against `schema/*.json`.
+- [x] Manifest ↔ urirun bridge: `/install?connectors=…` installs external packages,
+  generates bundled bindings, and compiles `connectors.registry.json`.
+- [x] MCP/A2A projection: catalog exposes `/mcp.json`, `/a2a.json`, and `/.well-known/agent.json`.
 - [ ] Harden `submit.php` / `validate-connector` (rate-limit, spam guard).
 - Verify: `/connectors.json`,`/registry.json`,`/search.json` valid JSON; `/install?connectors=planfile` runnable.
-- Risk: low (additive endpoints + CI).
+- Verified live: deployed to `https://connect.ifuri.com`, public smoke green, clean install generated connector registries on `urirun v0.3.14`.
+- Verified in Docker full E2E: available connector install produced 37 registry routes,
+  23 executed connector route results, 37 MCP tools and 37 A2A skills.
 
 ## 10 + 50 · app + CI (`if-uri/app`) — 🟢 PR-only (no deploy/secrets)
 - [x] Node/daemon unit: `systemd/ifuri-runtime-user.service` (+ `com.ifuri.runtime.plist`, NSSM note in `systemd/README.md`) — beside existing voice unit.
@@ -36,9 +44,10 @@ Current: `node.sh` pins `@main`; has `/health`; no `--upgrade`/`--service`/`node
 - Verify: `pytest --ignore=tests/e2e` (82+), `ifuri-app --help`.
 - Risk: low (matrix runs on tag only).
 
-## 40 · urirun (`tellmesh/urirun`) — 🟡 blocked
-- Not cloned locally. `release.yml` marked done. Remaining: bump `pyproject`, CHANGELOG, `make test` green after v1/v2 rename.
-- Blocker: clone repo + decision #2 (PyPI/npm).
+## 40 · urirun (`tellmesh/urirun`) — 🟢
+- Local source is `/home/tom/github/tellmesh/urihandler` with remote `tellmesh/urirun`.
+- Consumers now pin `v0.3.14`.
+- Remaining: optional PyPI/npm publishing, JS npm package, C release asset, and signed release policy.
 
 ## 🔴 Owner-only (not done autonomously)
 - Code signing / notarization (Apple Dev ID, Windows cert; `APPLE_*`/`WIN_CERT_*` secrets).

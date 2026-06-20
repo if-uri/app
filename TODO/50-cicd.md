@@ -20,9 +20,9 @@
 - [x] Tag → wheel+sdist+sha256 → GitHub Release (release.yml). Optional PyPI/npm pending.
 
 ### Connectors (connect.ifuri.com)
-- [ ] Validate connector manifests against `schema/*.json` on PR.
-- [ ] Build/publish `registry.json` + `search.json` artifacts.
-- [ ] Add a manual/nightly full connector lab workflow running
+- [x] Validate connector manifests against `schema/*.json` locally and in the connector hub smoke test.
+- [x] Build/publish `registry.json` + `search.json` from the PHP hub.
+- [x] Add a manual/nightly full connector lab workflow running
   `if-uri/examples/12-full_e2e_connect_lab make test`.
 
 ### Site deploys (ifuri-com, examples, docs, logo, get, connect)
@@ -32,7 +32,9 @@
 - [ ] Post-deploy smoke: `curl -fsSI https://<sub>.ifuri.com/`.
 
 ### Integrations / images
-- [x] **E2E lab in CI**: `examples/.github/workflows/e2e.yml` (nightly + manual) runs the full Docker scenario + host examples on pinned urirun.
+- [x] **E2E lab in CI**: `examples/.github/workflows/e2e.yml` (nightly + manual) runs the full Docker scenario + host examples on pinned urirun `v0.3.14`.
+  Local full Docker run is green with 2 nodes, 37 connector routes projected to MCP/A2A,
+  and `browser-control` included as available.
 - [ ] Docker images for urirun nodes + workers (publish to GHCR) on tag.
 - [ ] (Optional) VS Code extension build, MCP server image — see [60-reuse](60-reuse.md).
 

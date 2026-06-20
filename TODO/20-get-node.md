@@ -6,10 +6,11 @@
 - Static landing `index.html`; deploy via `scripts/deploy-plesk.sh`.
 
 ## Tasks
-- [x] **Pin versions**: default to released urirun tag `v0.3.12` (see [40-urirun](40-urirun.md)) instead of `@main`, with `URIRUN_REF` override — reproducible installs.
+- [x] **Pin versions**: default to released urirun tag `v0.3.14` (see [40-urirun](40-urirun.md)) instead of `@main`, with `URIRUN_REF` override — reproducible installs.
 - [x] **Integrity**: `node.sh.sha256` published + `sha256sum -c` verify instructions (README); `--no-start`/`--dry-run` to preview before running.
-- [ ] **Windows / macOS**: `get.ifuri.com/node.ps1` (PowerShell) and a `brew`/`pipx` path; document each.
-- [ ] **Service install**: `--service` flag → systemd (Linux) / launchd (macOS) / NSSM (Windows) so the node survives reboot.
+- [x] **Windows**: `get.ifuri.com/node.ps1` exists; keep parity tests on a Windows runner.
+- [ ] **macOS**: document launchd plus a `brew`/`pipx` path.
+- [x] **Service install**: `--service` flag → systemd --user (Linux), launchd (macOS), Scheduled Task (Windows) so the node survives reboot.
 - [x] **Idempotent upgrade**: `node.sh --upgrade` reuses venv, bumps urirun, recompiles, restarts running node.
 - [x] **App shortcut**: `get.ifuri.com/app` → 302 to latest desktop release (.htaccess + app/).
 - [x] **Health after install**: background installs poll `/health` and print URI routes + LAN address.
@@ -18,3 +19,6 @@
 ## Verify
 - `bash node.sh --help`; install on a clean box → `curl 127.0.0.1:8765/health` ok.
 - get.ifuri.com/ and /node.sh serve 200 (already live).
+- Docker full E2E verified two clean installs from `https://get.ifuri.com/node.sh`
+  (`pc1`, `pc2`) and node route discovery.
+- Linux service smoke verified a temporary `systemd --user` unit, `/health`, and cleanup.

@@ -12,18 +12,22 @@ current working path.
   to pin a tag/release instead of `@main`, keeping an override env var.
 
 ## Phase 2 — automate the proven E2E path
-- [ ] Add a manual/nightly workflow for `examples/12-full_e2e_connect_lab`.
-- [ ] Keep the scenario focused on the user path: get.ifuri.com node install,
+- [x] Add a manual/nightly workflow for `examples/12-full_e2e_connect_lab`.
+- [x] Keep the scenario focused on the user path: get.ifuri.com node install,
   connect.ifuri.com connector install, host/pc1/pc2 flow, MCP tools, A2A skills.
-- [ ] Keep `mqtt` and `browser-control` marked as planned until each has a real
+- [x] Move `browser-control` from planned to available after publishing a real
   connector package and Docker smoke environment.
+- [ ] Keep `mqtt`, `get-node`, `kvm`, `llm` and `mcp-filesystem` marked as planned
+  until each has a real connector package and Docker smoke environment.
 
 ## Phase 3 — connector package template
-- [ ] Turn `urirun-connector-http-check` into the reference template:
+- [x] Turn `urirun-connector-http-check` into the reference template:
   decorator, `connector_bindings()`, manifest, Docker smoke, README, CI.
-- [ ] Create the next connector from that template, preferably one with a real
-  external dependency but mock-safe execution: `mcp-filesystem` or `browser-control`.
-- [ ] Add catalog validation in `connect.ifuri.com` CI before accepting new
+- [x] Create the next connector from that template: `browser-control`, with
+  mock-safe execution, Docker smoke and hub manifest.
+- [ ] Create the next connector with a real external dependency and mock-safe
+  execution, preferably `mcp-filesystem`.
+- [x] Add catalog validation in `connect.ifuri.com` smoke tests before accepting new
   connector manifests.
 
 ## Phase 4 — app UX
