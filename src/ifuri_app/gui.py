@@ -436,16 +436,18 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         if not routes:
             ttk.Label(self.payload_form, text="(brak tras w pakiecie)").grid(row=0, column=0, sticky="w")
             return
-        route = routes[0]
+        examples = pkg.get("examples") or []
+        # prefer a route that has an example payload (richest form), else the first
+        route = next((r for r in routes if payload_form_fields(r, examples)), routes[0])
         ttk.Label(self.payload_form, text=route["uri"], foreground="#3f5f78").grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 4))
-        fields = payload_form_fields(route)
+        fields = payload_form_fields(route, examples)
         if not fields:
             ttk.Label(self.payload_form, text="(brak pól payloadu)").grid(row=1, column=0, sticky="w")
             return
         for i, field in enumerate(fields, start=1):
             label = field["name"] + (" *" if field["required"] else "")
             ttk.Label(self.payload_form, text=label).grid(row=i, column=0, sticky="w", padx=(0, 8), pady=2)
-            var = tk.StringVar()
+            var = tk.StringVar(value=field.get("example", ""))  # pre-fill from the connector example
             self._payload_vars[field["name"]] = var
             ttk.Entry(self.payload_form, textvariable=var).grid(row=i, column=1, sticky="ew", pady=2)
 

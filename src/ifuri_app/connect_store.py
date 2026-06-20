@@ -99,6 +99,12 @@ def normalize_packages(payload: Any) -> list[dict[str, Any]]:
         install = _normalize_install(pkg.get("install") if isinstance(pkg.get("install"), dict) else {})
         schemes = pkg.get("uriSchemes") or ([pkg["scheme"]] if pkg.get("scheme") else [])
         routes = [r for r in (_normalize_route(r) for r in (pkg.get("routes") or [])) if r]
+        examples = [
+            {"title": str(e.get("title") or ""), "uri": str(e.get("uri") or ""),
+             "payload": e["payload"] if isinstance(e.get("payload"), dict) else {}}
+            for e in (pkg.get("examples") or [])
+            if isinstance(e, dict) and e.get("uri")
+        ]
         out.append({
             "id": str(pkg.get("id") or name),
             "name": str(name),
@@ -110,6 +116,7 @@ def normalize_packages(payload: Any) -> list[dict[str, Any]]:
             "status": str(pkg.get("status") or ""),
             "install": install,
             "routes": routes,
+            "examples": examples,
         })
     out.sort(key=lambda p: p["name"].lower())
     return out
@@ -171,21 +178,34 @@ def local_registry_status() -> dict[str, Any]:
     return status
 
 
-def payload_form_fields(route: dict[str, Any]) -> list[dict[str, Any]]:
+def example_payload_for(uri: str, examples: list[dict[str, Any]] | None) -> dict[str, Any] | None:
+    """Return the example payload whose ``uri`` matches ``uri``, if any."""
+    for ex in examples or []:
+        if ex.get("uri") == uri and isinstance(ex.get("payload"), dict):
+            return ex["payload"]
+    return None
+
+
+def payload_form_fields(route: dict[str, Any], examples: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
     """Derive ordered, de-duplicated form fields for a route's run payload.
 
-    Fields come from (1) explicit ``params`` metadata and (2) ``{placeholder}``
-    tokens in the URI template, so a form can be shown before POSTing /run.
+    Fields come from, in priority order: (1) explicit ``params`` metadata, (2) a
+    matching connector ``example`` payload — keys become fields pre-filled with the
+    example value (the richest source the hub offers), and (3) ``{placeholder}``
+    tokens in the URI template. Each field is ``{name, required, example}``.
     """
     fields: list[dict[str, Any]] = []
     seen: set[str] = set()
-    for p in route.get("params") or []:
-        name = p.get("name")
+
+    def add(name: str, *, required: bool, example: Any = "") -> None:
         if name and name not in seen:
             seen.add(name)
-            fields.append({"name": name, "required": bool(p.get("required", False))})
+            fields.append({"name": name, "required": required, "example": "" if example is None else str(example)})
+
+    for p in route.get("params") or []:
+        add(p.get("name"), required=bool(p.get("required", False)))
+    for key, value in (example_payload_for(route.get("uri") or "", examples) or {}).items():
+        add(str(key), required=False, example=value)
     for token in _PLACEHOLDER_RE.findall(route.get("uri") or ""):
-        if token not in seen:
-            seen.add(token)
-            fields.append({"name": token, "required": True})
+        add(token, required=True)
     return fields
