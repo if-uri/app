@@ -156,6 +156,25 @@ def test_connect_catalog_and_payload_form(app):
     assert set(app._payload_vars) == {"url", "node"}  # params + placeholder
 
 
+def test_connect_payload_form_enriched_from_example(app):
+    """Selecting a connector with example payloads builds a pre-filled run form."""
+    from ifuri_app import connect_store as cs
+
+    hub = {"connectors": [{
+        "id": "planfile", "name": "Planfile Tasks", "uriSchemes": ["task"],
+        "install": {"mode": "urirun-extra", "pipSpec": "urirun-connector-planfile @ git+https://x@v0.1.1"},
+        "routes": ["task://host/tickets/query/list", "task://host/ticket/command/create"],
+        "examples": [{"title": "Create", "uri": "task://host/ticket/command/create",
+                      "payload": {"project": ".", "name": "Check DNS", "queue": "ops"}}],
+    }]}
+    app._catalog_done({"ok": True, "packages": cs.normalize_packages(hub)})
+    app.packages_tree.selection_set(app.packages_tree.get_children()[0])
+    app._on_package_select()
+    # the command route (with an example) wins over the query route, fields pre-filled
+    assert set(app._payload_vars) == {"project", "name", "queue"}
+    assert app._payload_vars["name"].get() == "Check DNS"
+
+
 def test_connect_install_manual_no_subprocess(app, monkeypatch):
     from ifuri_app import gui
 

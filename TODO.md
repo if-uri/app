@@ -16,9 +16,10 @@
       (Catalog fetch/normalise (real {connectors,uriSchemes,install.pipSpec}),
       pip install from install.pipSpec, local registry refresh via
       connect_store.local_registry_status (verified on the noVNC generated
-      registry — 12 routes), payload forms from route metadata. Note: hub routes
-      are plain URIs without param schemas, so run-forms only derive URI
-      {placeholders} until enriched from a live node registry.)
+      registry — 12 routes), payload forms enriched from connector examples
+      (real {title,uri,payload}) — pre-filled run forms, verified against the
+      live hub (planfile → project/sprint fields). Falls back to URI
+      {placeholders} when no example matches.)
 - [x] Add a GUI smoke that proves connector route tables, payload forms and
       result/log panels render correctly. (Headless xvfb tests in
       tests/test_gui_smoke.py cover Konektory route tables, Connect payload forms
