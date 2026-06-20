@@ -79,3 +79,34 @@ def test_connectors_empty_state(app):
     app._urirun_serve = None
     app.refresh_connectors()
     assert "Brak znanych węzłów" in app.connectors_status.get()
+
+
+def test_novnc_section_present(app):
+    assert hasattr(app, "novnc_status")
+
+
+def test_novnc_open_dashboard(app, monkeypatch):
+    from ifuri_app import gui
+
+    opened = []
+    monkeypatch.setattr(gui.webbrowser, "open", lambda url: opened.append(url))
+    app.open_novnc_dashboard()
+    assert opened and opened[0].startswith("http://127.0.0.1:")
+    assert "Dashboard" in app.novnc_status.get()
+
+
+def test_novnc_precheck_missing_dir(app, monkeypatch):
+    from ifuri_app import gui
+
+    monkeypatch.setattr(gui, "demo_dir", lambda: None)
+    assert app._novnc_precheck() is None
+    assert "Nie znaleziono" in app.novnc_status.get()
+
+
+def test_novnc_precheck_missing_docker(app, monkeypatch, tmp_path):
+    from ifuri_app import gui
+
+    monkeypatch.setattr(gui, "demo_dir", lambda: tmp_path)
+    monkeypatch.setattr(gui, "docker_available", lambda: False)
+    assert app._novnc_precheck() is None
+    assert "docker" in app.novnc_status.get().lower()

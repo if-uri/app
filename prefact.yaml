@@ -11,6 +11,11 @@ exclude:
 - '**/venv*/**'
 - '**/env/**'
 - '**/.git/**'
+# Anchored forms: '**/build/**' does NOT match a top-level build/ dir in glob,
+# which is why build/lib/* leaked into the generated TODO scans.
+- 'build/**'
+- 'dist/**'
+- '*.egg-info/**'
 - '**/build/**'
 - '**/dist/**'
 - '**/*.egg-info/**'

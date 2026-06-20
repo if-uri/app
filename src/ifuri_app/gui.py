@@ -15,6 +15,7 @@ from .connectors import fetch_node_routes, group_by_scheme
 from .discovery import DiscoveryResponder, discover
 from .flow_engine import as_pretty_json, dry_run_flow
 from .network_scan import scan_network
+from .novnc_demo import compose_args, dashboard_url, demo_dir, docker_available
 from .runtime import PortInUseError, RuntimeServer
 from .storage import add_event, load_workspace, save_workspace, workspace_path
 from .gui_chat import ChatTabMixin
@@ -210,6 +211,15 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
             self.peer_tree.heading(col, text=col)
             self.peer_tree.column(col, width=140)
         self.peer_tree.grid(row=7, column=0, sticky="nsew", pady=4)
+
+        demo = ttk.LabelFrame(tab, text="Demo noVNC LAN flow · examples/11-novnc_lan_flow", padding=8)
+        demo.grid(row=8, column=0, sticky="ew", pady=(8, 0))
+        ttk.Button(demo, text="Start (docker compose up)", command=self.start_novnc_demo).pack(side="left")
+        ttk.Button(demo, text="Otwórz dashboard", command=self.open_novnc_dashboard).pack(side="left", padx=6)
+        ttk.Button(demo, text="Stop", command=self.stop_novnc_demo).pack(side="left")
+        self.novnc_status = tk.StringVar(value="")
+        ttk.Label(demo, textvariable=self.novnc_status, foreground="#5d6d7e").pack(side="left", padx=10)
+
         self._last_scan: dict[str, Any] = {}
         self._refresh_peers()
 
@@ -523,6 +533,62 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
                     values=(svc.get("scheme"), svc.get("name"), svc.get("uri"), svc.get("source")),
                 )
         self._refresh_peers()
+
+    def _novnc_precheck(self) -> Path | None:
+        """Return the demo directory if docker + the example are both present."""
+        directory = demo_dir()
+        if directory is None:
+            self.novnc_status.set("Nie znaleziono examples/11-novnc_lan_flow (ustaw IFURI_NOVNC_DEMO_DIR).")
+            return None
+        if not docker_available():
+            self.novnc_status.set("Brak docker w PATH — zainstaluj Docker, aby uruchomić demo.")
+            return None
+        return directory
+
+    def _run_compose(self, action: str, directory: Path, *, on_done=None) -> None:
+        """Run a docker compose action in the demo dir on a background thread."""
+        self.novnc_status.set(f"docker compose {action}…")
+
+        def work() -> None:
+            try:
+                proc = subprocess.run(
+                    compose_args(action), cwd=str(directory),
+                    capture_output=True, text=True, timeout=600,
+                )
+                ok = proc.returncode == 0
+                msg = (proc.stderr or proc.stdout or "").strip().splitlines()
+                tail = msg[-1] if msg else ""
+            except Exception as exc:  # noqa: BLE001 - surface compose failure to the user
+                ok, tail = False, str(exc)
+            self.after(0, lambda: self._compose_done(action, ok, tail, on_done))
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def _compose_done(self, action: str, ok: bool, tail: str, on_done) -> None:
+        if ok:
+            self.novnc_status.set(f"compose {action}: OK")
+            self.append_log(f"noVNC demo: compose {action} OK")
+            if on_done:
+                on_done()
+        else:
+            self.novnc_status.set(f"compose {action} nie powiodło się: {tail[:80]}")
+            self.append_log(f"noVNC demo: compose {action} FAILED: {tail}")
+
+    def start_novnc_demo(self) -> None:
+        directory = self._novnc_precheck()
+        if directory:
+            self._run_compose("up", directory, on_done=self.open_novnc_dashboard)
+
+    def stop_novnc_demo(self) -> None:
+        directory = self._novnc_precheck()
+        if directory:
+            self._run_compose("down", directory)
+
+    def open_novnc_dashboard(self) -> None:
+        url = dashboard_url()
+        webbrowser.open(url)
+        self.novnc_status.set(f"Dashboard: {url}")
+        self.append_log(f"noVNC demo dashboard: {url}")
 
     def _on_device_select(self, _event=None) -> None:
         sel = self.device_tree.selection()
