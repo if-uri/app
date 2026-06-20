@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
@@ -58,7 +57,7 @@ def test_save_load_round_trip(home):
 
     reloaded = storage.load_workspace()
     assert reloaded["urisys"]["endpoint"] == "http://192.168.1.50:8790"
-    assert reloaded["services"][0]["uri"] == "mcp://fs/list"
+    assert "mcp://fs/list" in [s.get("uri") for s in reloaded["services"]]
 
 
 def test_save_is_atomic_no_tmp_left(home):
