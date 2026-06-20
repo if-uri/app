@@ -148,8 +148,8 @@ class ChatTabMixin:
             try:
                 data = list_chat_channels(timeout=1.8)
                 self.after(0, lambda: self._apply_chat_channels(data))
-            except Exception as exc:
-                self.after(0, lambda: self.chat_scan_status.set(f"Błąd skanu: {exc}"))
+            except Exception as exc:  # noqa: BLE001 - surface any scan failure to the UI
+                self.after(0, lambda e=exc: self.chat_scan_status.set(f"Błąd skanu: {e}"))
 
         threading.Thread(target=worker, daemon=True).start()
 

@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import argparse
 import platform
-import shutil
 import subprocess
 import sys
 import tarfile
@@ -126,7 +125,7 @@ def main(argv: list[str] | None = None) -> int:
             check=True,
         )
         subprocess.run(
-            [sys.executable, "-m", "pip", "install", "-q", "-e", f".[flows]"],
+            [sys.executable, "-m", "pip", "install", "-q", "-e", ".[flows]"],
             cwd=ROOT,
             check=True,
         )

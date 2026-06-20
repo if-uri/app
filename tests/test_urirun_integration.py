@@ -197,7 +197,9 @@ def test_urirun_serve_http(tmp_path):
 
 def test_cli_urirun_call_in_process_execute(tmp_path):
     """ifuri-app urirun-call runs a local-registry URI in-process (no service)."""
-    import json as _json, subprocess, sys
+    import json as _json
+    import subprocess
+    import sys
     (tmp_path / "urirun.bindings.v2.json").write_text(
         _json.dumps({"version": "urirun.bindings.v2", "bindings": {
             "sys://local/echo/hello": {"kind": "command", "adapter": "argv-template",
@@ -217,7 +219,9 @@ def test_cli_urirun_call_in_process_execute(tmp_path):
 
 def test_cli_run_execute_uses_runtime_state(tmp_path, monkeypatch):
     """ifuri-app run --execute must not fall back to dry_run_flow."""
-    import json as _json, subprocess, sys
+    import json as _json
+    import subprocess
+    import sys
 
     (tmp_path / "urirun.bindings.v2.json").write_text(
         _json.dumps(

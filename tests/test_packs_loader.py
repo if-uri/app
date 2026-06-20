@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 
 from ifuri_app.packs.loader import discover_manifests, pack_summary, packages_root
 

@@ -39,7 +39,6 @@ def dispatch_local_uri(
     if runtime is None:
         return None
     try:
-        from uri_control.registry import RouteNotFoundError
 
         runtime.registry.match(uri)
     except Exception:

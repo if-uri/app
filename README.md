@@ -157,7 +157,7 @@ Override: `IFURI_HOME`, `IFURI_CHAT_STORE`
 
 ## Related ifURI projects
 
-- Runtime: [tellmesh/urirun](https://github.com/tellmesh/urirun)
+- Runtime: [if-uri/urirun](https://github.com/if-uri/urirun)
 - Public docs: [if-uri/docs](https://github.com/if-uri/docs)
 - Examples and Docker/noVNC flows: [if-uri/examples](https://github.com/if-uri/examples)
 - Connector hub: [connect.ifuri.com](https://connect.ifuri.com)

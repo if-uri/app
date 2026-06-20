@@ -14,9 +14,11 @@ from . import DEFAULT_PORT, __version__
 from .chat_channels import (
     list_chat_channels,
     migrate_local_chat_to_urisys,
+    send_chat_message_routed,
     urisys_chat_available,
 )
 from .discovery import DiscoveryResponder, discover
+from .remote_screen import capture_remote_screen, probe_remote_control
 from .flow_engine import dry_run_flow, dry_run_uri, expand_flow
 from .flow_runner import run_flow_file
 from .gui import launch_gui
@@ -100,7 +102,7 @@ def cmd_serve(args) -> int:
     responder = DiscoveryResponder(api_port=port).start() if args.discovery else None
     print(f"ifURI runtime listening on {server.url}")
     if args.discovery:
-        print(f"LAN discovery enabled on UDP")
+        print("LAN discovery enabled on UDP")
     stop = False
 
     def _stop(_sig, _frame):

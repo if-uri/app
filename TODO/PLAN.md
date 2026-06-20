@@ -2,8 +2,8 @@
 
 Derived from `TODO/*.md` + recon (2026-06). Status corrected against the real repos.
 Repos local: `if-uri/app`, `if-uri/get`, `if-uri/connect.ifuri.com`, `if-uri/ifuri-com`.
-`tellmesh/urirun` lives locally as `/home/tom/github/tellmesh/urihandler` and pushes to
-`git@github.com:tellmesh/urirun.git`.
+`if-uri/urirun` lives locally as `/home/tom/github/tellmesh/urihandler` and pushes to
+`git@github.com:if-uri/urirun.git`.
 
 Legend: ✅ done · 🟢 safe to do now (code/config) · 🟡 needs decision/clone · 🔴 owner-only (creds/publish/security)
 
@@ -44,8 +44,8 @@ Current: `node.sh` and `node.ps1` default to `URIRUN_REF=v0.3.14`; `/health`,
 - Verify: `pytest --ignore=tests/e2e` (82+), `ifuri-app --help`.
 - Risk: low (matrix runs on tag only).
 
-## 40 · urirun (`tellmesh/urirun`) — 🟢
-- Local source is `/home/tom/github/tellmesh/urihandler` with remote `tellmesh/urirun`.
+## 40 · urirun (`if-uri/urirun`) — 🟢
+- Local source is `/home/tom/github/tellmesh/urihandler` with remote `if-uri/urirun`.
 - Consumers now pin `v0.3.14`.
 - Remaining: optional PyPI/npm publishing, JS npm package, C release asset, and signed release policy.
 

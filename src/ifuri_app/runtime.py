@@ -44,7 +44,6 @@ from .network_scan import scan_network
 from .storage import add_event, load_workspace, save_workspace, now_iso
 from .remote_screen import capture_remote_screen, probe_remote_control
 from .paths import web_dir
-from .urisys_client import UrisysNodeClient
 from .voice_pipeline import (
     install_voice_packs,
     plan_voice_command,
@@ -52,7 +51,7 @@ from .voice_pipeline import (
     voice_capabilities,
 )
 from .voice_planner import load_flow_catalog, voice_planner_mode
-from .webrtc_signal import local_peer_url, poll_signals, post_signal, room_stats
+from .webrtc_signal import local_peer_url, poll_signals, post_signal
 from .webrtc_pipeline import webrtc_capabilities
 
 WEB_DIR = web_dir()

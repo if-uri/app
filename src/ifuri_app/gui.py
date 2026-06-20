@@ -10,17 +10,18 @@ import threading
 import urllib.request
 import tkinter as tk
 import webbrowser
+from pathlib import Path
 from tkinter import messagebox, simpledialog, ttk
 from typing import Any
 
 from . import DEFAULT_PORT
 from .connectors import fetch_node_routes, group_by_scheme
-from .discovery import DiscoveryResponder, discover
+from .discovery import DiscoveryResponder
 from .flow_engine import as_pretty_json, dry_run_flow
 from .network_scan import scan_network
 from .novnc_demo import compose_args, dashboard_url, demo_dir, docker_available
 from .runtime import PortInUseError, RuntimeServer
-from .storage import add_event, load_workspace, save_workspace, workspace_path
+from .storage import add_event, load_workspace, save_workspace
 from .gui_chat import ChatTabMixin
 from .url_params import voice_url
 
@@ -504,6 +505,9 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         )
         self._refresh_network_views(result)
         self.append_log(as_pretty_json({"scan": counts}))
+        # pull each discovered node's /routes into the Konektory tab in one go
+        if hasattr(self, "connectors_tree") and (result.get("urisys_nodes") or self.workspace.get("urisys")):
+            self.refresh_connectors()
 
     def _refresh_network_views(self, scan: dict[str, Any] | None = None) -> None:
         scan = scan or self._last_scan

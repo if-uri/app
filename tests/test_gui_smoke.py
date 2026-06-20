@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
@@ -82,6 +81,20 @@ def test_connectors_empty_state(app):
     app._urirun_serve = None
     app.refresh_connectors()
     assert "Brak znanych węzłów" in app.connectors_status.get()
+
+
+def test_lan_scan_auto_refreshes_connectors(app, monkeypatch):
+    """Skanuj LAN should also populate the Konektory tab, not just devices."""
+    from ifuri_app import gui
+
+    monkeypatch.setattr(gui, "scan_network", lambda **_kw: {
+        "urisys_nodes": [{"endpoint": "http://node-a:8790", "node_id": "node-a"}],
+        "ifuri_peers": [], "mcp_agent_services": [], "llm_services": [], "counts": {},
+    })
+    called = []
+    monkeypatch.setattr(app, "refresh_connectors", lambda: called.append(True))
+    app.discover_peers()
+    assert called, "discover_peers must trigger refresh_connectors when a node is found"
 
 
 def test_novnc_section_present(app):

@@ -10,7 +10,6 @@ from typing import Any
 
 from .flow_runner import run_flow_file
 from .urisys_client import UrisysNodeClient, node_webrtc_available
-from .voice_pipeline import VOICE_STT_WHEEL
 
 WEBRTC_PACKS_FLOW = "lenovo-remote/02c-install-webrtc-pack.uri.flow.yaml"
 WEBRTC_WHEEL = os.environ.get(

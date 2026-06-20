@@ -16,7 +16,6 @@ from typing import Any
 
 from .discovery import discover
 from .storage import load_workspace, now_iso
-from .urisys_client import UrisysNodeClient
 
 SERVICE_SCHEMES = frozenset({"mcp", "agent", "a2a", "llm", "browser"})
 

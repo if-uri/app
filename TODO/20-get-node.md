@@ -2,7 +2,7 @@
 
 ## State
 - `node.sh`: `curl -fsSL https://get.ifuri.com/node.sh | bash` → installs a urirun node
-  (venv in `~/.urirun-node`, pip from `tellmesh/urirun`, runs on `0.0.0.0:8765`).
+  (venv in `~/.urirun-node`, pip from `if-uri/urirun`, runs on `0.0.0.0:8765`).
 - Static landing `index.html`; deploy via `scripts/deploy-plesk.sh`.
 
 ## Tasks

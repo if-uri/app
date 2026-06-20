@@ -6,7 +6,7 @@ Cross-repo plan for the ifURI ecosystem. One file per area; check items as done.
 - **Sites live on Plesk** with repeatable deploy (`scripts/deploy-plesk.sh` + `make deploy`):
   ifuri.com, examples.ifuri.com, docs.ifuri.com, logo.ifuri.com, get.ifuri.com, connect.ifuri.com.
 - **Brand**: unified palette (indigo/emerald/slate) + theme-aware logo; copy buttons on code; PWA, SEO (sitemap/robots), 404, a11y, contact+privacy.
-- **urirun**: renamed `tellmesh/urirun`; v1/v2 runtime; integrated into the app
+- **urirun**: renamed `if-uri/urirun`; v1/v2 runtime; integrated into the app
   (`ifuri-app urirun-info|scan|call|serve`, urirun-first dispatch).
 - **urirun connector authoring**: `urirun.v2.connector_bindings()` exists, so connector
   packages can expose JSON-serializable bindings from `@urirun.command` decorators.
@@ -25,7 +25,7 @@ Cross-repo plan for the ifURI ecosystem. One file per area; check items as done.
 - **P2** — broaden reuse / integrations to other platforms: [60-reuse](60-reuse.md).
 
 ## Execution order
-1. **Make installs reproducible**: tag/release `tellmesh/urirun`, then update
+1. **Make installs reproducible**: tag/release `if-uri/urirun`, then update
    `get.ifuri.com/node.sh`, app extras and connector dependencies to pin a tag or
    release wheel instead of `@main`.
 2. **Automate the proven E2E path**: move the passing full Docker lab into CI as a

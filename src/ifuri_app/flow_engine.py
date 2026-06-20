@@ -3,9 +3,13 @@
 
 from __future__ import annotations
 
+import json
+import re
+import time
 from typing import Any
+from urllib.parse import urlparse
 
-from .flow_compile import expand_flow_compiled, flow_steps_from_document, uri2flow_available
+from .flow_compile import expand_flow_compiled, uri2flow_available
 
 
 def expand_flow(flow_text: str, flow_id: str | None = None) -> dict[str, Any]:
@@ -44,11 +48,6 @@ def _legacy_expand_flow(flow_text: str, flow_id: str | None = None) -> dict[str,
 
 
 # --- kept for dry-run routing and regex fallback when uri2flow absent ---
-
-import json
-import re
-import time
-from urllib.parse import urlparse
 
 URI_RE = re.compile(r"([a-zA-Z][a-zA-Z0-9+.-]*://[^\s,\]\)}'\"]+)")
 TRAILING = ":;,."

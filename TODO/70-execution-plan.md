@@ -4,7 +4,7 @@ This is the practical order for executing the roadmap without breaking the
 current working path.
 
 ## Phase 1 — make the runtime reproducible
-- [x] Tag `tellmesh/urirun` after `connector_bindings()` and verify the release
+- [x] Tag `if-uri/urirun` after `connector_bindings()` and verify the release
   contains wheel, sdist and `sha256sums.txt`.
 - [x] Install from that release wheel in a clean venv and run:
   `urirun --help`, `urirun validate`, `urirun compile`, `urirun run`.

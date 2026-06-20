@@ -66,7 +66,7 @@ Install: `make webrtc-install-pack URISYS=…` · Full contract: [WEBRTC.md](WEB
 | **uricore** | tellmesh/uricore | Python URI control plane — local handlers in `packages/*/handlers/` |
 | **uricore-js** | tellmesh/uricore-js | Browser `page://` — `packages/ifuri-page/` |
 | **uri2flow** | tellmesh/uri2flow | Compile compact YAML → workflow graph (used by `/api/flow/expand`) |
-| **urirun** | tellmesh/urirun | Registry-backed URI execution via `/api/urirun/call` and `ifuri-app urirun-call` |
+| **urirun** | if-uri/urirun | Registry-backed URI execution via `/api/urirun/call` and `ifuri-app urirun-call` |
 | ifURI app | [if-uri/app](https://github.com/if-uri/app) | UI, planning, chat, flow client |
 | urisys-node | [tellmesh/urisys-node](https://github.com/tellmesh/urisys-node) | URI server on host |
 | uriwebrtc | [tellmesh/uriwebrtc](https://github.com/tellmesh/uriwebrtc) | `webrtc://` pack (signaling mock + envelopes) |

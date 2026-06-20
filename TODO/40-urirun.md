@@ -1,4 +1,4 @@
-# urirun — packaging & releases (repo: tellmesh/urirun, formerly urihandler)
+# urirun — packaging & releases (repo: if-uri/urirun, formerly urihandler)
 
 ## State
 - Python package `urirun` in `adapters/python/` (v1/v2 runtime, CLI `urirun`/`urirun-v1`/`urirun-v2`).
