@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Added
+- Record app follow-up work from the 2026-06-20 structure audit: connector
+  install from the hub, route payload forms and noVNC GUI smoke coverage.
+
+### Changed
+- Point the optional `urirun` install extra and public app links at
+  `github.com/if-uri/urirun`.
+- Clarify the developer install path and expose the documented chat/voice/WebRTC
+  Makefile targets in `make help`.
+
 ### Fixed
 - `ifuri-app run` can now switch from preview to real execution with
   `--execute`; URI targets also accept a JSON `--payload`.

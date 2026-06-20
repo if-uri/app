@@ -59,11 +59,14 @@ make stop
 
 Pakiet PyPI: **`ifuri`** (aktualnie **0.2.10**).
 
-Monorepo tellmesh (uri2flow, uricore lokalnie):
+Developer install. `make install-dev` użyje `uv`, jeśli jest dostępny; w trybie
+bez `uv` instaluje aplikację editable i opcjonalnie lokalne checkouty
+`uri2flow` / `uricore`, jeśli istnieją jako sąsiednie repozytoria developerskie.
 
 ```bash
-make install-dev   # uv sync --group dev --group tellmesh
-# bez uv: pip install -e ".[flows,dev,packs]" && pip install -e ../../tellmesh/{uri2flow,uricore}
+make install-dev
+# bez uv, minimalnie:
+python -m pip install -e ".[flows,dev,packs]"
 ```
 
 ```bash

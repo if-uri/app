@@ -9,6 +9,10 @@
       first-class view, grouped by node and URI scheme. (Konektory tab — fetches
       each node's /routes via ifuri_app.connectors, groups by node + scheme.)
 - [ ] Add a GUI path for installing connector packages from `connect.ifuri.com`.
+- [ ] Implement IFURI-017: consume the hub catalog, install selected connector
+      packages, refresh local registry and show payload forms before run.
+- [ ] Add a GUI smoke that proves connector route tables, payload forms and
+      result/log panels render correctly in noVNC.
 - [x] Add an end-to-end app test that calls a remote `urirun node` and verifies
       MCP/A2A/URI route discovery. (tests/test_remote_node_e2e.py — fake node
       HTTP server, probe -> scan_urisys_nodes -> connectors route discovery.)
