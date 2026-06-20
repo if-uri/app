@@ -14,9 +14,11 @@
 - [x] Implement IFURI-017: consume the hub catalog, install selected connector
       packages, refresh local registry and show payload forms before run.
       (Catalog fetch/normalise (real {connectors,uriSchemes,install.pipSpec}),
-      pip install from install.pipSpec, payload forms from route metadata.
-      Note: local registry refresh still TODO; hub routes lack param schemas so
-      run-forms only derive URI {placeholders}.)
+      pip install from install.pipSpec, local registry refresh via
+      connect_store.local_registry_status (verified on the noVNC generated
+      registry — 12 routes), payload forms from route metadata. Note: hub routes
+      are plain URIs without param schemas, so run-forms only derive URI
+      {placeholders} until enriched from a live node registry.)
 - [x] Add a GUI smoke that proves connector route tables, payload forms and
       result/log panels render correctly. (Headless xvfb tests in
       tests/test_gui_smoke.py cover Konektory route tables, Connect payload forms

@@ -171,3 +171,37 @@ def test_connect_catalog_error(app):
     app._catalog_done({"ok": False, "error": "refused", "packages": []})
     assert "Błąd katalogu" in app.connect_status.get()
     assert app.packages_tree.get_children() == ()
+
+
+def test_connect_registry_status_renders(app, monkeypatch):
+    from ifuri_app import gui
+
+    monkeypatch.setattr(gui, "local_registry_status", lambda: {
+        "available": True, "configured": True, "registry": "/tmp/reg.json",
+        "routes": 7, "bindings": 5, "version": "0.3.14",
+    })
+    app.refresh_registry_status()
+    text = app.connect_registry_status.get()
+    assert "7 tras" in text and "5 bindingów" in text
+
+
+def test_connect_registry_status_no_urirun(app, monkeypatch):
+    from ifuri_app import gui
+
+    monkeypatch.setattr(gui, "local_registry_status", lambda: {
+        "available": False, "configured": False, "registry": None, "routes": 0, "bindings": 0,
+    })
+    app.refresh_registry_status()
+    assert "urirun nie zainstalowany" in app.connect_registry_status.get()
+
+
+def test_connect_registry_status_registry_without_urirun(app, monkeypatch):
+    from ifuri_app import gui
+
+    # registry file present but urirun package missing → show count AND the warning
+    monkeypatch.setattr(gui, "local_registry_status", lambda: {
+        "available": False, "configured": True, "registry": "/tmp/reg.json", "routes": 12, "bindings": 12,
+    })
+    app.refresh_registry_status()
+    text = app.connect_registry_status.get()
+    assert "12 tras" in text and "⚠ urirun" in text

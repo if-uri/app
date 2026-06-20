@@ -15,7 +15,13 @@ from tkinter import messagebox, simpledialog, ttk
 from typing import Any
 
 from . import DEFAULT_PORT
-from .connect_store import catalog_url, fetch_catalog, install_command, payload_form_fields
+from .connect_store import (
+    catalog_url,
+    fetch_catalog,
+    install_command,
+    local_registry_status,
+    payload_form_fields,
+)
 from .connectors import fetch_node_routes, group_by_scheme
 from .discovery import DiscoveryResponder
 from .flow_engine import as_pretty_json, dry_run_flow
@@ -349,8 +355,13 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         self.catalog_url_var = tk.StringVar(value=catalog_url())
         ttk.Entry(top, textvariable=self.catalog_url_var).grid(row=0, column=1, sticky="ew", padx=(0, 6))
         ttk.Button(top, text="Pobierz katalog", command=self.refresh_catalog).grid(row=0, column=2)
-        self.connect_status = tk.StringVar(value="Sklep konektorów (connect.ifuri.com) — kontrakt API tymczasowy.")
+        self.connect_status = tk.StringVar(value="Sklep konektorów connect.ifuri.com — „Pobierz katalog”, aby zacząć.")
         ttk.Label(top, textvariable=self.connect_status, foreground="#5d6d7e").grid(row=1, column=0, columnspan=3, sticky="w", pady=(4, 0))
+        reg = ttk.Frame(top)
+        reg.grid(row=2, column=0, columnspan=3, sticky="ew", pady=(4, 0))
+        ttk.Button(reg, text="Odśwież rejestr", command=self.refresh_registry_status).pack(side="left")
+        self.connect_registry_status = tk.StringVar(value="")
+        ttk.Label(reg, textvariable=self.connect_registry_status, foreground="#5d6d7e").pack(side="left", padx=10)
 
         body = ttk.PanedWindow(tab, orient="horizontal")
         body.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
@@ -378,6 +389,7 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
         self.connect_log = tk.Text(detail, height=6, wrap="word", font=("Consolas" if sys.platform.startswith("win") else "Menlo", 9))
         self.connect_log.grid(row=4, column=0, sticky="ew", pady=(8, 0))
         body.add(detail, weight=3)
+        self.refresh_registry_status()
 
     def refresh_catalog(self) -> None:
         url = self.catalog_url_var.get().strip()
@@ -463,6 +475,21 @@ class IfuriDesktop(ChatTabMixin, tk.Tk):
     def _install_done(self, name: str, ok: bool, tail: str) -> None:
         self.connect_status.set(f"{name}: {'zainstalowano' if ok else 'błąd instalacji'}")
         self._connect_log(f"{name}: {'OK' if ok else 'FAILED'} {tail}")
+        if ok:
+            self.refresh_registry_status()  # confirm the connector landed in the local registry
+
+    def refresh_registry_status(self) -> None:
+        """Show the local urirun registry summary (IFURI-017 'refresh local registry')."""
+        st = local_registry_status()
+        warn = "" if st["available"] else " · ⚠ urirun nie zainstalowany"
+        if st["configured"]:
+            self.connect_registry_status.set(
+                f"Rejestr lokalny: {st['routes']} tras · {st['bindings']} bindingów · {st['registry']}{warn}"
+            )
+        elif st["available"]:
+            self.connect_registry_status.set("Rejestr lokalny: urirun OK, brak skonfigurowanego rejestru.")
+        else:
+            self.connect_registry_status.set("Rejestr lokalny: urirun nie zainstalowany, brak rejestru.")
 
     def _connect_log(self, msg: str) -> None:
         self.connect_log.insert("end", msg + "\n")

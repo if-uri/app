@@ -160,6 +160,28 @@ def test_fetch_catalog_unreachable():
     assert out["ok"] is False and out["packages"] == [] and out["error"]
 
 
+def test_local_registry_status_unconfigured(monkeypatch, tmp_path):
+    # no env registry and an isolated empty home → nothing configured
+    monkeypatch.delenv("IFURI_URIRUN_REGISTRY", raising=False)
+    monkeypatch.setenv("IFURI_HOME", str(tmp_path))
+    status = cs.local_registry_status()
+    assert status["configured"] is False
+    assert status["routes"] == 0
+    assert isinstance(status["available"], bool)  # reflects whether urirun is installed
+
+
+def test_local_registry_status_reads_registry(monkeypatch, tmp_path):
+    reg = tmp_path / "registry.json"
+    reg.write_text(json.dumps({"version": "urirun.registry.v1", "routeCount": 4,
+                               "bindings": {"a": {}, "b": {}}}), encoding="utf-8")
+    monkeypatch.setenv("IFURI_URIRUN_REGISTRY", str(reg))
+    status = cs.local_registry_status()
+    assert status["configured"] is True
+    assert status["registry"] == str(reg)
+    assert status["routes"] == 4
+    assert status["bindings"] == 2
+
+
 # Path to the real hub catalog in the sibling connect.ifuri.com repo.
 _REAL_CATALOG = Path(__file__).resolve().parents[2] / "connect.ifuri.com" / "data" / "connectors.json"
 

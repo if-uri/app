@@ -142,6 +142,35 @@ def install_command(pkg: dict[str, Any]) -> list[str] | None:
     return None
 
 
+def local_registry_status() -> dict[str, Any]:
+    """Summarise the local urirun registry for the post-install 'refresh' step.
+
+    Never raises; reports whether urirun is installed and how many routes the
+    configured registry exposes, so the Connect tab can confirm an installed
+    connector actually landed in the local registry.
+    """
+    from .urirun_bridge import default_urirun_registry, registry_summary, urirun_info
+
+    info = urirun_info()
+    path = default_urirun_registry()
+    status: dict[str, Any] = {
+        "available": bool(info.get("available")),
+        "version": info.get("version"),
+        "registry": path,
+        "configured": bool(path),
+        "routes": 0,
+        "bindings": 0,
+    }
+    if path:
+        try:
+            summary = registry_summary(path)
+            status["routes"] = int(summary.get("routes") or 0)
+            status["bindings"] = int(summary.get("bindings") or 0)
+        except Exception as exc:  # noqa: BLE001 - surface registry read failure as data
+            status["error"] = str(exc)
+    return status
+
+
 def payload_form_fields(route: dict[str, Any]) -> list[dict[str, Any]]:
     """Derive ordered, de-duplicated form fields for a route's run payload.
 
