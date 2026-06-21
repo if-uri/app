@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- Targets **urirun 0.4**: the bundled runtime pin moves from `v0.3.14` to `v0.4.0`
+  at release (applied by `if-uri/ifuri-com/scripts/apply-release-pins.sh`). The app
+  gains `error://` diagnostics, `adopt-pack` (give any package a URI surface) and
+  param-aware routing through the upgraded `urirun-call` / `/api/urirun/call` paths.
+
 ## [0.1.10] - 2026-06-21
 
 ### Fixed
