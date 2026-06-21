@@ -1,42 +1,42 @@
-# redup/duplication | 7 groups | 38f 5799L | 2026-06-19
+# redup/duplication | 7 groups | 41f 7030L | 2026-06-21
 
 SUMMARY:
-  files_scanned: 38
-  total_lines:   5799
+  files_scanned: 41
+  total_lines:   7030
   dup_groups:    7
   dup_fragments: 14
   saved_lines:   50
-  scan_ms:       2101
+  scan_ms:       2321
 
 HOTSPOTS[5] (files with most duplication):
-  src/ifuri_app/cli.py  dup=44L  groups=4  frags=8  (0.8%)
-  src/ifuri_app/urirun_bridge.py  dup=30L  groups=1  frags=2  (0.5%)
+  src/ifuri_app/cli.py  dup=44L  groups=4  frags=8  (0.6%)
+  src/ifuri_app/urirun_bridge.py  dup=30L  groups=1  frags=2  (0.4%)
   src/ifuri_app/urisys_client.py  dup=14L  groups=1  frags=2  (0.2%)
   src/ifuri_app/flow_compile.py  dup=4L  groups=1  frags=1  (0.1%)
   src/ifuri_app/flow_engine.py  dup=4L  groups=1  frags=1  (0.1%)
 
 DUPLICATES[7] (ranked by impact):
   [71b0c91d36991313]   STRU  list_routes  L=17 N=2 saved=17 sim=1.00
-      src/ifuri_app/urirun_bridge.py:213-229  (list_routes)
-      src/ifuri_app/urirun_bridge.py:363-375  (mcp_tools)
+      src/ifuri_app/urirun_bridge.py:216-232  (list_routes)
+      src/ifuri_app/urirun_bridge.py:366-378  (mcp_tools)
   [0de8715c258857c0]   STRU  cmd_flow_run  L=10 N=2 saved=10 sim=1.00
-      src/ifuri_app/cli.py:200-209  (cmd_flow_run)
-      src/ifuri_app/cli.py:212-221  (cmd_voice_plan)
+      src/ifuri_app/cli.py:205-214  (cmd_flow_run)
+      src/ifuri_app/cli.py:217-226  (cmd_voice_plan)
   [befabce1a989deb4]   STRU  node_llm_available  L=7 N=2 saved=7 sim=1.00
-      src/ifuri_app/urisys_client.py:36-42  (node_llm_available)
-      src/ifuri_app/urisys_client.py:45-51  (node_webrtc_available)
+      src/ifuri_app/urisys_client.py:39-45  (node_llm_available)
+      src/ifuri_app/urisys_client.py:48-54  (node_webrtc_available)
   [47d5a29ae4df3970]   STRU  cmd_voice_install_packs  L=5 N=2 saved=5 sim=1.00
-      src/ifuri_app/cli.py:237-241  (cmd_voice_install_packs)
-      src/ifuri_app/cli.py:250-254  (cmd_webrtc_install_pack)
+      src/ifuri_app/cli.py:242-246  (cmd_voice_install_packs)
+      src/ifuri_app/cli.py:255-259  (cmd_webrtc_install_pack)
   [bc6e3b103bbf2be5]   STRU  cmd_voice_capabilities  L=4 N=2 saved=4 sim=1.00
-      src/ifuri_app/cli.py:231-234  (cmd_voice_capabilities)
-      src/ifuri_app/cli.py:244-247  (cmd_webrtc_capabilities)
+      src/ifuri_app/cli.py:236-239  (cmd_voice_capabilities)
+      src/ifuri_app/cli.py:249-252  (cmd_webrtc_capabilities)
   [4626c3d55952124f]   STRU  _scheme  L=4 N=2 saved=4 sim=1.00
-      src/ifuri_app/flow_compile.py:148-151  (_scheme)
-      src/ifuri_app/flow_engine.py:58-61  (uri_scheme)
+      src/ifuri_app/flow_compile.py:151-154  (_scheme)
+      src/ifuri_app/flow_engine.py:60-63  (uri_scheme)
   [81b8d023ddbd7602]   EXAC  _stop  L=3 N=2 saved=3 sim=1.00
-      src/ifuri_app/cli.py:103-105  (_stop)
-      src/ifuri_app/cli.py:144-146  (_stop)
+      src/ifuri_app/cli.py:108-110  (_stop)
+      src/ifuri_app/cli.py:149-151  (_stop)
 
 REFACTOR[7] (ranked by priority):
   [1] ○ extract_function   → src/ifuri_app/utils/list_routes.py

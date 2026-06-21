@@ -1,93 +1,104 @@
-# app | 83f 9350L | python:58,shell:10,javascript:10,rust:3,less:1,css:1 | 2026-06-19
-# stats: 279 func | 13 cls | 83 mod | CC̄=4.6 | critical:25 | cycles:0
-# alerts[5]: CC channels_from_scan=34; CC run_voice_command=23; CC cmd_chat_send=19; CC send_chat_message=18; CC send_chat_message_routed=17
-# hotspots[5]: make_handler fan=76; run_gui_smoke fan=35; serve_http fan=27; test_urirun_serve_http fan=22; send_chat_message fan=20
+# app | 94f 11952L | python:68,shell:11,javascript:10,rust:3,less:1,css:1 | 2026-06-21
+# stats: 385 func | 17 cls | 94 mod | CC̄=4.5 | critical:28 | cycles:0
+# alerts[5]: CC channels_from_scan=34; CC normalize_packages=31; CC run_voice_command=23; CC cmd_chat_send=19; CC send_chat_message=18
+# hotspots[5]: make_handler fan=77; run_gui_smoke fan=49; serve_http fan=27; test_urirun_serve_http fan=22; send_chat_message fan=20
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[83]:
-  app.doql.less,230
-  desktop/dev-server.sh,39
-  desktop/src-tauri/build.rs,4
-  desktop/src-tauri/src/lib.rs,17
-  desktop/src-tauri/src/main.rs,7
-  docker/entrypoint-gui-test.sh,65
-  docker/install-gui-deps.sh,40
-  packages/ifuri-bridge/handlers/__init__.py,2
-  packages/ifuri-bridge/handlers/urisys_call.py,60
-  packages/ifuri-chat/handlers/__init__.py,2
-  packages/ifuri-chat/handlers/messages.py,30
-  packages/ifuri-page/handlers.js,52
-  packages/ifuri-page/manifest.js,36
-  packages/ifuri-voice/handlers/__init__.py,2
-  packages/ifuri-voice/handlers/plan.py,24
-  project.sh,63
-  scripts/bootstrap-lenovo-packs.py,58
-  scripts/build-platform.py,142
-  scripts/cd-github.sh,53
-  scripts/gui_smoke.py,170
-  scripts/ifuri_app_entry.py,7
-  scripts/run-ifuri-app.sh,4
-  scripts/test-gui-docker.sh,48
-  scripts/upgrade-lenovo-node.sh,56
-  scripts/upgrade-lenovo-remote.py,35
-  scripts/vendor-uricore-js.sh,21
-  src/ifuri_app/__init__.py,7
-  src/ifuri_app/__main__.py,5
-  src/ifuri_app/chat_channels.py,529
-  src/ifuri_app/chat_store.py,88
-  src/ifuri_app/cli.py,658
-  src/ifuri_app/discovery.py,124
-  src/ifuri_app/flow_compile.py,152
-  src/ifuri_app/flow_engine.py,128
-  src/ifuri_app/flow_runner.py,88
-  src/ifuri_app/gui.py,432
-  src/ifuri_app/gui_chat.py,288
-  src/ifuri_app/network_scan.py,225
-  src/ifuri_app/packs/__init__.py,14
-  src/ifuri_app/packs/loader.py,75
-  src/ifuri_app/packs/runtime.py,61
-  src/ifuri_app/paths.py,34
-  src/ifuri_app/remote_screen.py,114
-  src/ifuri_app/runtime.py,784
-  src/ifuri_app/sample_data.py,77
-  src/ifuri_app/storage.py,95
-  src/ifuri_app/urirun_bridge.py,413
-  src/ifuri_app/urisys_client.py,156
-  src/ifuri_app/url_params.py,41
-  src/ifuri_app/voice_pipeline.py,195
-  src/ifuri_app/voice_planner.py,287
-  src/ifuri_app/web/i18n.js,112
-  src/ifuri_app/web/page/handlers.js,52
-  src/ifuri_app/web/page/manifest.js,36
-  src/ifuri_app/web/page_runtime.js,21
-  src/ifuri_app/web/theme.js,40
-  src/ifuri_app/web/url_state.js,68
+M[94]:
+  app.doql.less,246
+  desktop/dev-server.sh,42
+  desktop/src-tauri/build.rs,7
+  desktop/src-tauri/src/lib.rs,20
+  desktop/src-tauri/src/main.rs,10
+  docker/entrypoint-gui-novnc.sh,40
+  docker/entrypoint-gui-test.sh,68
+  docker/install-gui-deps.sh,43
+  packages/ifuri-bridge/handlers/__init__.py,5
+  packages/ifuri-bridge/handlers/urisys_call.py,63
+  packages/ifuri-chat/handlers/__init__.py,5
+  packages/ifuri-chat/handlers/messages.py,33
+  packages/ifuri-page/handlers.js,55
+  packages/ifuri-page/manifest.js,39
+  packages/ifuri-voice/handlers/__init__.py,5
+  packages/ifuri-voice/handlers/plan.py,27
+  project.sh,66
+  scripts/bootstrap-lenovo-packs.py,61
+  scripts/build-platform.py,149
+  scripts/cd-github.sh,56
+  scripts/gui_smoke.py,223
+  scripts/ifuri_app_entry.py,10
+  scripts/run-ifuri-app.sh,7
+  scripts/test-gui-docker.sh,51
+  scripts/upgrade-lenovo-node.sh,59
+  scripts/upgrade-lenovo-remote.py,38
+  scripts/vendor-uricore-js.sh,24
+  src/ifuri_app/__init__.py,10
+  src/ifuri_app/__main__.py,8
+  src/ifuri_app/chat_channels.py,532
+  src/ifuri_app/chat_store.py,91
+  src/ifuri_app/cli.py,676
+  src/ifuri_app/connect_store.py,212
+  src/ifuri_app/connectors.py,122
+  src/ifuri_app/discovery.py,127
+  src/ifuri_app/flow_compile.py,155
+  src/ifuri_app/flow_engine.py,130
+  src/ifuri_app/flow_runner.py,91
+  src/ifuri_app/gui.py,1006
+  src/ifuri_app/gui_chat.py,293
+  src/ifuri_app/network_scan.py,229
+  src/ifuri_app/novnc_demo.py,122
+  src/ifuri_app/packs/__init__.py,17
+  src/ifuri_app/packs/loader.py,78
+  src/ifuri_app/packs/runtime.py,63
+  src/ifuri_app/paths.py,37
+  src/ifuri_app/remote_screen.py,117
+  src/ifuri_app/runtime.py,812
+  src/ifuri_app/sample_data.py,80
+  src/ifuri_app/storage.py,98
+  src/ifuri_app/urirun_bridge.py,416
+  src/ifuri_app/urisys_client.py,159
+  src/ifuri_app/url_params.py,44
+  src/ifuri_app/voice_pipeline.py,198
+  src/ifuri_app/voice_planner.py,290
+  src/ifuri_app/web/i18n.js,115
+  src/ifuri_app/web/page/handlers.js,55
+  src/ifuri_app/web/page/manifest.js,39
+  src/ifuri_app/web/page_runtime.js,24
+  src/ifuri_app/web/theme.js,43
+  src/ifuri_app/web/url_state.js,71
   src/ifuri_app/web/voice.css,364
-  src/ifuri_app/web/voice.js,639
-  src/ifuri_app/web/webrtc_peer.js,230
-  src/ifuri_app/webrtc_pipeline.py,130
-  src/ifuri_app/webrtc_signal.py,105
-  tests/e2e/test_voice_playwright.py,60
-  tests/test_api_runtime.py,206
-  tests/test_chat_channels.py,36
-  tests/test_chat_history.py,37
-  tests/test_chat_migrate.py,42
-  tests/test_chat_store.py,48
-  tests/test_cli_chat.py,15
-  tests/test_flow_compile.py,41
-  tests/test_gui_smoke.py,25
-  tests/test_ifuri_app.py,128
-  tests/test_packs_loader.py,46
-  tests/test_packs_runtime.py,28
-  tests/test_urirun_bridge.py,36
-  tests/test_urirun_integration.py,225
-  tests/test_url_params.py,24
-  tests/test_voice_capabilities.py,49
-  tests/test_voice_pack_hint.py,19
-  tests/test_voice_planner.py,68
-  tests/test_webrtc_pipeline.py,45
-  tests/test_webrtc_signal.py,36
-  tree.sh,2
+  src/ifuri_app/web/voice.js,642
+  src/ifuri_app/web/webrtc_peer.js,233
+  src/ifuri_app/webrtc_pipeline.py,132
+  src/ifuri_app/webrtc_signal.py,107
+  tests/e2e/test_voice_playwright.py,73
+  tests/test_api_runtime.py,249
+  tests/test_chat_channels.py,39
+  tests/test_chat_history.py,40
+  tests/test_chat_migrate.py,45
+  tests/test_chat_store.py,51
+  tests/test_cli_chat.py,18
+  tests/test_cli_run.py,102
+  tests/test_connect_store.py,232
+  tests/test_connectors.py,84
+  tests/test_flow_compile.py,44
+  tests/test_gui_smoke.py,239
+  tests/test_ifuri_app.py,131
+  tests/test_novnc_demo.py,113
+  tests/test_packs_loader.py,48
+  tests/test_packs_runtime.py,31
+  tests/test_paths.py,49
+  tests/test_remote_node_e2e.py,199
+  tests/test_storage.py,87
+  tests/test_urirun_bridge.py,39
+  tests/test_urirun_integration.py,286
+  tests/test_url_params.py,27
+  tests/test_voice_capabilities.py,52
+  tests/test_voice_pack_hint.py,22
+  tests/test_voice_planner.py,70
+  tests/test_webrtc_pipeline.py,48
+  tests/test_webrtc_signal.py,39
+  tree.sh,5
 D:
   packages/ifuri-bridge/handlers/__init__.py:
   packages/ifuri-bridge/handlers/urisys_call.py:
@@ -187,6 +198,26 @@ D:
     cmd_expand(args)
     build_parser()
     main(argv)
+  src/ifuri_app/connect_store.py:
+    e: catalog_url,_normalize_route,_normalize_install,_version_of,normalize_packages,fetch_catalog,install_command,local_registry_status,example_payload_for,payload_form_fields
+    catalog_url()
+    _normalize_route(route)
+    _normalize_install(install)
+    _version_of(install;pkg)
+    normalize_packages(payload)
+    fetch_catalog(url)
+    install_command(pkg)
+    local_registry_status()
+    example_payload_for(uri;examples)
+    payload_form_fields(route;examples)
+  src/ifuri_app/connectors.py:
+    e: route_scheme,_detail,_row,normalize_routes,group_by_scheme,fetch_node_routes
+    route_scheme(uri)
+    _detail(binding)
+    _row(uri;binding)
+    normalize_routes(payload)
+    group_by_scheme(rows)
+    fetch_node_routes(endpoint)
   src/ifuri_app/discovery.py:
     e: local_descriptor,discover,DiscoveryResponder
     DiscoveryResponder: __init__(2),start(0),stop(0),_loop(0)
@@ -220,8 +251,9 @@ D:
     load_flow_steps(flow_path)
     run_flow_file(flow_ref)
   src/ifuri_app/gui.py:
-    e: launch_gui,IfuriDesktop
-    IfuriDesktop: __init__(0),_build_style(0),_build_ui(0),_build_flows_tab(0),_build_services_tab(0),_build_network_tab(0),_build_events_tab(0),_groups(0),_flows(0),_load_groups(0),_load_flows(0),_load_current_flow_text(0),_on_group_select(0),_on_flow_select(0),new_group(0),new_flow(0),save_current_flow(0),dry_run_current_flow(0),_refresh_services(0),add_service(0),start_runtime(0),open_voice_ui(0),stop_runtime(0),discover_peers(0),_refresh_network_views(1),_on_device_select(1),_refresh_peers(0),refresh_log(0),append_log(1),save_all(0),_on_close(0)
+    e: launch_gui,IfuriDesktop,FirstRunWizard
+    IfuriDesktop: __init__(0),_set_app_icon(0),_build_style(0),_build_ui(0),_build_flows_tab(0),_build_services_tab(0),_build_network_tab(0),_build_connectors_tab(0),_connector_endpoints(0),refresh_connectors(0),_connectors_done(1),_toggle_connectors(0),_build_connect_tab(0),refresh_catalog(0),_catalog_done(1),_selected_package(0),_on_package_select(1),_render_payload_form(1),install_selected_connector(0),_install_done(3),refresh_registry_status(0),_connect_log(1),_build_events_tab(0),_groups(0),_flows(0),_load_groups(0),_load_flows(0),_load_current_flow_text(0),_on_group_select(0),_on_flow_select(0),new_group(0),new_flow(0),save_current_flow(0),dry_run_current_flow(0),_refresh_services(0),add_service(0),start_runtime(0),open_voice_ui(0),stop_runtime(0),discover_peers(0),_refresh_network_views(1),_novnc_precheck(0),_run_compose(2),_compose_done(4),start_novnc_demo(0),stop_novnc_demo(0),open_novnc_dashboard(0),_on_device_select(1),_apply_node_endpoint(1),_maybe_first_run(0),_refresh_peers(0),refresh_log(0),append_log(1),save_all(0),_urirun_serve_cmd(1),start_urirun_serve(0),stop_urirun_serve(0),show_urirun_routes(0),_on_close(0)
+    FirstRunWizard: __init__(1),_scan(0),_scan_done(2),_on_pick(1),_save(0),_skip(0),_finish(0)  # First-run setup: scan the LAN, pick (or type) a urirun node 
     launch_gui()
   src/ifuri_app/gui_chat.py:
     e: ChatTabMixin
@@ -237,6 +269,15 @@ D:
     scan_urisys_nodes()
     scan_network()
     try_mdns_urisys(timeout)
+  src/ifuri_app/novnc_demo.py:
+    e: demo_dir,read_env_file,dashboard_ports,dashboard_url,docker_available,compose_args,launch_info
+    demo_dir()
+    read_env_file(directory)
+    dashboard_ports(directory)
+    dashboard_url(ports)
+    docker_available()
+    compose_args(action)
+    launch_info()
   src/ifuri_app/packs/__init__.py:
   src/ifuri_app/packs/loader.py:
     e: packages_root,discover_manifests,_ensure_pack_path,load_local_registry,pack_summary
@@ -355,12 +396,13 @@ D:
     poll_signals(room)
     room_stats()
   tests/e2e/test_voice_playwright.py:
-    e: voice_server,test_voice_page_loads_and_lang_toggle,test_voice_static_i18n_bundle
+    e: launch_chromium,voice_server,test_voice_page_loads_and_lang_toggle,test_voice_static_i18n_bundle
+    launch_chromium(playwright)
     voice_server(tmp_path_factory)
     test_voice_page_loads_and_lang_toggle(voice_server)
     test_voice_static_i18n_bundle(voice_server)
   tests/test_api_runtime.py:
-    e: server,_get,_post,test_health,test_voice_page,test_static_assets,test_api_packs,test_api_urirun_status,test_api_urirun_call_contract,test_uri_call_voice_plan,test_flow_validate,test_flow_expand,test_flow_expand_missing_text,test_chat_channels,test_chat_history,test_network_scan,test_voice_plan,test_chat_send_empty,test_concurrent_health,test_not_found,test_webrtc_signal_api
+    e: server,_get,_post,test_health,test_voice_page,test_static_assets,test_api_packs,test_api_urirun_status,test_api_urirun_call_contract,test_api_urirun_call_local_registry_execute,test_uri_call_voice_plan,test_flow_validate,test_flow_expand,test_flow_expand_missing_text,test_chat_channels,test_chat_history,test_network_scan,test_voice_plan,test_chat_send_empty,test_concurrent_health,test_not_found,test_webrtc_signal_api
     server(tmp_path_factory)
     _get(url)
     _post(url;payload)
@@ -370,6 +412,7 @@ D:
     test_api_packs(server)
     test_api_urirun_status(server)
     test_api_urirun_call_contract(server)
+    test_api_urirun_call_local_registry_execute(server;tmp_path)
     test_uri_call_voice_plan(server)
     test_flow_validate(server)
     test_flow_expand(server)
@@ -404,6 +447,43 @@ D:
   tests/test_cli_chat.py:
     e: test_cli_chat_status_calls_urisys_chat_available
     test_cli_chat_status_calls_urisys_chat_available()
+  tests/test_cli_run.py:
+    e: run_cli,test_run_uri_dry_run_default,test_run_flow_file_dry_run,test_run_invalid_payload_json,test_run_target_not_file_or_uri,test_run_uri_execute_uses_runtime_not_dry,test_run_flow_execute_uses_runtime
+    run_cli(args;capsys)
+    test_run_uri_dry_run_default(capsys)
+    test_run_flow_file_dry_run(tmp_path;capsys)
+    test_run_invalid_payload_json(capsys)
+    test_run_target_not_file_or_uri(capsys)
+    test_run_uri_execute_uses_runtime_not_dry(monkeypatch;capsys)
+    test_run_flow_execute_uses_runtime(monkeypatch;tmp_path;capsys)
+  tests/test_connect_store.py:
+    e: test_catalog_url_env_override,test_normalize_packages_shapes,test_normalize_real_hub_shape,test_normalize_skips_invalid_and_accepts_bare_list,test_install_command_pip_and_unknown,test_payload_form_fields_from_params_and_placeholders,test_payload_form_fields_dedup,test_payload_form_fields_from_example_payload,test_payload_form_no_example_match_falls_back,test_example_payload_for,test_fetch_catalog_live_mock,test_fetch_catalog_unreachable,test_local_registry_status_unconfigured,test_local_registry_status_reads_registry,test_normalize_against_real_catalog_file,_CatalogHandler
+    _CatalogHandler: log_message(0),do_GET(0)
+    test_catalog_url_env_override(monkeypatch)
+    test_normalize_packages_shapes()
+    test_normalize_real_hub_shape()
+    test_normalize_skips_invalid_and_accepts_bare_list()
+    test_install_command_pip_and_unknown()
+    test_payload_form_fields_from_params_and_placeholders()
+    test_payload_form_fields_dedup()
+    test_payload_form_fields_from_example_payload()
+    test_payload_form_no_example_match_falls_back()
+    test_example_payload_for()
+    test_fetch_catalog_live_mock()
+    test_fetch_catalog_unreachable()
+    test_local_registry_status_unconfigured(monkeypatch;tmp_path)
+    test_local_registry_status_reads_registry(monkeypatch;tmp_path)
+    test_normalize_against_real_catalog_file()
+  tests/test_connectors.py:
+    e: test_route_scheme_variants,test_normalize_list_of_dicts,test_normalize_dict_of_bindings,test_normalize_list_of_strings_and_bare_list,test_normalize_alternate_uri_keys_and_dedup,test_normalize_ignores_entries_without_uri,test_group_by_scheme,test_fetch_node_routes_handles_unreachable
+    test_route_scheme_variants()
+    test_normalize_list_of_dicts()
+    test_normalize_dict_of_bindings()
+    test_normalize_list_of_strings_and_bare_list()
+    test_normalize_alternate_uri_keys_and_dedup()
+    test_normalize_ignores_entries_without_uri()
+    test_group_by_scheme()
+    test_fetch_node_routes_handles_unreachable()
   tests/test_flow_compile.py:
     e: test_uri2flow_available,test_expand_flow_uses_uri2flow,test_expand_flow_compiled_graph_edges,test_flow_steps_from_kvm_linkedin_flow
     test_uri2flow_available()
@@ -411,9 +491,28 @@ D:
     test_expand_flow_compiled_graph_edges()
     test_flow_steps_from_kvm_linkedin_flow()
   tests/test_gui_smoke.py:
-    e: test_gui_module_imports,test_gui_smoke_script_parse
+    e: app,test_gui_module_imports,test_gui_smoke_script_parse,test_connectors_tab_present,test_connectors_render_groups_by_node_and_scheme,test_connectors_empty_state,test_lan_scan_auto_refreshes_connectors,test_novnc_section_present,test_novnc_open_dashboard,test_novnc_precheck_missing_dir,test_novnc_precheck_missing_docker,test_app_icon_asset_present,test_app_icon_set_on_window,test_connect_tab_present,test_connect_catalog_and_payload_form,test_connect_payload_form_enriched_from_example,test_connect_install_manual_no_subprocess,test_connect_catalog_error,test_connect_registry_status_renders,test_connect_registry_status_no_urirun,test_connect_registry_status_registry_without_urirun
+    app()
     test_gui_module_imports()
     test_gui_smoke_script_parse()
+    test_connectors_tab_present(app)
+    test_connectors_render_groups_by_node_and_scheme(app)
+    test_connectors_empty_state(app)
+    test_lan_scan_auto_refreshes_connectors(app;monkeypatch)
+    test_novnc_section_present(app)
+    test_novnc_open_dashboard(app;monkeypatch)
+    test_novnc_precheck_missing_dir(app;monkeypatch)
+    test_novnc_precheck_missing_docker(app;monkeypatch;tmp_path)
+    test_app_icon_asset_present()
+    test_app_icon_set_on_window(app)
+    test_connect_tab_present(app)
+    test_connect_catalog_and_payload_form(app)
+    test_connect_payload_form_enriched_from_example(app)
+    test_connect_install_manual_no_subprocess(app;monkeypatch)
+    test_connect_catalog_error(app)
+    test_connect_registry_status_renders(app;monkeypatch)
+    test_connect_registry_status_no_urirun(app;monkeypatch)
+    test_connect_registry_status_registry_without_urirun(app;monkeypatch)
   tests/test_ifuri_app.py:
     e: test_plan_linkedin_flow,test_plan_health_flow,test_plan_voice_fallback,test_expand_flow_extracts_uris,test_scan_network_structure,test_node_voice_capabilities_without_voice_packs,test_node_voice_capabilities_with_stt_pack,test_screen_uri,test_unwrap_result_nested,test_capture_remote_screen_mock,test_connection_hint_on_refused
     test_plan_linkedin_flow()
@@ -427,6 +526,18 @@ D:
     test_unwrap_result_nested()
     test_capture_remote_screen_mock()
     test_connection_hint_on_refused()
+  tests/test_novnc_demo.py:
+    e: test_dashboard_url_defaults,test_dashboard_url_honours_overrides,test_dashboard_ports_reads_env,test_compose_args,test_read_env_file,test_dashboard_ports_reads_dotenv,test_shell_env_overrides_dotenv,test_demo_dir_env_override,test_demo_dir_resolves_sibling_examples,test_launch_info_shape
+    test_dashboard_url_defaults()
+    test_dashboard_url_honours_overrides()
+    test_dashboard_ports_reads_env(monkeypatch)
+    test_compose_args()
+    test_read_env_file(tmp_path)
+    test_dashboard_ports_reads_dotenv(tmp_path;monkeypatch)
+    test_shell_env_overrides_dotenv(tmp_path;monkeypatch)
+    test_demo_dir_env_override(monkeypatch;tmp_path)
+    test_demo_dir_resolves_sibling_examples(monkeypatch)
+    test_launch_info_shape()
   tests/test_packs_loader.py:
     e: test_packages_root_exists,test_discover_manifests_finds_bridge_voice_chat,test_pack_summary_lists_js_page_pack,test_load_local_registry_when_uricore_available
     test_packages_root_exists()
@@ -437,6 +548,35 @@ D:
     e: test_local_runtime_info,test_voice_plan_local_pack
     test_local_runtime_info()
     test_voice_plan_local_pack()
+  tests/test_paths.py:
+    e: test_app_package_dir_dev,test_web_and_assets_under_package,test_repo_root_and_packages_dir,test_frozen_bundle_branch,test_frozen_bundle_fallback_without_web
+    test_app_package_dir_dev()
+    test_web_and_assets_under_package()
+    test_repo_root_and_packages_dir()
+    test_frozen_bundle_branch(monkeypatch;tmp_path)
+    test_frozen_bundle_fallback_without_web(monkeypatch;tmp_path)
+  tests/test_remote_node_e2e.py:
+    e: isolated_home,remote_node,test_probe_discovers_remote_node,test_scan_finds_node_via_extra_hosts,test_route_discovery_covers_uri_mcp_a2a,test_probe_tolerates_novnc_health_schema,test_end_to_end_node_then_routes,_NodeHandler,_NoVncHandler
+    _NodeHandler: log_message(0),_send(1),do_GET(0)
+    _NoVncHandler: log_message(0),do_GET(0)  # Mimics the noVNC example node: /health uses node/routes (not
+    isolated_home(tmp_path;monkeypatch)
+    remote_node()
+    test_probe_discovers_remote_node(remote_node)
+    test_scan_finds_node_via_extra_hosts(remote_node)
+    test_route_discovery_covers_uri_mcp_a2a(remote_node)
+    test_probe_tolerates_novnc_health_schema()
+    test_end_to_end_node_then_routes(remote_node)
+  tests/test_storage.py:
+    e: home,test_app_home_honours_env,test_now_iso_format,test_load_creates_default_when_missing,test_normalize_fills_defaults,test_save_load_round_trip,test_save_is_atomic_no_tmp_left,test_load_recovers_from_corrupt_json,test_add_event_appends_and_caps
+    home(tmp_path;monkeypatch)
+    test_app_home_honours_env(home)
+    test_now_iso_format()
+    test_load_creates_default_when_missing(home)
+    test_normalize_fills_defaults()
+    test_save_load_round_trip(home)
+    test_save_is_atomic_no_tmp_left(home)
+    test_load_recovers_from_corrupt_json(home)
+    test_add_event_appends_and_caps()
   tests/test_urirun_bridge.py:
     e: test_urirun_info_shape,test_call_without_installed_urirun,test_parse_json_object_rejects_arrays,test_service_map_env_restores_previous
     test_urirun_info_shape()
@@ -444,7 +584,7 @@ D:
     test_parse_json_object_rejects_arrays()
     test_service_map_env_restores_previous(monkeypatch)
   tests/test_urirun_integration.py:
-    e: _registry,test_dispatch_local_unknown_route_returns_none,test_dispatch_local_dry_run_uses_urirun,test_dispatch_local_execute_with_policy,test_dispatch_local_without_registry_returns_none,test_scan_project_builds_registry,test_run_flow_routes_via_urirun,test_urirun_serve_http,test_cli_urirun_call_in_process_execute,test_mcp_tools_and_a2a_card
+    e: _registry,test_dispatch_local_unknown_route_returns_none,test_dispatch_local_dry_run_uses_urirun,test_dispatch_local_execute_with_policy,test_dispatch_local_without_registry_returns_none,test_scan_project_builds_registry,test_run_flow_routes_via_urirun,test_urirun_serve_http,test_cli_urirun_call_in_process_execute,test_cli_run_execute_uses_runtime_state,test_mcp_tools_and_a2a_card
     _registry()
     test_dispatch_local_unknown_route_returns_none()
     test_dispatch_local_dry_run_uses_urirun()
@@ -454,6 +594,7 @@ D:
     test_run_flow_routes_via_urirun(tmp_path;monkeypatch)
     test_urirun_serve_http(tmp_path)
     test_cli_urirun_call_in_process_execute(tmp_path)
+    test_cli_run_execute_uses_runtime_state(tmp_path;monkeypatch)
     test_mcp_tools_and_a2a_card()
   tests/test_url_params.py:
     e: test_voice_url_builds_prompt,test_voice_query_skips_empty,test_merge_voice_url

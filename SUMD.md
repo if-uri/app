@@ -48,7 +48,7 @@ app {
 dependencies {
   flows: pyyaml>=6.0;
   packs: "uricore>=0.1.8, pyyaml>=6.0";
-  urirun: "urirun @ git+https://github.com/tellmesh/urirun.git@v0.3.12#subdirectory=adapters/python";
+  urirun: "urirun @ git+https://github.com/if-uri/urirun.git@v0.3.14#subdirectory=adapters/python";
   build: "pyinstaller>=6.0, pyyaml>=6.0";
   dev: "pytest>=8.0, pyyaml>=6.0, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
 }
@@ -100,13 +100,13 @@ workflow[name="test-api"] {
 
 workflow[name="test-e2e"] {
   trigger: manual;
-  step-1: run cmd=PYTHONPATH=src uv run --group e2e pytest tests/e2e -q;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m pytest tests/e2e -q;
 }
 
 workflow[name="install-e2e"] {
   trigger: manual;
-  step-1: run cmd=uv sync --group e2e;
-  step-2: run cmd=uv run --group e2e python -m playwright install chromium;
+  step-1: run cmd=$(PYTHON) -m pip install pytest-playwright playwright;
+  step-2: run cmd=$(PYTHON) -m playwright install chromium;
 }
 
 workflow[name="test-gui"] {
@@ -117,6 +117,18 @@ workflow[name="test-gui"] {
 workflow[name="test-gui-docker"] {
   trigger: manual;
   step-1: run cmd=bash scripts/test-gui-docker.sh;
+}
+
+workflow[name="smoke-novnc"] {
+  trigger: manual;
+  step-1: run cmd=$(MAKE) -C ../examples/11-novnc_lan_flow up;
+  step-2: run cmd=PYTHONPATH=src xvfb-run -a $(PYTHON) scripts/gui_smoke.py --urisys-endpoint $(NODE) --out dist/gui-smoke --timeout 30;
+}
+
+workflow[name="run-gui-novnc"] {
+  trigger: manual;
+  step-1: run cmd=docker compose -f docker/docker-compose.novnc.yml up --build;
+  step-2: run cmd=echo "open http://localhost:6080/vnc.html?autoconnect=1&resize=remote";
 }
 
 workflow[name="run"] {
@@ -250,8 +262,12 @@ workflow[name="clean"] {
   step-2: run cmd=find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true;
 }
 
+tests {
+  import: testql-scenarios/**/*.testql.toon.yaml;
+}
+
 env_vars {
-  keys: OPENROUTER_API_KEY, LLM_MODEL, PFIX_AUTO_APPLY, PFIX_AUTO_INSTALL_DEPS, PFIX_AUTO_RESTART, PFIX_MAX_RETRIES, PFIX_DRY_RUN, PFIX_ENABLED, PFIX_GIT_COMMIT, PFIX_GIT_PREFIX, PFIX_CREATE_BACKUPS, URI_SERVICE_MAP, IFURI_URIRUN_REGISTRY, URISYS_EXAMPLES_ROOT, IFURI_EXAMPLES_ROOT, IFURI_VOICE_PLANNER, URISYS_WEBRTC_WHEEL, URISYS_WHEEL_HOST, URISYS_NODE_ENDPOINT, IFURI_HOME, URISYS_STT_WHEEL, IFURI_STT_URI, IFURI_TTS_URI;
+  keys: OPENROUTER_API_KEY, LLM_MODEL, PFIX_AUTO_APPLY, PFIX_AUTO_INSTALL_DEPS, PFIX_AUTO_RESTART, PFIX_MAX_RETRIES, PFIX_DRY_RUN, PFIX_ENABLED, PFIX_GIT_COMMIT, PFIX_GIT_PREFIX, PFIX_CREATE_BACKUPS, URI_SERVICE_MAP, IFURI_URIRUN_REGISTRY, IFURI_CONNECT_CATALOG, URISYS_EXAMPLES_ROOT, IFURI_EXAMPLES_ROOT, IFURI_VOICE_PLANNER, URISYS_WEBRTC_WHEEL, URISYS_WHEEL_HOST, IFURI_NOVNC_DEMO_DIR, URISYS_NODE_ENDPOINT, IFURI_HOME, URISYS_STT_WHEEL, IFURI_STT_URI, IFURI_TTS_URI;
 }
 
 deploy {
@@ -464,7 +480,7 @@ pip install -e .[dev]
 - **commits**: `conventional` scope=`ifuri-app`
 - **changelog**: `keep-a-changelog`
 - **build strategies**: `python`, `nodejs`, `rust`
-- **version files**: `VERSION`, `pyproject.toml:version`, `.venv/lib/python3.13/site-packages/mistune/__init__.py:__version__`
+- **version files**: `VERSION`, `pyproject.toml:version`, `desktop/src-tauri/Cargo.toml:version`, `src/ifuri_app/__init__.py:__version__`
 
 ## Makefile Targets
 
@@ -478,6 +494,8 @@ pip install -e .[dev]
 - `install-e2e`
 - `test-gui`
 - `test-gui-docker`
+- `smoke-novnc`
+- `run-gui-novnc`
 - `run`
 - `run-gui`
 - `run-voice`
@@ -505,96 +523,107 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# app | 83f 9350L | python:58,shell:10,javascript:10,rust:3,less:1,css:1 | 2026-06-19
-# stats: 279 func | 13 cls | 83 mod | CC̄=4.6 | critical:25 | cycles:0
-# alerts[5]: CC channels_from_scan=34; CC run_voice_command=23; CC cmd_chat_send=19; CC send_chat_message=18; CC send_chat_message_routed=17
-# hotspots[5]: make_handler fan=76; run_gui_smoke fan=35; serve_http fan=27; test_urirun_serve_http fan=22; send_chat_message fan=20
+# app | 94f 11952L | python:68,shell:11,javascript:10,rust:3,less:1,css:1 | 2026-06-21
+# stats: 385 func | 17 cls | 94 mod | CC̄=4.5 | critical:28 | cycles:0
+# alerts[5]: CC channels_from_scan=34; CC normalize_packages=31; CC run_voice_command=23; CC cmd_chat_send=19; CC send_chat_message=18
+# hotspots[5]: make_handler fan=77; run_gui_smoke fan=49; serve_http fan=27; test_urirun_serve_http fan=22; send_chat_message fan=20
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[83]:
-  app.doql.less,230
-  desktop/dev-server.sh,39
-  desktop/src-tauri/build.rs,4
-  desktop/src-tauri/src/lib.rs,17
-  desktop/src-tauri/src/main.rs,7
-  docker/entrypoint-gui-test.sh,65
-  docker/install-gui-deps.sh,40
-  packages/ifuri-bridge/handlers/__init__.py,2
-  packages/ifuri-bridge/handlers/urisys_call.py,60
-  packages/ifuri-chat/handlers/__init__.py,2
-  packages/ifuri-chat/handlers/messages.py,30
-  packages/ifuri-page/handlers.js,52
-  packages/ifuri-page/manifest.js,36
-  packages/ifuri-voice/handlers/__init__.py,2
-  packages/ifuri-voice/handlers/plan.py,24
-  project.sh,63
-  scripts/bootstrap-lenovo-packs.py,58
-  scripts/build-platform.py,142
-  scripts/cd-github.sh,53
-  scripts/gui_smoke.py,170
-  scripts/ifuri_app_entry.py,7
-  scripts/run-ifuri-app.sh,4
-  scripts/test-gui-docker.sh,48
-  scripts/upgrade-lenovo-node.sh,56
-  scripts/upgrade-lenovo-remote.py,35
-  scripts/vendor-uricore-js.sh,21
-  src/ifuri_app/__init__.py,7
-  src/ifuri_app/__main__.py,5
-  src/ifuri_app/chat_channels.py,529
-  src/ifuri_app/chat_store.py,88
-  src/ifuri_app/cli.py,658
-  src/ifuri_app/discovery.py,124
-  src/ifuri_app/flow_compile.py,152
-  src/ifuri_app/flow_engine.py,128
-  src/ifuri_app/flow_runner.py,88
-  src/ifuri_app/gui.py,432
-  src/ifuri_app/gui_chat.py,288
-  src/ifuri_app/network_scan.py,225
-  src/ifuri_app/packs/__init__.py,14
-  src/ifuri_app/packs/loader.py,75
-  src/ifuri_app/packs/runtime.py,61
-  src/ifuri_app/paths.py,34
-  src/ifuri_app/remote_screen.py,114
-  src/ifuri_app/runtime.py,784
-  src/ifuri_app/sample_data.py,77
-  src/ifuri_app/storage.py,95
-  src/ifuri_app/urirun_bridge.py,413
-  src/ifuri_app/urisys_client.py,156
-  src/ifuri_app/url_params.py,41
-  src/ifuri_app/voice_pipeline.py,195
-  src/ifuri_app/voice_planner.py,287
-  src/ifuri_app/web/i18n.js,112
-  src/ifuri_app/web/page/handlers.js,52
-  src/ifuri_app/web/page/manifest.js,36
-  src/ifuri_app/web/page_runtime.js,21
-  src/ifuri_app/web/theme.js,40
-  src/ifuri_app/web/url_state.js,68
+M[94]:
+  app.doql.less,246
+  desktop/dev-server.sh,42
+  desktop/src-tauri/build.rs,7
+  desktop/src-tauri/src/lib.rs,20
+  desktop/src-tauri/src/main.rs,10
+  docker/entrypoint-gui-novnc.sh,40
+  docker/entrypoint-gui-test.sh,68
+  docker/install-gui-deps.sh,43
+  packages/ifuri-bridge/handlers/__init__.py,5
+  packages/ifuri-bridge/handlers/urisys_call.py,63
+  packages/ifuri-chat/handlers/__init__.py,5
+  packages/ifuri-chat/handlers/messages.py,33
+  packages/ifuri-page/handlers.js,55
+  packages/ifuri-page/manifest.js,39
+  packages/ifuri-voice/handlers/__init__.py,5
+  packages/ifuri-voice/handlers/plan.py,27
+  project.sh,66
+  scripts/bootstrap-lenovo-packs.py,61
+  scripts/build-platform.py,149
+  scripts/cd-github.sh,56
+  scripts/gui_smoke.py,223
+  scripts/ifuri_app_entry.py,10
+  scripts/run-ifuri-app.sh,7
+  scripts/test-gui-docker.sh,51
+  scripts/upgrade-lenovo-node.sh,59
+  scripts/upgrade-lenovo-remote.py,38
+  scripts/vendor-uricore-js.sh,24
+  src/ifuri_app/__init__.py,10
+  src/ifuri_app/__main__.py,8
+  src/ifuri_app/chat_channels.py,532
+  src/ifuri_app/chat_store.py,91
+  src/ifuri_app/cli.py,676
+  src/ifuri_app/connect_store.py,212
+  src/ifuri_app/connectors.py,122
+  src/ifuri_app/discovery.py,127
+  src/ifuri_app/flow_compile.py,155
+  src/ifuri_app/flow_engine.py,130
+  src/ifuri_app/flow_runner.py,91
+  src/ifuri_app/gui.py,1006
+  src/ifuri_app/gui_chat.py,293
+  src/ifuri_app/network_scan.py,229
+  src/ifuri_app/novnc_demo.py,122
+  src/ifuri_app/packs/__init__.py,17
+  src/ifuri_app/packs/loader.py,78
+  src/ifuri_app/packs/runtime.py,63
+  src/ifuri_app/paths.py,37
+  src/ifuri_app/remote_screen.py,117
+  src/ifuri_app/runtime.py,812
+  src/ifuri_app/sample_data.py,80
+  src/ifuri_app/storage.py,98
+  src/ifuri_app/urirun_bridge.py,416
+  src/ifuri_app/urisys_client.py,159
+  src/ifuri_app/url_params.py,44
+  src/ifuri_app/voice_pipeline.py,198
+  src/ifuri_app/voice_planner.py,290
+  src/ifuri_app/web/i18n.js,115
+  src/ifuri_app/web/page/handlers.js,55
+  src/ifuri_app/web/page/manifest.js,39
+  src/ifuri_app/web/page_runtime.js,24
+  src/ifuri_app/web/theme.js,43
+  src/ifuri_app/web/url_state.js,71
   src/ifuri_app/web/voice.css,364
-  src/ifuri_app/web/voice.js,639
-  src/ifuri_app/web/webrtc_peer.js,230
-  src/ifuri_app/webrtc_pipeline.py,130
-  src/ifuri_app/webrtc_signal.py,105
-  tests/e2e/test_voice_playwright.py,60
-  tests/test_api_runtime.py,206
-  tests/test_chat_channels.py,36
-  tests/test_chat_history.py,37
-  tests/test_chat_migrate.py,42
-  tests/test_chat_store.py,48
-  tests/test_cli_chat.py,15
-  tests/test_flow_compile.py,41
-  tests/test_gui_smoke.py,25
-  tests/test_ifuri_app.py,128
-  tests/test_packs_loader.py,46
-  tests/test_packs_runtime.py,28
-  tests/test_urirun_bridge.py,36
-  tests/test_urirun_integration.py,225
-  tests/test_url_params.py,24
-  tests/test_voice_capabilities.py,49
-  tests/test_voice_pack_hint.py,19
-  tests/test_voice_planner.py,68
-  tests/test_webrtc_pipeline.py,45
-  tests/test_webrtc_signal.py,36
-  tree.sh,2
+  src/ifuri_app/web/voice.js,642
+  src/ifuri_app/web/webrtc_peer.js,233
+  src/ifuri_app/webrtc_pipeline.py,132
+  src/ifuri_app/webrtc_signal.py,107
+  tests/e2e/test_voice_playwright.py,73
+  tests/test_api_runtime.py,249
+  tests/test_chat_channels.py,39
+  tests/test_chat_history.py,40
+  tests/test_chat_migrate.py,45
+  tests/test_chat_store.py,51
+  tests/test_cli_chat.py,18
+  tests/test_cli_run.py,102
+  tests/test_connect_store.py,232
+  tests/test_connectors.py,84
+  tests/test_flow_compile.py,44
+  tests/test_gui_smoke.py,239
+  tests/test_ifuri_app.py,131
+  tests/test_novnc_demo.py,113
+  tests/test_packs_loader.py,48
+  tests/test_packs_runtime.py,31
+  tests/test_paths.py,49
+  tests/test_remote_node_e2e.py,199
+  tests/test_storage.py,87
+  tests/test_urirun_bridge.py,39
+  tests/test_urirun_integration.py,286
+  tests/test_url_params.py,27
+  tests/test_voice_capabilities.py,52
+  tests/test_voice_pack_hint.py,22
+  tests/test_voice_planner.py,70
+  tests/test_webrtc_pipeline.py,48
+  tests/test_webrtc_signal.py,39
+  tree.sh,5
 D:
   packages/ifuri-bridge/handlers/__init__.py:
   packages/ifuri-bridge/handlers/urisys_call.py:
@@ -694,6 +723,26 @@ D:
     cmd_expand(args)
     build_parser()
     main(argv)
+  src/ifuri_app/connect_store.py:
+    e: catalog_url,_normalize_route,_normalize_install,_version_of,normalize_packages,fetch_catalog,install_command,local_registry_status,example_payload_for,payload_form_fields
+    catalog_url()
+    _normalize_route(route)
+    _normalize_install(install)
+    _version_of(install;pkg)
+    normalize_packages(payload)
+    fetch_catalog(url)
+    install_command(pkg)
+    local_registry_status()
+    example_payload_for(uri;examples)
+    payload_form_fields(route;examples)
+  src/ifuri_app/connectors.py:
+    e: route_scheme,_detail,_row,normalize_routes,group_by_scheme,fetch_node_routes
+    route_scheme(uri)
+    _detail(binding)
+    _row(uri;binding)
+    normalize_routes(payload)
+    group_by_scheme(rows)
+    fetch_node_routes(endpoint)
   src/ifuri_app/discovery.py:
     e: local_descriptor,discover,DiscoveryResponder
     DiscoveryResponder: __init__(2),start(0),stop(0),_loop(0)
@@ -727,8 +776,9 @@ D:
     load_flow_steps(flow_path)
     run_flow_file(flow_ref)
   src/ifuri_app/gui.py:
-    e: launch_gui,IfuriDesktop
-    IfuriDesktop: __init__(0),_build_style(0),_build_ui(0),_build_flows_tab(0),_build_services_tab(0),_build_network_tab(0),_build_events_tab(0),_groups(0),_flows(0),_load_groups(0),_load_flows(0),_load_current_flow_text(0),_on_group_select(0),_on_flow_select(0),new_group(0),new_flow(0),save_current_flow(0),dry_run_current_flow(0),_refresh_services(0),add_service(0),start_runtime(0),open_voice_ui(0),stop_runtime(0),discover_peers(0),_refresh_network_views(1),_on_device_select(1),_refresh_peers(0),refresh_log(0),append_log(1),save_all(0),_on_close(0)
+    e: launch_gui,IfuriDesktop,FirstRunWizard
+    IfuriDesktop: __init__(0),_set_app_icon(0),_build_style(0),_build_ui(0),_build_flows_tab(0),_build_services_tab(0),_build_network_tab(0),_build_connectors_tab(0),_connector_endpoints(0),refresh_connectors(0),_connectors_done(1),_toggle_connectors(0),_build_connect_tab(0),refresh_catalog(0),_catalog_done(1),_selected_package(0),_on_package_select(1),_render_payload_form(1),install_selected_connector(0),_install_done(3),refresh_registry_status(0),_connect_log(1),_build_events_tab(0),_groups(0),_flows(0),_load_groups(0),_load_flows(0),_load_current_flow_text(0),_on_group_select(0),_on_flow_select(0),new_group(0),new_flow(0),save_current_flow(0),dry_run_current_flow(0),_refresh_services(0),add_service(0),start_runtime(0),open_voice_ui(0),stop_runtime(0),discover_peers(0),_refresh_network_views(1),_novnc_precheck(0),_run_compose(2),_compose_done(4),start_novnc_demo(0),stop_novnc_demo(0),open_novnc_dashboard(0),_on_device_select(1),_apply_node_endpoint(1),_maybe_first_run(0),_refresh_peers(0),refresh_log(0),append_log(1),save_all(0),_urirun_serve_cmd(1),start_urirun_serve(0),stop_urirun_serve(0),show_urirun_routes(0),_on_close(0)
+    FirstRunWizard: __init__(1),_scan(0),_scan_done(2),_on_pick(1),_save(0),_skip(0),_finish(0)  # First-run setup: scan the LAN, pick (or type) a urirun node 
     launch_gui()
   src/ifuri_app/gui_chat.py:
     e: ChatTabMixin
@@ -744,6 +794,15 @@ D:
     scan_urisys_nodes()
     scan_network()
     try_mdns_urisys(timeout)
+  src/ifuri_app/novnc_demo.py:
+    e: demo_dir,read_env_file,dashboard_ports,dashboard_url,docker_available,compose_args,launch_info
+    demo_dir()
+    read_env_file(directory)
+    dashboard_ports(directory)
+    dashboard_url(ports)
+    docker_available()
+    compose_args(action)
+    launch_info()
   src/ifuri_app/packs/__init__.py:
   src/ifuri_app/packs/loader.py:
     e: packages_root,discover_manifests,_ensure_pack_path,load_local_registry,pack_summary
@@ -862,12 +921,13 @@ D:
     poll_signals(room)
     room_stats()
   tests/e2e/test_voice_playwright.py:
-    e: voice_server,test_voice_page_loads_and_lang_toggle,test_voice_static_i18n_bundle
+    e: launch_chromium,voice_server,test_voice_page_loads_and_lang_toggle,test_voice_static_i18n_bundle
+    launch_chromium(playwright)
     voice_server(tmp_path_factory)
     test_voice_page_loads_and_lang_toggle(voice_server)
     test_voice_static_i18n_bundle(voice_server)
   tests/test_api_runtime.py:
-    e: server,_get,_post,test_health,test_voice_page,test_static_assets,test_api_packs,test_api_urirun_status,test_api_urirun_call_contract,test_uri_call_voice_plan,test_flow_validate,test_flow_expand,test_flow_expand_missing_text,test_chat_channels,test_chat_history,test_network_scan,test_voice_plan,test_chat_send_empty,test_concurrent_health,test_not_found,test_webrtc_signal_api
+    e: server,_get,_post,test_health,test_voice_page,test_static_assets,test_api_packs,test_api_urirun_status,test_api_urirun_call_contract,test_api_urirun_call_local_registry_execute,test_uri_call_voice_plan,test_flow_validate,test_flow_expand,test_flow_expand_missing_text,test_chat_channels,test_chat_history,test_network_scan,test_voice_plan,test_chat_send_empty,test_concurrent_health,test_not_found,test_webrtc_signal_api
     server(tmp_path_factory)
     _get(url)
     _post(url;payload)
@@ -877,6 +937,7 @@ D:
     test_api_packs(server)
     test_api_urirun_status(server)
     test_api_urirun_call_contract(server)
+    test_api_urirun_call_local_registry_execute(server;tmp_path)
     test_uri_call_voice_plan(server)
     test_flow_validate(server)
     test_flow_expand(server)
@@ -911,6 +972,43 @@ D:
   tests/test_cli_chat.py:
     e: test_cli_chat_status_calls_urisys_chat_available
     test_cli_chat_status_calls_urisys_chat_available()
+  tests/test_cli_run.py:
+    e: run_cli,test_run_uri_dry_run_default,test_run_flow_file_dry_run,test_run_invalid_payload_json,test_run_target_not_file_or_uri,test_run_uri_execute_uses_runtime_not_dry,test_run_flow_execute_uses_runtime
+    run_cli(args;capsys)
+    test_run_uri_dry_run_default(capsys)
+    test_run_flow_file_dry_run(tmp_path;capsys)
+    test_run_invalid_payload_json(capsys)
+    test_run_target_not_file_or_uri(capsys)
+    test_run_uri_execute_uses_runtime_not_dry(monkeypatch;capsys)
+    test_run_flow_execute_uses_runtime(monkeypatch;tmp_path;capsys)
+  tests/test_connect_store.py:
+    e: test_catalog_url_env_override,test_normalize_packages_shapes,test_normalize_real_hub_shape,test_normalize_skips_invalid_and_accepts_bare_list,test_install_command_pip_and_unknown,test_payload_form_fields_from_params_and_placeholders,test_payload_form_fields_dedup,test_payload_form_fields_from_example_payload,test_payload_form_no_example_match_falls_back,test_example_payload_for,test_fetch_catalog_live_mock,test_fetch_catalog_unreachable,test_local_registry_status_unconfigured,test_local_registry_status_reads_registry,test_normalize_against_real_catalog_file,_CatalogHandler
+    _CatalogHandler: log_message(0),do_GET(0)
+    test_catalog_url_env_override(monkeypatch)
+    test_normalize_packages_shapes()
+    test_normalize_real_hub_shape()
+    test_normalize_skips_invalid_and_accepts_bare_list()
+    test_install_command_pip_and_unknown()
+    test_payload_form_fields_from_params_and_placeholders()
+    test_payload_form_fields_dedup()
+    test_payload_form_fields_from_example_payload()
+    test_payload_form_no_example_match_falls_back()
+    test_example_payload_for()
+    test_fetch_catalog_live_mock()
+    test_fetch_catalog_unreachable()
+    test_local_registry_status_unconfigured(monkeypatch;tmp_path)
+    test_local_registry_status_reads_registry(monkeypatch;tmp_path)
+    test_normalize_against_real_catalog_file()
+  tests/test_connectors.py:
+    e: test_route_scheme_variants,test_normalize_list_of_dicts,test_normalize_dict_of_bindings,test_normalize_list_of_strings_and_bare_list,test_normalize_alternate_uri_keys_and_dedup,test_normalize_ignores_entries_without_uri,test_group_by_scheme,test_fetch_node_routes_handles_unreachable
+    test_route_scheme_variants()
+    test_normalize_list_of_dicts()
+    test_normalize_dict_of_bindings()
+    test_normalize_list_of_strings_and_bare_list()
+    test_normalize_alternate_uri_keys_and_dedup()
+    test_normalize_ignores_entries_without_uri()
+    test_group_by_scheme()
+    test_fetch_node_routes_handles_unreachable()
   tests/test_flow_compile.py:
     e: test_uri2flow_available,test_expand_flow_uses_uri2flow,test_expand_flow_compiled_graph_edges,test_flow_steps_from_kvm_linkedin_flow
     test_uri2flow_available()
@@ -918,9 +1016,28 @@ D:
     test_expand_flow_compiled_graph_edges()
     test_flow_steps_from_kvm_linkedin_flow()
   tests/test_gui_smoke.py:
-    e: test_gui_module_imports,test_gui_smoke_script_parse
+    e: app,test_gui_module_imports,test_gui_smoke_script_parse,test_connectors_tab_present,test_connectors_render_groups_by_node_and_scheme,test_connectors_empty_state,test_lan_scan_auto_refreshes_connectors,test_novnc_section_present,test_novnc_open_dashboard,test_novnc_precheck_missing_dir,test_novnc_precheck_missing_docker,test_app_icon_asset_present,test_app_icon_set_on_window,test_connect_tab_present,test_connect_catalog_and_payload_form,test_connect_payload_form_enriched_from_example,test_connect_install_manual_no_subprocess,test_connect_catalog_error,test_connect_registry_status_renders,test_connect_registry_status_no_urirun,test_connect_registry_status_registry_without_urirun
+    app()
     test_gui_module_imports()
     test_gui_smoke_script_parse()
+    test_connectors_tab_present(app)
+    test_connectors_render_groups_by_node_and_scheme(app)
+    test_connectors_empty_state(app)
+    test_lan_scan_auto_refreshes_connectors(app;monkeypatch)
+    test_novnc_section_present(app)
+    test_novnc_open_dashboard(app;monkeypatch)
+    test_novnc_precheck_missing_dir(app;monkeypatch)
+    test_novnc_precheck_missing_docker(app;monkeypatch;tmp_path)
+    test_app_icon_asset_present()
+    test_app_icon_set_on_window(app)
+    test_connect_tab_present(app)
+    test_connect_catalog_and_payload_form(app)
+    test_connect_payload_form_enriched_from_example(app)
+    test_connect_install_manual_no_subprocess(app;monkeypatch)
+    test_connect_catalog_error(app)
+    test_connect_registry_status_renders(app;monkeypatch)
+    test_connect_registry_status_no_urirun(app;monkeypatch)
+    test_connect_registry_status_registry_without_urirun(app;monkeypatch)
   tests/test_ifuri_app.py:
     e: test_plan_linkedin_flow,test_plan_health_flow,test_plan_voice_fallback,test_expand_flow_extracts_uris,test_scan_network_structure,test_node_voice_capabilities_without_voice_packs,test_node_voice_capabilities_with_stt_pack,test_screen_uri,test_unwrap_result_nested,test_capture_remote_screen_mock,test_connection_hint_on_refused
     test_plan_linkedin_flow()
@@ -934,6 +1051,18 @@ D:
     test_unwrap_result_nested()
     test_capture_remote_screen_mock()
     test_connection_hint_on_refused()
+  tests/test_novnc_demo.py:
+    e: test_dashboard_url_defaults,test_dashboard_url_honours_overrides,test_dashboard_ports_reads_env,test_compose_args,test_read_env_file,test_dashboard_ports_reads_dotenv,test_shell_env_overrides_dotenv,test_demo_dir_env_override,test_demo_dir_resolves_sibling_examples,test_launch_info_shape
+    test_dashboard_url_defaults()
+    test_dashboard_url_honours_overrides()
+    test_dashboard_ports_reads_env(monkeypatch)
+    test_compose_args()
+    test_read_env_file(tmp_path)
+    test_dashboard_ports_reads_dotenv(tmp_path;monkeypatch)
+    test_shell_env_overrides_dotenv(tmp_path;monkeypatch)
+    test_demo_dir_env_override(monkeypatch;tmp_path)
+    test_demo_dir_resolves_sibling_examples(monkeypatch)
+    test_launch_info_shape()
   tests/test_packs_loader.py:
     e: test_packages_root_exists,test_discover_manifests_finds_bridge_voice_chat,test_pack_summary_lists_js_page_pack,test_load_local_registry_when_uricore_available
     test_packages_root_exists()
@@ -944,6 +1073,35 @@ D:
     e: test_local_runtime_info,test_voice_plan_local_pack
     test_local_runtime_info()
     test_voice_plan_local_pack()
+  tests/test_paths.py:
+    e: test_app_package_dir_dev,test_web_and_assets_under_package,test_repo_root_and_packages_dir,test_frozen_bundle_branch,test_frozen_bundle_fallback_without_web
+    test_app_package_dir_dev()
+    test_web_and_assets_under_package()
+    test_repo_root_and_packages_dir()
+    test_frozen_bundle_branch(monkeypatch;tmp_path)
+    test_frozen_bundle_fallback_without_web(monkeypatch;tmp_path)
+  tests/test_remote_node_e2e.py:
+    e: isolated_home,remote_node,test_probe_discovers_remote_node,test_scan_finds_node_via_extra_hosts,test_route_discovery_covers_uri_mcp_a2a,test_probe_tolerates_novnc_health_schema,test_end_to_end_node_then_routes,_NodeHandler,_NoVncHandler
+    _NodeHandler: log_message(0),_send(1),do_GET(0)
+    _NoVncHandler: log_message(0),do_GET(0)  # Mimics the noVNC example node: /health uses node/routes (not
+    isolated_home(tmp_path;monkeypatch)
+    remote_node()
+    test_probe_discovers_remote_node(remote_node)
+    test_scan_finds_node_via_extra_hosts(remote_node)
+    test_route_discovery_covers_uri_mcp_a2a(remote_node)
+    test_probe_tolerates_novnc_health_schema()
+    test_end_to_end_node_then_routes(remote_node)
+  tests/test_storage.py:
+    e: home,test_app_home_honours_env,test_now_iso_format,test_load_creates_default_when_missing,test_normalize_fills_defaults,test_save_load_round_trip,test_save_is_atomic_no_tmp_left,test_load_recovers_from_corrupt_json,test_add_event_appends_and_caps
+    home(tmp_path;monkeypatch)
+    test_app_home_honours_env(home)
+    test_now_iso_format()
+    test_load_creates_default_when_missing(home)
+    test_normalize_fills_defaults()
+    test_save_load_round_trip(home)
+    test_save_is_atomic_no_tmp_left(home)
+    test_load_recovers_from_corrupt_json(home)
+    test_add_event_appends_and_caps()
   tests/test_urirun_bridge.py:
     e: test_urirun_info_shape,test_call_without_installed_urirun,test_parse_json_object_rejects_arrays,test_service_map_env_restores_previous
     test_urirun_info_shape()
@@ -951,7 +1109,7 @@ D:
     test_parse_json_object_rejects_arrays()
     test_service_map_env_restores_previous(monkeypatch)
   tests/test_urirun_integration.py:
-    e: _registry,test_dispatch_local_unknown_route_returns_none,test_dispatch_local_dry_run_uses_urirun,test_dispatch_local_execute_with_policy,test_dispatch_local_without_registry_returns_none,test_scan_project_builds_registry,test_run_flow_routes_via_urirun,test_urirun_serve_http,test_cli_urirun_call_in_process_execute,test_mcp_tools_and_a2a_card
+    e: _registry,test_dispatch_local_unknown_route_returns_none,test_dispatch_local_dry_run_uses_urirun,test_dispatch_local_execute_with_policy,test_dispatch_local_without_registry_returns_none,test_scan_project_builds_registry,test_run_flow_routes_via_urirun,test_urirun_serve_http,test_cli_urirun_call_in_process_execute,test_cli_run_execute_uses_runtime_state,test_mcp_tools_and_a2a_card
     _registry()
     test_dispatch_local_unknown_route_returns_none()
     test_dispatch_local_dry_run_uses_urirun()
@@ -961,6 +1119,7 @@ D:
     test_run_flow_routes_via_urirun(tmp_path;monkeypatch)
     test_urirun_serve_http(tmp_path)
     test_cli_urirun_call_in_process_execute(tmp_path)
+    test_cli_run_execute_uses_runtime_state(tmp_path;monkeypatch)
     test_mcp_tools_and_a2a_card()
   tests/test_url_params.py:
     e: test_voice_url_builds_prompt,test_voice_query_skips_empty,test_merge_voice_url
@@ -1006,89 +1165,100 @@ D:
 project_metadata('app', '0.2.10', 'python').
 
 % ── Project Files ────────────────────────────────────────
-project_file('app.doql.less', 230, 'less').
-project_file('desktop/dev-server.sh', 39, 'shell').
-project_file('desktop/src-tauri/build.rs', 4, 'rust').
-project_file('desktop/src-tauri/src/lib.rs', 17, 'rust').
-project_file('desktop/src-tauri/src/main.rs', 7, 'rust').
-project_file('docker/entrypoint-gui-test.sh', 65, 'shell').
-project_file('docker/install-gui-deps.sh', 40, 'shell').
-project_file('packages/ifuri-bridge/handlers/__init__.py', 2, 'python').
-project_file('packages/ifuri-bridge/handlers/urisys_call.py', 60, 'python').
-project_file('packages/ifuri-chat/handlers/__init__.py', 2, 'python').
-project_file('packages/ifuri-chat/handlers/messages.py', 30, 'python').
-project_file('packages/ifuri-page/handlers.js', 52, 'javascript').
-project_file('packages/ifuri-page/manifest.js', 36, 'javascript').
-project_file('packages/ifuri-voice/handlers/__init__.py', 2, 'python').
-project_file('packages/ifuri-voice/handlers/plan.py', 24, 'python').
-project_file('project.sh', 63, 'shell').
-project_file('scripts/bootstrap-lenovo-packs.py', 58, 'python').
-project_file('scripts/build-platform.py', 142, 'python').
-project_file('scripts/cd-github.sh', 53, 'shell').
-project_file('scripts/gui_smoke.py', 170, 'python').
-project_file('scripts/ifuri_app_entry.py', 7, 'python').
-project_file('scripts/run-ifuri-app.sh', 4, 'shell').
-project_file('scripts/test-gui-docker.sh', 48, 'shell').
-project_file('scripts/upgrade-lenovo-node.sh', 56, 'shell').
-project_file('scripts/upgrade-lenovo-remote.py', 35, 'python').
-project_file('scripts/vendor-uricore-js.sh', 21, 'shell').
-project_file('src/ifuri_app/__init__.py', 7, 'python').
-project_file('src/ifuri_app/__main__.py', 5, 'python').
-project_file('src/ifuri_app/chat_channels.py', 529, 'python').
-project_file('src/ifuri_app/chat_store.py', 88, 'python').
-project_file('src/ifuri_app/cli.py', 658, 'python').
-project_file('src/ifuri_app/discovery.py', 124, 'python').
-project_file('src/ifuri_app/flow_compile.py', 152, 'python').
-project_file('src/ifuri_app/flow_engine.py', 128, 'python').
-project_file('src/ifuri_app/flow_runner.py', 88, 'python').
-project_file('src/ifuri_app/gui.py', 432, 'python').
-project_file('src/ifuri_app/gui_chat.py', 288, 'python').
-project_file('src/ifuri_app/network_scan.py', 225, 'python').
-project_file('src/ifuri_app/packs/__init__.py', 14, 'python').
-project_file('src/ifuri_app/packs/loader.py', 75, 'python').
-project_file('src/ifuri_app/packs/runtime.py', 61, 'python').
-project_file('src/ifuri_app/paths.py', 34, 'python').
-project_file('src/ifuri_app/remote_screen.py', 114, 'python').
-project_file('src/ifuri_app/runtime.py', 784, 'python').
-project_file('src/ifuri_app/sample_data.py', 77, 'python').
-project_file('src/ifuri_app/storage.py', 95, 'python').
-project_file('src/ifuri_app/urirun_bridge.py', 413, 'python').
-project_file('src/ifuri_app/urisys_client.py', 156, 'python').
-project_file('src/ifuri_app/url_params.py', 41, 'python').
-project_file('src/ifuri_app/voice_pipeline.py', 195, 'python').
-project_file('src/ifuri_app/voice_planner.py', 287, 'python').
-project_file('src/ifuri_app/web/i18n.js', 112, 'javascript').
-project_file('src/ifuri_app/web/page/handlers.js', 52, 'javascript').
-project_file('src/ifuri_app/web/page/manifest.js', 36, 'javascript').
-project_file('src/ifuri_app/web/page_runtime.js', 21, 'javascript').
-project_file('src/ifuri_app/web/theme.js', 40, 'javascript').
-project_file('src/ifuri_app/web/url_state.js', 68, 'javascript').
+project_file('app.doql.less', 246, 'less').
+project_file('desktop/dev-server.sh', 42, 'shell').
+project_file('desktop/src-tauri/build.rs', 7, 'rust').
+project_file('desktop/src-tauri/src/lib.rs', 20, 'rust').
+project_file('desktop/src-tauri/src/main.rs', 10, 'rust').
+project_file('docker/entrypoint-gui-novnc.sh', 40, 'shell').
+project_file('docker/entrypoint-gui-test.sh', 68, 'shell').
+project_file('docker/install-gui-deps.sh', 43, 'shell').
+project_file('packages/ifuri-bridge/handlers/__init__.py', 5, 'python').
+project_file('packages/ifuri-bridge/handlers/urisys_call.py', 63, 'python').
+project_file('packages/ifuri-chat/handlers/__init__.py', 5, 'python').
+project_file('packages/ifuri-chat/handlers/messages.py', 33, 'python').
+project_file('packages/ifuri-page/handlers.js', 55, 'javascript').
+project_file('packages/ifuri-page/manifest.js', 39, 'javascript').
+project_file('packages/ifuri-voice/handlers/__init__.py', 5, 'python').
+project_file('packages/ifuri-voice/handlers/plan.py', 27, 'python').
+project_file('project.sh', 66, 'shell').
+project_file('scripts/bootstrap-lenovo-packs.py', 61, 'python').
+project_file('scripts/build-platform.py', 149, 'python').
+project_file('scripts/cd-github.sh', 56, 'shell').
+project_file('scripts/gui_smoke.py', 223, 'python').
+project_file('scripts/ifuri_app_entry.py', 10, 'python').
+project_file('scripts/run-ifuri-app.sh', 7, 'shell').
+project_file('scripts/test-gui-docker.sh', 51, 'shell').
+project_file('scripts/upgrade-lenovo-node.sh', 59, 'shell').
+project_file('scripts/upgrade-lenovo-remote.py', 38, 'python').
+project_file('scripts/vendor-uricore-js.sh', 24, 'shell').
+project_file('src/ifuri_app/__init__.py', 10, 'python').
+project_file('src/ifuri_app/__main__.py', 8, 'python').
+project_file('src/ifuri_app/chat_channels.py', 532, 'python').
+project_file('src/ifuri_app/chat_store.py', 91, 'python').
+project_file('src/ifuri_app/cli.py', 676, 'python').
+project_file('src/ifuri_app/connect_store.py', 212, 'python').
+project_file('src/ifuri_app/connectors.py', 122, 'python').
+project_file('src/ifuri_app/discovery.py', 127, 'python').
+project_file('src/ifuri_app/flow_compile.py', 155, 'python').
+project_file('src/ifuri_app/flow_engine.py', 130, 'python').
+project_file('src/ifuri_app/flow_runner.py', 91, 'python').
+project_file('src/ifuri_app/gui.py', 1006, 'python').
+project_file('src/ifuri_app/gui_chat.py', 293, 'python').
+project_file('src/ifuri_app/network_scan.py', 229, 'python').
+project_file('src/ifuri_app/novnc_demo.py', 122, 'python').
+project_file('src/ifuri_app/packs/__init__.py', 17, 'python').
+project_file('src/ifuri_app/packs/loader.py', 78, 'python').
+project_file('src/ifuri_app/packs/runtime.py', 63, 'python').
+project_file('src/ifuri_app/paths.py', 37, 'python').
+project_file('src/ifuri_app/remote_screen.py', 117, 'python').
+project_file('src/ifuri_app/runtime.py', 812, 'python').
+project_file('src/ifuri_app/sample_data.py', 80, 'python').
+project_file('src/ifuri_app/storage.py', 98, 'python').
+project_file('src/ifuri_app/urirun_bridge.py', 416, 'python').
+project_file('src/ifuri_app/urisys_client.py', 159, 'python').
+project_file('src/ifuri_app/url_params.py', 44, 'python').
+project_file('src/ifuri_app/voice_pipeline.py', 198, 'python').
+project_file('src/ifuri_app/voice_planner.py', 290, 'python').
+project_file('src/ifuri_app/web/i18n.js', 115, 'javascript').
+project_file('src/ifuri_app/web/page/handlers.js', 55, 'javascript').
+project_file('src/ifuri_app/web/page/manifest.js', 39, 'javascript').
+project_file('src/ifuri_app/web/page_runtime.js', 24, 'javascript').
+project_file('src/ifuri_app/web/theme.js', 43, 'javascript').
+project_file('src/ifuri_app/web/url_state.js', 71, 'javascript').
 project_file('src/ifuri_app/web/voice.css', 364, 'css').
-project_file('src/ifuri_app/web/voice.js', 639, 'javascript').
-project_file('src/ifuri_app/web/webrtc_peer.js', 230, 'javascript').
-project_file('src/ifuri_app/webrtc_pipeline.py', 130, 'python').
-project_file('src/ifuri_app/webrtc_signal.py', 105, 'python').
-project_file('tests/e2e/test_voice_playwright.py', 60, 'python').
-project_file('tests/test_api_runtime.py', 206, 'python').
-project_file('tests/test_chat_channels.py', 36, 'python').
-project_file('tests/test_chat_history.py', 37, 'python').
-project_file('tests/test_chat_migrate.py', 42, 'python').
-project_file('tests/test_chat_store.py', 48, 'python').
-project_file('tests/test_cli_chat.py', 15, 'python').
-project_file('tests/test_flow_compile.py', 41, 'python').
-project_file('tests/test_gui_smoke.py', 25, 'python').
-project_file('tests/test_ifuri_app.py', 128, 'python').
-project_file('tests/test_packs_loader.py', 46, 'python').
-project_file('tests/test_packs_runtime.py', 28, 'python').
-project_file('tests/test_urirun_bridge.py', 36, 'python').
-project_file('tests/test_urirun_integration.py', 225, 'python').
-project_file('tests/test_url_params.py', 24, 'python').
-project_file('tests/test_voice_capabilities.py', 49, 'python').
-project_file('tests/test_voice_pack_hint.py', 19, 'python').
-project_file('tests/test_voice_planner.py', 68, 'python').
-project_file('tests/test_webrtc_pipeline.py', 45, 'python').
-project_file('tests/test_webrtc_signal.py', 36, 'python').
-project_file('tree.sh', 2, 'shell').
+project_file('src/ifuri_app/web/voice.js', 642, 'javascript').
+project_file('src/ifuri_app/web/webrtc_peer.js', 233, 'javascript').
+project_file('src/ifuri_app/webrtc_pipeline.py', 132, 'python').
+project_file('src/ifuri_app/webrtc_signal.py', 107, 'python').
+project_file('tests/e2e/test_voice_playwright.py', 73, 'python').
+project_file('tests/test_api_runtime.py', 249, 'python').
+project_file('tests/test_chat_channels.py', 39, 'python').
+project_file('tests/test_chat_history.py', 40, 'python').
+project_file('tests/test_chat_migrate.py', 45, 'python').
+project_file('tests/test_chat_store.py', 51, 'python').
+project_file('tests/test_cli_chat.py', 18, 'python').
+project_file('tests/test_cli_run.py', 102, 'python').
+project_file('tests/test_connect_store.py', 232, 'python').
+project_file('tests/test_connectors.py', 84, 'python').
+project_file('tests/test_flow_compile.py', 44, 'python').
+project_file('tests/test_gui_smoke.py', 239, 'python').
+project_file('tests/test_ifuri_app.py', 131, 'python').
+project_file('tests/test_novnc_demo.py', 113, 'python').
+project_file('tests/test_packs_loader.py', 48, 'python').
+project_file('tests/test_packs_runtime.py', 31, 'python').
+project_file('tests/test_paths.py', 49, 'python').
+project_file('tests/test_remote_node_e2e.py', 199, 'python').
+project_file('tests/test_storage.py', 87, 'python').
+project_file('tests/test_urirun_bridge.py', 39, 'python').
+project_file('tests/test_urirun_integration.py', 286, 'python').
+project_file('tests/test_url_params.py', 27, 'python').
+project_file('tests/test_voice_capabilities.py', 52, 'python').
+project_file('tests/test_voice_pack_hint.py', 22, 'python').
+project_file('tests/test_voice_planner.py', 70, 'python').
+project_file('tests/test_webrtc_pipeline.py', 48, 'python').
+project_file('tests/test_webrtc_signal.py', 39, 'python').
+project_file('tree.sh', 5, 'shell').
 
 % ── Python Functions ─────────────────────────────────────
 python_function('packages/ifuri-bridge/handlers/urisys_call.py', '_endpoint', 2, 10, 3).
@@ -1102,12 +1272,12 @@ python_function('scripts/bootstrap-lenovo-packs.py', 'main', 0, 5, 8).
 python_function('scripts/build-platform.py', 'read_version', 0, 4, 6).
 python_function('scripts/build-platform.py', 'platform_tag', 0, 4, 3).
 python_function('scripts/build-platform.py', 'add_data_arg', 2, 2, 1).
-python_function('scripts/build-platform.py', 'run_pyinstaller', 0, 6, 10).
+python_function('scripts/build-platform.py', 'run_pyinstaller', 0, 8, 10).
 python_function('scripts/build-platform.py', 'package_artifact', 3, 4, 7).
 python_function('scripts/build-platform.py', 'main', 1, 2, 9).
 python_function('scripts/gui_smoke.py', 'parse_args', 0, 1, 4).
 python_function('scripts/gui_smoke.py', 'take_screenshot', 1, 5, 6).
-python_function('scripts/gui_smoke.py', 'run_gui_smoke', 3, 2, 35).
+python_function('scripts/gui_smoke.py', 'run_gui_smoke', 3, 2, 49).
 python_function('scripts/gui_smoke.py', 'main', 0, 2, 8).
 python_function('scripts/upgrade-lenovo-remote.py', 'main', 0, 2, 4).
 python_function('src/ifuri_app/chat_channels.py', '_channel_id', 2, 1, 1).
@@ -1158,10 +1328,26 @@ python_function('src/ifuri_app/cli.py', 'cmd_urirun_scan', 1, 2, 3).
 python_function('src/ifuri_app/cli.py', 'cmd_urirun_serve', 1, 4, 7).
 python_function('src/ifuri_app/cli.py', 'cmd_urirun_mcp', 1, 7, 6).
 python_function('src/ifuri_app/cli.py', 'cmd_flow_validate', 1, 1, 4).
-python_function('src/ifuri_app/cli.py', 'cmd_run', 1, 4, 7).
+python_function('src/ifuri_app/cli.py', 'cmd_run', 1, 6, 12).
 python_function('src/ifuri_app/cli.py', 'cmd_expand', 1, 1, 4).
-python_function('src/ifuri_app/cli.py', 'build_parser', 0, 1, 6).
+python_function('src/ifuri_app/cli.py', 'build_parser', 0, 1, 7).
 python_function('src/ifuri_app/cli.py', 'main', 1, 2, 5).
+python_function('src/ifuri_app/connect_store.py', 'catalog_url', 0, 2, 1).
+python_function('src/ifuri_app/connect_store.py', '_normalize_route', 1, 8, 4).
+python_function('src/ifuri_app/connect_store.py', '_normalize_install', 1, 6, 3).
+python_function('src/ifuri_app/connect_store.py', '_version_of', 2, 4, 4).
+python_function('src/ifuri_app/connect_store.py', 'normalize_packages', 1, 31, 9).
+python_function('src/ifuri_app/connect_store.py', 'fetch_catalog', 1, 6, 9).
+python_function('src/ifuri_app/connect_store.py', 'install_command', 1, 5, 2).
+python_function('src/ifuri_app/connect_store.py', 'local_registry_status', 0, 5, 7).
+python_function('src/ifuri_app/connect_store.py', 'example_payload_for', 2, 5, 2).
+python_function('src/ifuri_app/connect_store.py', 'payload_form_fields', 2, 8, 9).
+python_function('src/ifuri_app/connectors.py', 'route_scheme', 1, 6, 3).
+python_function('src/ifuri_app/connectors.py', '_detail', 1, 5, 4).
+python_function('src/ifuri_app/connectors.py', '_row', 2, 4, 4).
+python_function('src/ifuri_app/connectors.py', 'normalize_routes', 1, 15, 10).
+python_function('src/ifuri_app/connectors.py', 'group_by_scheme', 1, 2, 2).
+python_function('src/ifuri_app/connectors.py', 'fetch_node_routes', 1, 6, 9).
 python_function('src/ifuri_app/discovery.py', 'local_descriptor', 1, 5, 5).
 python_function('src/ifuri_app/discovery.py', 'discover', 3, 9, 20).
 python_function('src/ifuri_app/flow_compile.py', 'uri2flow_available', 0, 2, 0).
@@ -1184,16 +1370,23 @@ python_function('src/ifuri_app/flow_runner.py', 'examples_root', 0, 4, 6).
 python_function('src/ifuri_app/flow_runner.py', 'resolve_flow_path', 1, 4, 5).
 python_function('src/ifuri_app/flow_runner.py', 'load_flow_steps', 1, 3, 3).
 python_function('src/ifuri_app/flow_runner.py', 'run_flow_file', 1, 9, 9).
-python_function('src/ifuri_app/gui.py', 'launch_gui', 0, 1, 2).
+python_function('src/ifuri_app/gui.py', 'launch_gui', 0, 1, 3).
 python_function('src/ifuri_app/network_scan.py', '_local_ipv4', 0, 2, 3).
 python_function('src/ifuri_app/network_scan.py', '_subnet_hosts', 1, 3, 3).
-python_function('src/ifuri_app/network_scan.py', 'probe_urisys_node', 2, 4, 5).
+python_function('src/ifuri_app/network_scan.py', 'probe_urisys_node', 2, 6, 5).
 python_function('src/ifuri_app/network_scan.py', 'probe_ifuri_peer', 1, 4, 6).
 python_function('src/ifuri_app/network_scan.py', '_collect_local_services', 0, 8, 6).
 python_function('src/ifuri_app/network_scan.py', '_services_from_peers', 1, 9, 5).
 python_function('src/ifuri_app/network_scan.py', 'scan_urisys_nodes', 0, 15, 16).
 python_function('src/ifuri_app/network_scan.py', 'scan_network', 0, 17, 19).
 python_function('src/ifuri_app/network_scan.py', 'try_mdns_urisys', 1, 2, 1).
+python_function('src/ifuri_app/novnc_demo.py', 'demo_dir', 0, 4, 5).
+python_function('src/ifuri_app/novnc_demo.py', 'read_env_file', 1, 7, 6).
+python_function('src/ifuri_app/novnc_demo.py', 'dashboard_ports', 1, 5, 3).
+python_function('src/ifuri_app/novnc_demo.py', 'dashboard_url', 1, 4, 3).
+python_function('src/ifuri_app/novnc_demo.py', 'docker_available', 0, 1, 1).
+python_function('src/ifuri_app/novnc_demo.py', 'compose_args', 1, 4, 1).
+python_function('src/ifuri_app/novnc_demo.py', 'launch_info', 0, 3, 4).
 python_function('src/ifuri_app/packs/loader.py', 'packages_root', 0, 1, 1).
 python_function('src/ifuri_app/packs/loader.py', 'discover_manifests', 1, 3, 4).
 python_function('src/ifuri_app/packs/loader.py', '_ensure_pack_path', 1, 2, 3).
@@ -1218,7 +1411,7 @@ python_function('src/ifuri_app/runtime.py', 'find_free_port', 2, 3, 4).
 python_function('src/ifuri_app/runtime.py', 'bind_runtime_server', 3, 3, 4).
 python_function('src/ifuri_app/runtime.py', '_load_urirun_policy', 2, 5, 5).
 python_function('src/ifuri_app/runtime.py', 'json_bytes', 1, 1, 2).
-python_function('src/ifuri_app/runtime.py', 'make_handler', 1, 1, 76).
+python_function('src/ifuri_app/runtime.py', 'make_handler', 1, 1, 77).
 python_function('src/ifuri_app/sample_data.py', 'default_workspace', 0, 3, 4).
 python_function('src/ifuri_app/storage.py', 'app_home', 0, 2, 5).
 python_function('src/ifuri_app/storage.py', 'workspace_path', 0, 1, 1).
@@ -1277,6 +1470,7 @@ python_function('src/ifuri_app/webrtc_signal.py', '_purge_room', 2, 3, 4).
 python_function('src/ifuri_app/webrtc_signal.py', 'post_signal', 1, 9, 8).
 python_function('src/ifuri_app/webrtc_signal.py', 'poll_signals', 1, 10, 5).
 python_function('src/ifuri_app/webrtc_signal.py', 'room_stats', 0, 1, 3).
+python_function('tests/e2e/test_voice_playwright.py', 'launch_chromium', 1, 5, 6).
 python_function('tests/e2e/test_voice_playwright.py', 'voice_server', 1, 1, 7).
 python_function('tests/e2e/test_voice_playwright.py', 'test_voice_page_loads_and_lang_toggle', 1, 7, 14).
 python_function('tests/e2e/test_voice_playwright.py', 'test_voice_static_i18n_bundle', 1, 3, 3).
@@ -1289,6 +1483,7 @@ python_function('tests/test_api_runtime.py', 'test_static_assets', 1, 4, 2).
 python_function('tests/test_api_runtime.py', 'test_api_packs', 1, 6, 4).
 python_function('tests/test_api_runtime.py', 'test_api_urirun_status', 1, 4, 2).
 python_function('tests/test_api_runtime.py', 'test_api_urirun_call_contract', 1, 4, 2).
+python_function('tests/test_api_runtime.py', 'test_api_urirun_call_local_registry_execute', 2, 6, 8).
 python_function('tests/test_api_runtime.py', 'test_uri_call_voice_plan', 1, 4, 2).
 python_function('tests/test_api_runtime.py', 'test_flow_validate', 1, 3, 2).
 python_function('tests/test_api_runtime.py', 'test_flow_expand', 1, 6, 3).
@@ -1313,12 +1508,61 @@ python_function('tests/test_chat_store.py', 'test_local_store_roundtrip', 1, 3, 
 python_function('tests/test_chat_store.py', 'test_fetch_history_falls_back_on_404', 1, 4, 4).
 python_function('tests/test_chat_store.py', 'test_persist_falls_back_on_404', 1, 4, 5).
 python_function('tests/test_cli_chat.py', 'test_cli_chat_status_calls_urisys_chat_available', 0, 2, 4).
+python_function('tests/test_cli_run.py', 'run_cli', 2, 2, 6).
+python_function('tests/test_cli_run.py', 'test_run_uri_dry_run_default', 1, 4, 2).
+python_function('tests/test_cli_run.py', 'test_run_flow_file_dry_run', 2, 3, 3).
+python_function('tests/test_cli_run.py', 'test_run_invalid_payload_json', 1, 3, 1).
+python_function('tests/test_cli_run.py', 'test_run_target_not_file_or_uri', 1, 3, 4).
+python_function('tests/test_cli_run.py', 'test_run_uri_execute_uses_runtime_not_dry', 2, 4, 3).
+python_function('tests/test_cli_run.py', 'test_run_flow_execute_uses_runtime', 3, 3, 5).
+python_function('tests/test_connect_store.py', 'test_catalog_url_env_override', 1, 3, 3).
+python_function('tests/test_connect_store.py', 'test_normalize_packages_shapes', 0, 6, 1).
+python_function('tests/test_connect_store.py', 'test_normalize_real_hub_shape', 0, 9, 4).
+python_function('tests/test_connect_store.py', 'test_normalize_skips_invalid_and_accepts_bare_list', 0, 2, 1).
+python_function('tests/test_connect_store.py', 'test_install_command_pip_and_unknown', 0, 3, 2).
+python_function('tests/test_connect_store.py', 'test_payload_form_fields_from_params_and_placeholders', 0, 5, 1).
+python_function('tests/test_connect_store.py', 'test_payload_form_fields_dedup', 0, 2, 1).
+python_function('tests/test_connect_store.py', 'test_payload_form_fields_from_example_payload', 0, 4, 2).
+python_function('tests/test_connect_store.py', 'test_payload_form_no_example_match_falls_back', 0, 2, 1).
+python_function('tests/test_connect_store.py', 'test_example_payload_for', 0, 4, 1).
+python_function('tests/test_connect_store.py', 'test_fetch_catalog_live_mock', 0, 5, 9).
+python_function('tests/test_connect_store.py', 'test_fetch_catalog_unreachable', 0, 2, 1).
+python_function('tests/test_connect_store.py', 'test_local_registry_status_unconfigured', 2, 4, 5).
+python_function('tests/test_connect_store.py', 'test_local_registry_status_reads_registry', 2, 5, 5).
+python_function('tests/test_connect_store.py', 'test_normalize_against_real_catalog_file', 0, 10, 9).
+python_function('tests/test_connectors.py', 'test_route_scheme_variants', 0, 6, 1).
+python_function('tests/test_connectors.py', 'test_normalize_list_of_dicts', 0, 7, 2).
+python_function('tests/test_connectors.py', 'test_normalize_dict_of_bindings', 0, 4, 2).
+python_function('tests/test_connectors.py', 'test_normalize_list_of_strings_and_bare_list', 0, 3, 2).
+python_function('tests/test_connectors.py', 'test_normalize_alternate_uri_keys_and_dedup', 0, 3, 1).
+python_function('tests/test_connectors.py', 'test_normalize_ignores_entries_without_uri', 0, 2, 1).
+python_function('tests/test_connectors.py', 'test_group_by_scheme', 0, 3, 4).
+python_function('tests/test_connectors.py', 'test_fetch_node_routes_handles_unreachable', 0, 5, 1).
 python_function('tests/test_flow_compile.py', 'test_uri2flow_available', 0, 2, 1).
 python_function('tests/test_flow_compile.py', 'test_expand_flow_uses_uri2flow', 0, 6, 4).
 python_function('tests/test_flow_compile.py', 'test_expand_flow_compiled_graph_edges', 0, 3, 1).
 python_function('tests/test_flow_compile.py', 'test_flow_steps_from_kvm_linkedin_flow', 0, 4, 6).
-python_function('tests/test_gui_smoke.py', 'test_gui_module_imports', 0, 2, 1).
+python_function('tests/test_gui_smoke.py', 'app', 0, 2, 3).
+python_function('tests/test_gui_smoke.py', 'test_gui_module_imports', 0, 3, 1).
 python_function('tests/test_gui_smoke.py', 'test_gui_smoke_script_parse', 0, 3, 3).
+python_function('tests/test_gui_smoke.py', 'test_connectors_tab_present', 1, 4, 5).
+python_function('tests/test_gui_smoke.py', 'test_connectors_render_groups_by_node_and_scheme', 1, 5, 6).
+python_function('tests/test_gui_smoke.py', 'test_connectors_empty_state', 1, 2, 3).
+python_function('tests/test_gui_smoke.py', 'test_lan_scan_auto_refreshes_connectors', 2, 2, 3).
+python_function('tests/test_gui_smoke.py', 'test_novnc_section_present', 1, 2, 1).
+python_function('tests/test_gui_smoke.py', 'test_novnc_open_dashboard', 2, 3, 5).
+python_function('tests/test_gui_smoke.py', 'test_novnc_precheck_missing_dir', 2, 3, 3).
+python_function('tests/test_gui_smoke.py', 'test_novnc_precheck_missing_docker', 3, 3, 4).
+python_function('tests/test_gui_smoke.py', 'test_app_icon_asset_present', 0, 2, 2).
+python_function('tests/test_gui_smoke.py', 'test_app_icon_set_on_window', 1, 2, 1).
+python_function('tests/test_gui_smoke.py', 'test_connect_tab_present', 1, 4, 5).
+python_function('tests/test_gui_smoke.py', 'test_connect_catalog_and_payload_form', 1, 4, 7).
+python_function('tests/test_gui_smoke.py', 'test_connect_payload_form_enriched_from_example', 1, 3, 7).
+python_function('tests/test_gui_smoke.py', 'test_connect_install_manual_no_subprocess', 2, 3, 8).
+python_function('tests/test_gui_smoke.py', 'test_connect_catalog_error', 1, 3, 3).
+python_function('tests/test_gui_smoke.py', 'test_connect_registry_status_renders', 2, 2, 3).
+python_function('tests/test_gui_smoke.py', 'test_connect_registry_status_no_urirun', 2, 2, 3).
+python_function('tests/test_gui_smoke.py', 'test_connect_registry_status_registry_without_urirun', 2, 2, 3).
 python_function('tests/test_ifuri_app.py', 'test_plan_linkedin_flow', 0, 4, 1).
 python_function('tests/test_ifuri_app.py', 'test_plan_health_flow', 0, 4, 1).
 python_function('tests/test_ifuri_app.py', 'test_plan_voice_fallback', 0, 4, 2).
@@ -1330,12 +1574,43 @@ python_function('tests/test_ifuri_app.py', 'test_screen_uri', 0, 3, 2).
 python_function('tests/test_ifuri_app.py', 'test_unwrap_result_nested', 0, 2, 1).
 python_function('tests/test_ifuri_app.py', 'test_capture_remote_screen_mock', 0, 3, 2).
 python_function('tests/test_ifuri_app.py', 'test_connection_hint_on_refused', 0, 3, 1).
+python_function('tests/test_novnc_demo.py', 'test_dashboard_url_defaults', 0, 7, 2).
+python_function('tests/test_novnc_demo.py', 'test_dashboard_url_honours_overrides', 0, 4, 2).
+python_function('tests/test_novnc_demo.py', 'test_dashboard_ports_reads_env', 1, 3, 3).
+python_function('tests/test_novnc_demo.py', 'test_compose_args', 0, 4, 2).
+python_function('tests/test_novnc_demo.py', 'test_read_env_file', 1, 6, 2).
+python_function('tests/test_novnc_demo.py', 'test_dashboard_ports_reads_dotenv', 2, 7, 5).
+python_function('tests/test_novnc_demo.py', 'test_shell_env_overrides_dotenv', 2, 2, 3).
+python_function('tests/test_novnc_demo.py', 'test_demo_dir_env_override', 2, 3, 3).
+python_function('tests/test_novnc_demo.py', 'test_demo_dir_resolves_sibling_examples', 1, 4, 3).
+python_function('tests/test_novnc_demo.py', 'test_launch_info_shape', 0, 4, 4).
 python_function('tests/test_packs_loader.py', 'test_packages_root_exists', 0, 3, 3).
 python_function('tests/test_packs_loader.py', 'test_discover_manifests_finds_bridge_voice_chat', 0, 6, 2).
 python_function('tests/test_packs_loader.py', 'test_pack_summary_lists_js_page_pack', 0, 6, 2).
 python_function('tests/test_packs_loader.py', 'test_load_local_registry_when_uricore_available', 0, 7, 2).
 python_function('tests/test_packs_runtime.py', 'test_local_runtime_info', 0, 3, 2).
 python_function('tests/test_packs_runtime.py', 'test_voice_plan_local_pack', 0, 6, 3).
+python_function('tests/test_paths.py', 'test_app_package_dir_dev', 0, 3, 2).
+python_function('tests/test_paths.py', 'test_web_and_assets_under_package', 0, 3, 3).
+python_function('tests/test_paths.py', 'test_repo_root_and_packages_dir', 0, 3, 3).
+python_function('tests/test_paths.py', 'test_frozen_bundle_branch', 2, 2, 4).
+python_function('tests/test_paths.py', 'test_frozen_bundle_fallback_without_web', 2, 2, 3).
+python_function('tests/test_remote_node_e2e.py', 'isolated_home', 2, 1, 3).
+python_function('tests/test_remote_node_e2e.py', 'remote_node', 0, 3, 8).
+python_function('tests/test_remote_node_e2e.py', 'test_probe_discovers_remote_node', 1, 6, 2).
+python_function('tests/test_remote_node_e2e.py', 'test_scan_finds_node_via_extra_hosts', 1, 3, 1).
+python_function('tests/test_remote_node_e2e.py', 'test_route_discovery_covers_uri_mcp_a2a', 1, 8, 2).
+python_function('tests/test_remote_node_e2e.py', 'test_probe_tolerates_novnc_health_schema', 0, 7, 10).
+python_function('tests/test_remote_node_e2e.py', 'test_end_to_end_node_then_routes', 1, 4, 7).
+python_function('tests/test_storage.py', 'home', 2, 1, 2).
+python_function('tests/test_storage.py', 'test_app_home_honours_env', 1, 3, 2).
+python_function('tests/test_storage.py', 'test_now_iso_format', 0, 2, 3).
+python_function('tests/test_storage.py', 'test_load_creates_default_when_missing', 1, 5, 3).
+python_function('tests/test_storage.py', 'test_normalize_fills_defaults', 0, 5, 1).
+python_function('tests/test_storage.py', 'test_save_load_round_trip', 1, 3, 5).
+python_function('tests/test_storage.py', 'test_save_is_atomic_no_tmp_left', 1, 2, 3).
+python_function('tests/test_storage.py', 'test_load_recovers_from_corrupt_json', 1, 3, 8).
+python_function('tests/test_storage.py', 'test_add_event_appends_and_caps', 0, 6, 3).
 python_function('tests/test_urirun_bridge.py', 'test_urirun_info_shape', 0, 4, 1).
 python_function('tests/test_urirun_bridge.py', 'test_call_without_installed_urirun', 1, 5, 2).
 python_function('tests/test_urirun_bridge.py', 'test_parse_json_object_rejects_arrays', 0, 1, 2).
@@ -1349,6 +1624,7 @@ python_function('tests/test_urirun_integration.py', 'test_scan_project_builds_re
 python_function('tests/test_urirun_integration.py', 'test_run_flow_routes_via_urirun', 2, 4, 8).
 python_function('tests/test_urirun_integration.py', 'test_urirun_serve_http', 1, 8, 22).
 python_function('tests/test_urirun_integration.py', 'test_cli_urirun_call_in_process_execute', 1, 4, 6).
+python_function('tests/test_urirun_integration.py', 'test_cli_run_execute_uses_runtime_state', 2, 5, 7).
 python_function('tests/test_urirun_integration.py', 'test_mcp_tools_and_a2a_card', 0, 7, 5).
 python_function('tests/test_url_params.py', 'test_voice_url_builds_prompt', 0, 4, 2).
 python_function('tests/test_url_params.py', 'test_voice_query_skips_empty', 0, 2, 1).
@@ -1384,12 +1660,28 @@ python_method('DiscoveryResponder', 'stop', 0, 4, 3).
 python_method('DiscoveryResponder', '_loop', 0, 9, 15).
 python_class('src/ifuri_app/flow_compile.py', 'FlowCompileError').
 python_class('src/ifuri_app/gui.py', 'IfuriDesktop').
-python_method('IfuriDesktop', '__init__', 0, 1, 10).
-python_method('IfuriDesktop', '_build_style', 0, 2, 3).
-python_method('IfuriDesktop', '_build_ui', 0, 1, 10).
+python_method('IfuriDesktop', '__init__', 0, 1, 11).
+python_method('IfuriDesktop', '_set_app_icon', 0, 3, 5).
+python_method('IfuriDesktop', '_build_style', 0, 2, 4).
+python_method('IfuriDesktop', '_build_ui', 0, 1, 12).
 python_method('IfuriDesktop', '_build_flows_tab', 0, 2, 17).
-python_method('IfuriDesktop', '_build_services_tab', 0, 3, 14).
-python_method('IfuriDesktop', '_build_network_tab', 0, 4, 19).
+python_method('IfuriDesktop', '_build_services_tab', 0, 2, 19).
+python_method('IfuriDesktop', '_build_network_tab', 0, 4, 20).
+python_method('IfuriDesktop', '_build_connectors_tab', 0, 2, 14).
+python_method('IfuriDesktop', '_connector_endpoints', 0, 12, 7).
+python_method('IfuriDesktop', 'refresh_connectors', 0, 2, 8).
+python_method('IfuriDesktop', '_connectors_done', 1, 7, 8).
+python_method('IfuriDesktop', '_toggle_connectors', 0, 4, 3).
+python_method('IfuriDesktop', '_build_connect_tab', 0, 3, 20).
+python_method('IfuriDesktop', 'refresh_catalog', 0, 1, 8).
+python_method('IfuriDesktop', '_catalog_done', 1, 4, 6).
+python_method('IfuriDesktop', '_selected_package', 0, 3, 3).
+python_method('IfuriDesktop', '_on_package_select', 1, 3, 5).
+python_method('IfuriDesktop', '_render_payload_form', 1, 10, 10).
+python_method('IfuriDesktop', 'install_selected_connector', 0, 4, 14).
+python_method('IfuriDesktop', '_install_done', 3, 4, 3).
+python_method('IfuriDesktop', 'refresh_registry_status', 0, 4, 2).
+python_method('IfuriDesktop', '_connect_log', 1, 1, 3).
 python_method('IfuriDesktop', '_build_events_tab', 0, 2, 9).
 python_method('IfuriDesktop', '_groups', 0, 1, 1).
 python_method('IfuriDesktop', '_flows', 0, 2, 2).
@@ -1407,14 +1699,34 @@ python_method('IfuriDesktop', 'add_service', 0, 3, 9).
 python_method('IfuriDesktop', 'start_runtime', 0, 5, 13).
 python_method('IfuriDesktop', 'open_voice_ui', 0, 5, 7).
 python_method('IfuriDesktop', 'stop_runtime', 0, 3, 3).
-python_method('IfuriDesktop', 'discover_peers', 0, 2, 8).
+python_method('IfuriDesktop', 'discover_peers', 0, 5, 10).
 python_method('IfuriDesktop', '_refresh_network_views', 1, 15, 7).
-python_method('IfuriDesktop', '_on_device_select', 1, 4, 5).
+python_method('IfuriDesktop', '_novnc_precheck', 0, 3, 3).
+python_method('IfuriDesktop', '_run_compose', 2, 1, 10).
+python_method('IfuriDesktop', '_compose_done', 4, 3, 3).
+python_method('IfuriDesktop', 'start_novnc_demo', 0, 2, 2).
+python_method('IfuriDesktop', 'stop_novnc_demo', 0, 2, 2).
+python_method('IfuriDesktop', 'open_novnc_dashboard', 0, 1, 4).
+python_method('IfuriDesktop', '_on_device_select', 1, 4, 4).
+python_method('IfuriDesktop', '_apply_node_endpoint', 1, 4, 6).
+python_method('IfuriDesktop', '_maybe_first_run', 0, 2, 2).
 python_method('IfuriDesktop', '_refresh_peers', 0, 5, 6).
 python_method('IfuriDesktop', 'refresh_log', 0, 2, 5).
 python_method('IfuriDesktop', 'append_log', 1, 1, 3).
 python_method('IfuriDesktop', 'save_all', 0, 1, 1).
-python_method('IfuriDesktop', '_on_close', 0, 1, 3).
+python_method('IfuriDesktop', '_urirun_serve_cmd', 1, 2, 2).
+python_method('IfuriDesktop', 'start_urirun_serve', 0, 4, 9).
+python_method('IfuriDesktop', 'stop_urirun_serve', 0, 4, 6).
+python_method('IfuriDesktop', 'show_urirun_routes', 0, 1, 12).
+python_method('IfuriDesktop', '_on_close', 0, 1, 4).
+python_class('src/ifuri_app/gui.py', 'FirstRunWizard').
+python_method('FirstRunWizard', '__init__', 1, 1, 16).
+python_method('FirstRunWizard', '_scan', 0, 1, 8).
+python_method('FirstRunWizard', '_scan_done', 2, 10, 6).
+python_method('FirstRunWizard', '_on_pick', 1, 3, 3).
+python_method('FirstRunWizard', '_save', 0, 1, 3).
+python_method('FirstRunWizard', '_skip', 0, 1, 1).
+python_method('FirstRunWizard', '_finish', 0, 2, 3).
 python_class('src/ifuri_app/gui_chat.py', 'ChatTabMixin').
 python_method('ChatTabMixin', '_build_chat_tab', 0, 1, 18).
 python_method('ChatTabMixin', '_router_endpoint', 0, 6, 4).
@@ -1453,6 +1765,16 @@ python_method('UrisysNodeClient', 'app_chat_channels', 0, 1, 2).
 python_method('UrisysNodeClient', 'app_chat_append', 3, 2, 1).
 python_method('UrisysNodeClient', '_get', 1, 3, 5).
 python_method('UrisysNodeClient', '_post', 2, 5, 9).
+python_class('tests/test_connect_store.py', '_CatalogHandler').
+python_method('_CatalogHandler', 'log_message', 0, 1, 0).
+python_method('_CatalogHandler', 'do_GET', 0, 1, 8).
+python_class('tests/test_remote_node_e2e.py', '_NodeHandler').
+python_method('_NodeHandler', 'log_message', 0, 1, 0).
+python_method('_NodeHandler', '_send', 1, 1, 8).
+python_method('_NodeHandler', 'do_GET', 0, 3, 3).
+python_class('tests/test_remote_node_e2e.py', '_NoVncHandler').
+python_method('_NoVncHandler', 'log_message', 0, 1, 0).
+python_method('_NoVncHandler', 'do_GET', 0, 3, 8).
 python_class('tests/test_voice_capabilities.py', 'FakeClient').
 python_method('FakeClient', 'health', 0, 1, 0).
 python_class('tests/test_webrtc_pipeline.py', 'FakeClient').
@@ -1473,6 +1795,8 @@ makefile_target('test-e2e', '').
 makefile_target('install-e2e', '').
 makefile_target('test-gui', '').
 makefile_target('test-gui-docker', '').
+makefile_target('smoke-novnc', '').
+makefile_target('run-gui-novnc', '').
 makefile_target('run', '').
 makefile_target('run-gui', '').
 makefile_target('run-voice', '').
@@ -1515,52 +1839,150 @@ testql_scenario('generated-cli-tests.testql.toon.yaml', 'cli').
 testql_scenario('generated-from-pytests.testql.toon.yaml', 'integration').
 
 % ── Semantic Facts from SUMD.md ──────────────────────────
+sumd_declared_file('app.doql.less', 'doql').
+sumd_declared_file('testql-scenarios/generated-cli-tests.testql.toon.yaml', 'testql').
+sumd_declared_file('testql-scenarios/generated-from-pytests.testql.toon.yaml', 'testql').
+sumd_declared_file('project/map.toon.yaml', 'analysis').
+sumd_declared_file('project/logic.pl', 'analysis').
+sumd_declared_file('project/calls.toon.yaml', 'analysis').
+sumd_interface('cli', 'argparse').
+sumd_interface('cli', '').
+sumd_interface('cli', '').
+sumd_interface('desktop', '').
+sumd_workflow('install', 'manual').
+sumd_workflow_step('install', 1, '$(PYTHON) -m pip install -e .').
+sumd_workflow('install-dev', 'manual').
+sumd_workflow_step('install-dev', 1, 'if command -v uv >/dev/null 2>&1').
+sumd_workflow_step('install-dev', 2, 'uv sync --group dev --group tellmesh').
+sumd_workflow_step('install-dev', 3, 'else \').
+sumd_workflow_step('install-dev', 4, '$(PYTHON) -m pip install -e ".[flows,dev,packs]"').
+sumd_workflow_step('install-dev', 5, '$(PYTHON) -m pip install -e ../../tellmesh/uri2flow ../../tellmesh/uricore 2>/dev/null || true').
+sumd_workflow_step('install-dev', 6, 'fi').
+sumd_workflow('vendor-uricore-js', 'manual').
+sumd_workflow_step('vendor-uricore-js', 1, 'bash scripts/vendor-uricore-js.sh').
+sumd_workflow('test', 'manual').
+sumd_workflow_step('test', 1, 'PYTHONPATH=src $(PYTHON) -m pytest -q --ignore=tests/e2e').
+sumd_workflow('test-api', 'manual').
+sumd_workflow_step('test-api', 1, 'PYTHONPATH=src $(PYTHON) -m pytest tests/test_api_runtime.py -q').
+sumd_workflow('test-e2e', 'manual').
+sumd_workflow_step('test-e2e', 1, 'PYTHONPATH=src $(PYTHON) -m pytest tests/e2e -q').
+sumd_workflow('install-e2e', 'manual').
+sumd_workflow_step('install-e2e', 1, '$(PYTHON) -m pip install pytest-playwright playwright').
+sumd_workflow_step('install-e2e', 2, '$(PYTHON) -m playwright install chromium').
+sumd_workflow('test-gui', 'manual').
+sumd_workflow_step('test-gui', 1, 'PYTHONPATH=src $(PYTHON) -m pytest tests/test_gui_smoke.py -q').
+sumd_workflow('test-gui-docker', 'manual').
+sumd_workflow_step('test-gui-docker', 1, 'bash scripts/test-gui-docker.sh').
+sumd_workflow('smoke-novnc', 'manual').
+sumd_workflow_step('smoke-novnc', 1, '$(MAKE) -C ../examples/11-novnc_lan_flow up').
+sumd_workflow_step('smoke-novnc', 2, 'PYTHONPATH=src xvfb-run -a $(PYTHON) scripts/gui_smoke.py --urisys-endpoint $(NODE) --out dist/gui-smoke --timeout 30').
+sumd_workflow('run-gui-novnc', 'manual').
+sumd_workflow_step('run-gui-novnc', 1, 'docker compose -f docker/docker-compose.novnc.yml up --build').
+sumd_workflow_step('run-gui-novnc', 2, 'echo "open http://localhost:6080/vnc.html?autoconnect=1&resize=remote"').
+sumd_workflow('run', 'manual').
+sumd_workflow_step('run', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app $(ARGS)').
+sumd_workflow('run-gui', 'manual').
+sumd_workflow_step('run-gui', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app app').
+sumd_workflow('run-voice', 'manual').
+sumd_workflow_step('run-voice', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app voice \').
+sumd_workflow_step('run-voice', 2, '--urisys-endpoint $(URISYS) --port $(PORT) --auto-port').
+sumd_workflow('run-voice-bg', 'manual').
+sumd_workflow_step('run-voice-bg', 1, '! test -f /tmp/ifuri-voice.pid || { echo "already running (pid $$(cat /tmp/ifuri-voice.pid))"').
+sumd_workflow('run-tauri-dev', 'manual').
+sumd_workflow_step('run-tauri-dev', 1, 'PORT=$(PORT) URISYS=$(URISYS) PYTHON=$(PYTHON) bash desktop/dev-server.sh').
+sumd_workflow_step('run-tauri-dev', 2, 'cd desktop && cargo tauri dev').
+sumd_workflow('stop', 'manual').
+sumd_workflow_step('stop', 1, 'if test -f /tmp/ifuri-voice.pid').
+sumd_workflow_step('stop', 2, 'kill $$(cat /tmp/ifuri-voice.pid) 2>/dev/null || true').
+sumd_workflow_step('stop', 3, 'rm -f /tmp/ifuri-voice.pid').
+sumd_workflow_step('stop', 4, 'echo "stopped"').
+sumd_workflow_step('stop', 5, 'else \').
+sumd_workflow_step('stop', 6, 'echo "no pid file (/tmp/ifuri-voice.pid)"').
+sumd_workflow_step('stop', 7, 'fi').
+sumd_workflow('health', 'manual').
+sumd_workflow_step('health', 1, 'curl -fsS "http://127.0.0.1:$(PORT)/api/health" | $(PYTHON) -m json.tool | head -20').
+sumd_workflow('api-smoke', 'manual').
+sumd_workflow_step('api-smoke', 1, 'echo "== /voice =="').
+sumd_workflow_step('api-smoke', 2, 'curl -fsS "http://127.0.0.1:$(PORT)/voice" | head -c 120').
+sumd_workflow_step('api-smoke', 3, 'echo "== /api/packs =="').
+sumd_workflow_step('api-smoke', 4, 'curl -fsS "http://127.0.0.1:$(PORT)/api/packs" | $(PYTHON) -m json.tool | head -12').
+sumd_workflow_step('api-smoke', 5, 'echo "== /api/chat/channels =="').
+sumd_workflow_step('api-smoke', 6, 'curl -fsS "http://127.0.0.1:$(PORT)/api/chat/channels?timeout=0.5" | $(PYTHON) -m json.tool | head -15').
+sumd_workflow_step('api-smoke', 7, 'echo "== /api/chat/history =="').
+sumd_workflow_step('api-smoke', 8, 'curl -fsS "http://127.0.0.1:$(PORT)/api/chat/history?channel_id=smoke" | $(PYTHON) -m json.tool | head -10').
+sumd_workflow('chat-status', 'manual').
+sumd_workflow_step('chat-status', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app chat-status --endpoint $(URISYS)').
+sumd_workflow('chat-migrate', 'manual').
+sumd_workflow_step('chat-migrate', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app chat-migrate --endpoint $(URISYS)').
+sumd_workflow('chat-migrate-dry', 'manual').
+sumd_workflow_step('chat-migrate-dry', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app chat-migrate --endpoint $(URISYS) --dry-run').
+sumd_workflow('voice-capabilities', 'manual').
+sumd_workflow_step('voice-capabilities', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app voice-capabilities --endpoint $(URISYS)').
+sumd_workflow('voice-install-packs', 'manual').
+sumd_workflow_step('voice-install-packs', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app voice-install-packs --endpoint $(URISYS)').
+sumd_workflow('webrtc-capabilities', 'manual').
+sumd_workflow_step('webrtc-capabilities', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app webrtc-capabilities --endpoint $(URISYS)').
+sumd_workflow('webrtc-install-pack', 'manual').
+sumd_workflow_step('webrtc-install-pack', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app webrtc-install-pack --endpoint $(URISYS)').
+sumd_workflow('webrtc-smoke', 'manual').
+sumd_workflow_step('webrtc-smoke', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app webrtc-smoke --endpoint $(URISYS)').
+sumd_workflow('urirun-info', 'manual').
+sumd_workflow_step('urirun-info', 1, 'PYTHONPATH=src $(PYTHON) -m ifuri_app urirun-info').
+sumd_workflow('upgrade-node', 'manual').
+sumd_workflow('wheel', 'manual').
+sumd_workflow_step('wheel', 1, '$(PYTHON) -m pip wheel -w dist .').
+sumd_workflow('build', 'manual').
+sumd_workflow_step('build', 1, '$(PYTHON) scripts/build-platform.py').
+sumd_workflow('clean', 'manual').
+sumd_workflow_step('clean', 1, 'rm -rf dist/*.whl dist/*.tar.gz dist/*.zip .pytest_cache **/__pycache__').
 ```
 
 ## Call Graph
 
-*314 nodes · 459 edges · 36 modules · CC̄=4.0*
+*345 nodes · 491 edges · 39 modules · CC̄=4.1*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
-| `make_handler` *(in src.ifuri_app.runtime)* | 1 | 1 | 447 | **448** |
-| `build_parser` *(in src.ifuri_app.cli)* | 1 | 1 | 171 | **172** |
-| `run_gui_smoke` *(in scripts.gui_smoke)* | 2 | 1 | 60 | **61** |
+| `make_handler` *(in src.ifuri_app.runtime)* | 1 | 1 | 453 | **454** |
+| `build_parser` *(in src.ifuri_app.cli)* | 1 | 1 | 174 | **175** |
+| `run_gui_smoke` *(in scripts.gui_smoke)* | 2 | 1 | 93 | **94** |
 | `channels_from_scan` *(in src.ifuri_app.chat_channels)* | 34 ⚠ | 1 | 49 | **50** |
 | `serve_http` *(in src.ifuri_app.urirun_bridge)* | 7 | 1 | 46 | **47** |
+| `normalize_packages` *(in src.ifuri_app.connect_store)* | 31 ⚠ | 1 | 41 | **42** |
 | `run_flow` *(in src.ifuri_app.runtime.RuntimeState)* | 17 ⚠ | 0 | 41 | **41** |
-| `scan_network` *(in src.ifuri_app.network_scan)* | 17 ⚠ | 4 | 35 | **39** |
-| `print_json` *(in src.ifuri_app.cli)* | 1 | 35 | 2 | **37** |
+| `scan_network` *(in src.ifuri_app.network_scan)* | 17 ⚠ | 5 | 35 | **40** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/if-uri/app
-# generated in 0.19s
-# nodes: 314 | edges: 459 | modules: 36
-# CC̄=4.0
+# generated in 0.15s
+# nodes: 345 | edges: 491 | modules: 39
+# CC̄=4.1
 
 HUBS[20]:
   src.ifuri_app.runtime.make_handler
-    CC=1  in:1  out:447  total:448
+    CC=1  in:1  out:453  total:454
   src.ifuri_app.cli.build_parser
-    CC=1  in:1  out:171  total:172
+    CC=1  in:1  out:174  total:175
   scripts.gui_smoke.run_gui_smoke
-    CC=2  in:1  out:60  total:61
+    CC=2  in:1  out:93  total:94
   src.ifuri_app.chat_channels.channels_from_scan
     CC=34  in:1  out:49  total:50
   src.ifuri_app.urirun_bridge.serve_http
     CC=7  in:1  out:46  total:47
+  src.ifuri_app.connect_store.normalize_packages
+    CC=31  in:1  out:41  total:42
   src.ifuri_app.runtime.RuntimeState.run_flow
     CC=17  in:0  out:41  total:41
   src.ifuri_app.network_scan.scan_network
-    CC=17  in:4  out:35  total:39
+    CC=17  in:5  out:35  total:40
   src.ifuri_app.cli.print_json
-    CC=1  in:35  out:2  total:37
+    CC=1  in:36  out:2  total:38
+  src.ifuri_app.storage.save_workspace
+    CC=2  in:22  out:14  total:36
   src.ifuri_app.storage.load_workspace
     CC=3  in:17  out:18  total:35
-  src.ifuri_app.storage.save_workspace
-    CC=2  in:21  out:14  total:35
   src.ifuri_app.chat_channels.send_chat_message
     CC=18  in:1  out:33  total:34
   src.ifuri_app.voice_pipeline.run_voice_command
@@ -1569,18 +1991,16 @@ HUBS[20]:
     CC=9  in:2  out:29  total:31
   src.ifuri_app.remote_screen.probe_remote_control
     CC=7  in:4  out:26  total:30
-  src.ifuri_app.chat_channels.migrate_local_chat_to_urisys
-    CC=16  in:2  out:26  total:28
   src.ifuri_app.chat_channels.send_chat_message_routed
     CC=17  in:3  out:25  total:28
-  src.ifuri_app.flow_compile.expand_flow_compiled
-    CC=15  in:1  out:26  total:27
+  src.ifuri_app.chat_channels.migrate_local_chat_to_urisys
+    CC=16  in:2  out:26  total:28
   src.ifuri_app.remote_screen.capture_remote_screen
     CC=11  in:5  out:22  total:27
+  src.ifuri_app.flow_compile.expand_flow_compiled
+    CC=15  in:1  out:26  total:27
   src.ifuri_app.voice_planner.load_flow_catalog
     CC=13  in:5  out:21  total:26
-  src.ifuri_app.runtime.RuntimeState.call_uri
-    CC=11  in:0  out:25  total:25
 
 MODULES:
   packages.ifuri-bridge.handlers.urisys_call  [3 funcs]
@@ -1598,17 +2018,16 @@ MODULES:
   scripts.bootstrap-lenovo-packs  [2 funcs]
     call  CC=2  out:6
     main  CC=5  out:13
-  scripts.build-platform  [6 funcs]
-    add_data_arg  CC=2  out:1
+  scripts.build-platform  [5 funcs]
     main  CC=2  out:13
     package_artifact  CC=4  out:10
     platform_tag  CC=4  out:4
     read_version  CC=4  out:10
-    run_pyinstaller  CC=6  out:20
+    run_pyinstaller  CC=8  out:23
   scripts.gui_smoke  [3 funcs]
     main  CC=2  out:9
     parse_args  CC=1  out:6
-    run_gui_smoke  CC=2  out:60
+    run_gui_smoke  CC=2  out:93
   src.ifuri_app.chat_channels  [15 funcs]
     _format_json_reply  CC=1  out:1
     _format_voice_reply  CC=16  out:23
@@ -1624,7 +2043,7 @@ MODULES:
     __init__  CC=2  out:3
     chat_store_path  CC=2  out:6
   src.ifuri_app.cli  [34 funcs]
-    build_parser  CC=1  out:171
+    build_parser  CC=1  out:174
     cmd_app  CC=1  out:1
     cmd_chat_channels  CC=2  out:3
     cmd_chat_migrate  CC=2  out:3
@@ -1634,6 +2053,20 @@ MODULES:
     cmd_expand  CC=1  out:4
     cmd_flow_run  CC=2  out:3
     cmd_flow_validate  CC=1  out:4
+  src.ifuri_app.connect_store  [7 funcs]
+    _normalize_install  CC=6  out:7
+    catalog_url  CC=2  out:1
+    fetch_catalog  CC=6  out:11
+    install_command  CC=5  out:4
+    local_registry_status  CC=5  out:12
+    normalize_packages  CC=31  out:41
+    payload_form_fields  CC=8  out:17
+  src.ifuri_app.connectors  [5 funcs]
+    _detail  CC=5  out:5
+    _row  CC=4  out:6
+    fetch_node_routes  CC=6  out:11
+    normalize_routes  CC=15  out:21
+    route_scheme  CC=6  out:5
   src.ifuri_app.discovery  [3 funcs]
     _loop  CC=9  out:16
     discover  CC=9  out:29
@@ -1660,17 +2093,17 @@ MODULES:
     load_flow_steps  CC=3  out:3
     resolve_flow_path  CC=4  out:8
     run_flow_file  CC=9  out:14
-  src.ifuri_app.gui  [11 funcs]
-    __init__  CC=1  out:10
-    _on_device_select  CC=4  out:5
-    add_service  CC=3  out:12
-    discover_peers  CC=2  out:12
-    dry_run_current_flow  CC=1  out:12
-    open_voice_ui  CC=5  out:8
-    refresh_log  CC=2  out:5
-    save_all  CC=1  out:1
-    save_current_flow  CC=2  out:7
-    start_runtime  CC=5  out:17
+  src.ifuri_app.gui  [24 funcs]
+    _finish  CC=2  out:3
+    _scan  CC=1  out:10
+    __init__  CC=1  out:11
+    _apply_node_endpoint  CC=4  out:6
+    _connector_endpoints  CC=12  out:13
+    _novnc_precheck  CC=3  out:4
+    _on_package_select  CC=3  out:6
+    _render_payload_form  CC=10  out:20
+    _run_compose  CC=1  out:11
+    _set_app_icon  CC=3  out:5
   src.ifuri_app.gui_chat  [5 funcs]
     _load_chat_history_from_urisys  CC=1  out:17
     _on_chat_channel_select  CC=5  out:12
@@ -1680,10 +2113,18 @@ MODULES:
   src.ifuri_app.network_scan  [6 funcs]
     _collect_local_services  CC=8  out:13
     _local_ipv4  CC=2  out:3
-    probe_urisys_node  CC=4  out:9
+    probe_urisys_node  CC=6  out:12
     scan_network  CC=17  out:35
     scan_urisys_nodes  CC=15  out:19
     try_mdns_urisys  CC=2  out:1
+  src.ifuri_app.novnc_demo  [7 funcs]
+    compose_args  CC=4  out:1
+    dashboard_ports  CC=5  out:4
+    dashboard_url  CC=4  out:4
+    demo_dir  CC=4  out:7
+    docker_available  CC=1  out:1
+    launch_info  CC=3  out:5
+    read_env_file  CC=7  out:10
   src.ifuri_app.packs.loader  [5 funcs]
     _ensure_pack_path  CC=2  out:3
     discover_manifests  CC=3  out:4
@@ -1825,13 +2266,23 @@ EDGES:
   packages.ifuri-page.handlers.get_url_state → packages.ifuri-page.handlers.urlState
   packages.ifuri-page.handlers.set_url_state → packages.ifuri-page.handlers.urlState
   packages.ifuri-page.handlers.toggle_view → packages.ifuri-page.handlers.urlState
+  src.ifuri_app.url_params.voice_url → src.ifuri_app.url_params.voice_query
+  src.ifuri_app.connect_store.normalize_packages → src.ifuri_app.connect_store._normalize_install
+  src.ifuri_app.connect_store.fetch_catalog → src.ifuri_app.connect_store.catalog_url
+  src.ifuri_app.connect_store.fetch_catalog → src.ifuri_app.connect_store.normalize_packages
+  src.ifuri_app.connect_store.local_registry_status → src.ifuri_app.urirun_bridge.urirun_info
+  src.ifuri_app.connect_store.local_registry_status → src.ifuri_app.urirun_bridge.default_urirun_registry
+  src.ifuri_app.connect_store.local_registry_status → src.ifuri_app.urirun_bridge.registry_summary
+  src.ifuri_app.connect_store.payload_form_fields → src.ifuri_app.web.url_state.set
   packages.ifuri-bridge.handlers.urisys_call.urisys_call → packages.ifuri-bridge.handlers.urisys_call._endpoint
   packages.ifuri-bridge.handlers.urisys_call.node_health → packages.ifuri-bridge.handlers.urisys_call._endpoint
-  packages.ifuri-voice.handlers.plan.plan → src.ifuri_app.voice_planner.plan_voice_command
   src.ifuri_app.paths.web_dir → src.ifuri_app.paths.app_package_dir
   src.ifuri_app.paths.assets_dir → src.ifuri_app.paths.app_package_dir
   src.ifuri_app.paths.repo_root → src.ifuri_app.paths.app_package_dir
   src.ifuri_app.paths.packages_dir → src.ifuri_app.paths.repo_root
+  src.ifuri_app.webrtc_signal.local_peer_url → src.ifuri_app.network_scan._local_ipv4
+  src.ifuri_app.webrtc_signal.post_signal → src.ifuri_app.webrtc_signal._purge_room
+  src.ifuri_app.webrtc_signal.poll_signals → src.ifuri_app.webrtc_signal._purge_room
   src.ifuri_app.flow_compile.expand_flow_compiled → src.ifuri_app.flow_compile._parse_flow_input
   src.ifuri_app.flow_compile.expand_flow_compiled → src.ifuri_app.flow_compile.uri2flow_available
   src.ifuri_app.flow_compile.flow_steps_from_document → src.ifuri_app.flow_compile.uri2flow_available
@@ -1839,10 +2290,18 @@ EDGES:
   src.ifuri_app.flow_compile.flow_steps_from_document → src.ifuri_app.flow_engine.extract_steps
   src.ifuri_app.flow_compile.validate_flow_compiled → src.ifuri_app.flow_compile._parse_flow_input
   src.ifuri_app.flow_compile.validate_flow_compiled → src.ifuri_app.flow_compile.uri2flow_available
-  src.ifuri_app.urisys_client.default_node_endpoint → src.ifuri_app.storage.load_workspace
-  src.ifuri_app.urisys_client.node_voice_capabilities → src.ifuri_app.urisys_client.node_llm_available
-  src.ifuri_app.urisys_client.node_voice_capabilities → src.ifuri_app.urisys_client.node_webrtc_available
-  src.ifuri_app.urisys_client.UrisysNodeClient.__init__ → src.ifuri_app.urisys_client.default_node_endpoint
+  packages.ifuri-voice.handlers.plan.plan → src.ifuri_app.voice_planner.plan_voice_command
+  src.ifuri_app.flow_engine.expand_flow → src.ifuri_app.flow_compile.uri2flow_available
+  src.ifuri_app.flow_engine.expand_flow → src.ifuri_app.flow_engine._legacy_expand_flow
+  src.ifuri_app.flow_engine.expand_flow → src.ifuri_app.flow_compile.expand_flow_compiled
+  src.ifuri_app.flow_engine._legacy_expand_flow → src.ifuri_app.flow_engine.extract_steps
+  src.ifuri_app.flow_engine._legacy_expand_flow → src.ifuri_app.flow_engine.flow_id_from_text
+  src.ifuri_app.flow_engine.extract_steps → src.ifuri_app.flow_engine.clean_uri
+  src.ifuri_app.flow_engine.extract_steps → src.ifuri_app.flow_engine.uri_scheme
+  src.ifuri_app.flow_engine.classify_route → src.ifuri_app.flow_engine.uri_scheme
+  src.ifuri_app.flow_engine.dry_run_uri → src.ifuri_app.flow_engine.classify_route
+  src.ifuri_app.flow_engine.dry_run_flow → src.ifuri_app.flow_engine.expand_flow
+  src.ifuri_app.flow_engine.dry_run_flow → src.ifuri_app.flow_engine.dry_run_uri
   src.ifuri_app.webrtc_pipeline.webrtc_capabilities → src.ifuri_app.urisys_client.node_webrtc_available
   src.ifuri_app.webrtc_pipeline.webrtc_capabilities → src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint
   src.ifuri_app.webrtc_pipeline.install_webrtc_pack → src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint
@@ -1850,28 +2309,10 @@ EDGES:
   src.ifuri_app.webrtc_pipeline.install_webrtc_pack → src.ifuri_app.urisys_client.node_webrtc_available
   src.ifuri_app.webrtc_pipeline.webrtc_smoke → src.ifuri_app.urisys_client.node_webrtc_available
   src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint → src.ifuri_app.urisys_client.node_webrtc_available
-  src.ifuri_app.voice_planner.load_flow_catalog → src.ifuri_app.flow_runner.examples_root
-  src.ifuri_app.voice_planner.plan_with_regex → src.ifuri_app.voice_planner._flow_plan
-  src.ifuri_app.voice_planner.plan_with_catalog → src.ifuri_app.voice_planner._flow_plan
-  src.ifuri_app.voice_planner.plan_with_catalog → src.ifuri_app.voice_planner.load_flow_catalog
-  src.ifuri_app.voice_planner.plan_with_catalog → src.ifuri_app.voice_planner._catalog_tokens
-  src.ifuri_app.voice_planner._parse_llm_plan_json → src.ifuri_app.voice_planner._flow_plan
-  src.ifuri_app.voice_planner.plan_with_llm → src.ifuri_app.voice_planner._parse_llm_plan_json
-  src.ifuri_app.voice_planner.plan_with_llm → src.ifuri_app.voice_planner.node_has_llm
-  src.ifuri_app.voice_planner.plan_with_llm → src.ifuri_app.voice_planner.load_flow_catalog
-  src.ifuri_app.voice_planner.plan_voice_command → src.ifuri_app.voice_planner.load_flow_catalog
-  src.ifuri_app.voice_planner.plan_voice_command → src.ifuri_app.voice_planner.plan_with_regex
-  src.ifuri_app.voice_planner.plan_voice_command → src.ifuri_app.voice_planner.plan_with_catalog
-  src.ifuri_app.voice_planner.plan_voice_command → src.ifuri_app.voice_planner.plan_with_llm
   src.ifuri_app.chat_store.chat_store_path → src.ifuri_app.storage.app_home
   src.ifuri_app.chat_store.LocalChatStore.__init__ → src.ifuri_app.storage.ensure_home
   src.ifuri_app.chat_store.LocalChatStore.__init__ → src.ifuri_app.chat_store.chat_store_path
-  src.ifuri_app.webrtc_signal.local_peer_url → src.ifuri_app.network_scan._local_ipv4
-  src.ifuri_app.webrtc_signal.post_signal → src.ifuri_app.webrtc_signal._purge_room
-  src.ifuri_app.webrtc_signal.poll_signals → src.ifuri_app.webrtc_signal._purge_room
-  src.ifuri_app.discovery.local_descriptor → src.ifuri_app.storage.load_workspace
-  src.ifuri_app.discovery.local_descriptor → src.ifuri_app.storage.now_iso
-  src.ifuri_app.discovery.DiscoveryResponder._loop → src.ifuri_app.discovery.local_descriptor
+  src.ifuri_app.urisys_client.default_node_endpoint → src.ifuri_app.storage.load_workspace
 ```
 
 ## Test Contracts

@@ -17,526 +17,6 @@ sprints:
   objectives:
   - Fix code quality issues
   task_patterns:
-  - id: ticket-4d150f18
-    name: Fix relative-imports issues
-    description: Resolve 2 relative-imports issues in build/lib/ifuri_app/__main__.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/__main__.py
-    rule_id: relative-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-c5ad8aac
-    name: Fix ai-boilerplate issues
-    description: Resolve 1 ai-boilerplate issues in build/lib/ifuri_app/__main__.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/__main__.py
-    rule_id: ai-boilerplate
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-0680b026
-    name: Fix magic-numbers issues
-    description: Resolve 2 magic-numbers issues in build/lib/ifuri_app/__init__.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/__init__.py
-    rule_id: magic-numbers
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-9271323b
-    name: Fix relative-imports issues
-    description: Resolve 4 relative-imports issues in build/lib/ifuri_app/discovery.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - build/lib/ifuri_app/discovery.py
-    rule_id: relative-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-cf5ae09e
-    name: Fix string-concat issues
-    description: Resolve 1 string-concat issues in build/lib/ifuri_app/discovery.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/discovery.py
-    rule_id: string-concat
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-9e1f1c60
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in build/lib/ifuri_app/discovery.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/discovery.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-e30c8628
-    name: Fix magic-numbers issues
-    description: Resolve 5 magic-numbers issues in build/lib/ifuri_app/discovery.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - build/lib/ifuri_app/discovery.py
-    rule_id: magic-numbers
-    count: 5
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-2d2301f3
-    name: Fix relative-imports issues
-    description: Resolve 20 relative-imports issues in build/lib/ifuri_app/cli.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - build/lib/ifuri_app/cli.py
-    rule_id: relative-imports
-    count: 20
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-392331c1
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in build/lib/ifuri_app/cli.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/cli.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-74ffa337
-    name: Fix ai-boilerplate issues
-    description: Resolve 1 ai-boilerplate issues in build/lib/ifuri_app/cli.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/cli.py
-    rule_id: ai-boilerplate
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-10f5261c
-    name: Fix string-concat issues
-    description: Resolve 1 string-concat issues in build/lib/ifuri_app/flow_engine.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/flow_engine.py
-    rule_id: string-concat
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-dfbcfc3a
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in build/lib/ifuri_app/flow_engine.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/flow_engine.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-18d7011e
-    name: Fix relative-imports issues
-    description: Resolve 6 relative-imports issues in build/lib/ifuri_app/network_scan.py
-    task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - build/lib/ifuri_app/network_scan.py
-    rule_id: relative-imports
-    count: 6
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-70fc80a2
-    name: Fix duplicate-imports issues
-    description: Resolve 2 duplicate-imports issues in build/lib/ifuri_app/network_scan.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/network_scan.py
-    rule_id: duplicate-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-20f4ae37
-    name: Fix unused-imports issues
-    description: Resolve 6 unused-imports issues in build/lib/ifuri_app/network_scan.py
-    task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - build/lib/ifuri_app/network_scan.py
-    rule_id: unused-imports
-    count: 6
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-01f090be
-    name: Fix magic-numbers issues
-    description: Resolve 5 magic-numbers issues in build/lib/ifuri_app/network_scan.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - build/lib/ifuri_app/network_scan.py
-    rule_id: magic-numbers
-    count: 5
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-1ec3a456
-    name: Fix relative-imports issues
-    description: Resolve 4 relative-imports issues in build/lib/ifuri_app/flow_runner.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - build/lib/ifuri_app/flow_runner.py
-    rule_id: relative-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-3ba51d68
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in build/lib/ifuri_app/flow_runner.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/flow_runner.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-23dc6038
-    name: Fix magic-numbers issues
-    description: Resolve 1 magic-numbers issues in build/lib/ifuri_app/flow_runner.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/flow_runner.py
-    rule_id: magic-numbers
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-222a7ac8
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in build/lib/ifuri_app/paths.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/paths.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-06216bcc
-    name: Fix relative-imports issues
-    description: Resolve 12 relative-imports issues in build/lib/ifuri_app/gui.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - build/lib/ifuri_app/gui.py
-    rule_id: relative-imports
-    count: 12
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-a754e022
-    name: Fix string-concat issues
-    description: Resolve 4 string-concat issues in build/lib/ifuri_app/gui.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - build/lib/ifuri_app/gui.py
-    rule_id: string-concat
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-e4167fd6
-    name: Fix unused-imports issues
-    description: Resolve 10 unused-imports issues in build/lib/ifuri_app/gui.py
-    task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - build/lib/ifuri_app/gui.py
-    rule_id: unused-imports
-    count: 10
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-2825b51e
-    name: Fix magic-numbers issues
-    description: Resolve 20 magic-numbers issues in build/lib/ifuri_app/gui.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - build/lib/ifuri_app/gui.py
-    rule_id: magic-numbers
-    count: 20
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-76dc7664
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in build/lib/ifuri_app/sample_data.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/sample_data.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-4f3315be
-    name: Fix magic-numbers issues
-    description: Resolve 1 magic-numbers issues in build/lib/ifuri_app/sample_data.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/sample_data.py
-    rule_id: magic-numbers
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-ce3ea181
-    name: Fix relative-imports issues
-    description: Resolve 2 relative-imports issues in build/lib/ifuri_app/storage.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/storage.py
-    rule_id: relative-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-057304d9
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in build/lib/ifuri_app/storage.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/storage.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-d610842b
-    name: Fix llm-hallucinations issues
-    description: Resolve 1 llm-hallucinations issues in build/lib/ifuri_app/storage.py
-    task_type: bugfix
-    priority: critical
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/storage.py
-    rule_id: llm-hallucinations
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-3c4b7eb8
-    name: Fix magic-numbers issues
-    description: Resolve 2 magic-numbers issues in build/lib/ifuri_app/storage.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/storage.py
-    rule_id: magic-numbers
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-c2866ae5
-    name: Fix relative-imports issues
-    description: Resolve 16 relative-imports issues in build/lib/ifuri_app/runtime.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - build/lib/ifuri_app/runtime.py
-    rule_id: relative-imports
-    count: 16
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-21ef96ae
-    name: Fix smart-return-type issues
-    description: Resolve 1 smart-return-type issues in build/lib/ifuri_app/runtime.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/runtime.py
-    rule_id: smart-return-type
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-6c09fefc
-    name: Fix string-concat issues
-    description: Resolve 2 string-concat issues in build/lib/ifuri_app/runtime.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/runtime.py
-    rule_id: string-concat
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-2a2b44a4
-    name: Fix unused-imports issues
-    description: Resolve 6 unused-imports issues in build/lib/ifuri_app/runtime.py
-    task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - build/lib/ifuri_app/runtime.py
-    rule_id: unused-imports
-    count: 6
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-55393cf9
-    name: Fix magic-numbers issues
-    description: Resolve 25 magic-numbers issues in build/lib/ifuri_app/runtime.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - build/lib/ifuri_app/runtime.py
-    rule_id: magic-numbers
-    count: 25
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-5904e1b2
-    name: Fix relative-imports issues
-    description: Resolve 2 relative-imports issues in build/lib/ifuri_app/urisys_client.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/urisys_client.py
-    rule_id: relative-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-130a02c9
-    name: Fix duplicate-imports issues
-    description: Resolve 2 duplicate-imports issues in build/lib/ifuri_app/urisys_client.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/urisys_client.py
-    rule_id: duplicate-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-6212f76e
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in build/lib/ifuri_app/urisys_client.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/urisys_client.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-8c651cf7
-    name: Fix relative-imports issues
-    description: Resolve 4 relative-imports issues in build/lib/ifuri_app/voice_pipeline.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - build/lib/ifuri_app/voice_pipeline.py
-    rule_id: relative-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-277c8b00
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in build/lib/ifuri_app/voice_pipeline.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - build/lib/ifuri_app/voice_pipeline.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-9e5416d3
     name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in packages/ifuri-bridge/handlers/urisys_call.py
@@ -1313,6 +793,526 @@ sprints:
     files:
     - src/ifuri_app/paths.py
     rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e6d1c485
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in src/ifuri_app/connect_store.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/connect_store.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-85220ccf
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/connect_store.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/connect_store.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1e43db1f
+    name: Fix llm-hallucinations issues
+    description: Resolve 1 llm-hallucinations issues in src/ifuri_app/connect_store.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/connect_store.py
+    rule_id: llm-hallucinations
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1b0b41b0
+    name: Fix llm-generated-code issues
+    description: Resolve 1 llm-generated-code issues in src/ifuri_app/connect_store.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/connect_store.py
+    rule_id: llm-generated-code
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7b69ad63
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/connectors.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/connectors.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c13b45ad
+    name: Fix string-concat issues
+    description: Resolve 3 string-concat issues in src/ifuri_app/novnc_demo.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/novnc_demo.py
+    rule_id: string-concat
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-92ed4ce8
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/novnc_demo.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/novnc_demo.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6fcc25a3
+    name: Fix llm-generated-code issues
+    description: Resolve 1 llm-generated-code issues in src/ifuri_app/novnc_demo.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/novnc_demo.py
+    rule_id: llm-generated-code
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-673f4a57
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in src/ifuri_app/remote_screen.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/remote_screen.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7060c4e2
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/remote_screen.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/remote_screen.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-394aa712
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/sample_data.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/sample_data.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-fc0c18f6
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in src/ifuri_app/sample_data.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/sample_data.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f12e8cd5
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in src/ifuri_app/storage.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/storage.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-8c7e7e6e
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/storage.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/storage.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-16cd0355
+    name: Fix llm-hallucinations issues
+    description: Resolve 1 llm-hallucinations issues in src/ifuri_app/storage.py
+    task_type: bugfix
+    priority: critical
+    estimate: 1d
+    files:
+    - src/ifuri_app/storage.py
+    rule_id: llm-hallucinations
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-8a467cb5
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in src/ifuri_app/storage.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/storage.py
+    rule_id: magic-numbers
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0c73d5d7
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in src/ifuri_app/urirun_bridge.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/urirun_bridge.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-9544f68e
+    name: Fix duplicate-imports issues
+    description: Resolve 4 duplicate-imports issues in src/ifuri_app/urirun_bridge.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/ifuri_app/urirun_bridge.py
+    rule_id: duplicate-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f072b2b0
+    name: Fix smart-return-type issues
+    description: Resolve 4 smart-return-type issues in src/ifuri_app/urirun_bridge.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/ifuri_app/urirun_bridge.py
+    rule_id: smart-return-type
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-64f1bd79
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/urirun_bridge.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/urirun_bridge.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a2e98726
+    name: Fix magic-numbers issues
+    description: Resolve 12 magic-numbers issues in src/ifuri_app/urirun_bridge.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - src/ifuri_app/urirun_bridge.py
+    rule_id: magic-numbers
+    count: 12
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-bac37c6d
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in src/ifuri_app/urisys_client.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/urisys_client.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e9277bd5
+    name: Fix duplicate-imports issues
+    description: Resolve 4 duplicate-imports issues in src/ifuri_app/urisys_client.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/ifuri_app/urisys_client.py
+    rule_id: duplicate-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-efd7f29a
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/urisys_client.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/urisys_client.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-fda62ad2
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in src/ifuri_app/urisys_client.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/urisys_client.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0350b758
+    name: Fix relative-imports issues
+    description: Resolve 34 relative-imports issues in src/ifuri_app/runtime.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - src/ifuri_app/runtime.py
+    rule_id: relative-imports
+    count: 34
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e7296f11
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in src/ifuri_app/runtime.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/runtime.py
+    rule_id: smart-return-type
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-64833d29
+    name: Fix string-concat issues
+    description: Resolve 2 string-concat issues in src/ifuri_app/runtime.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/runtime.py
+    rule_id: string-concat
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e966cd52
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/runtime.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/runtime.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-eae0e65b
+    name: Fix magic-numbers issues
+    description: Resolve 11 magic-numbers issues in src/ifuri_app/runtime.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - src/ifuri_app/runtime.py
+    rule_id: magic-numbers
+    count: 11
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0fa28705
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/url_params.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/url_params.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a31aac73
+    name: Fix relative-imports issues
+    description: Resolve 6 relative-imports issues in src/ifuri_app/voice_pipeline.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - src/ifuri_app/voice_pipeline.py
+    rule_id: relative-imports
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f64b0893
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/voice_pipeline.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/voice_pipeline.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0834e6b5
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in src/ifuri_app/webrtc_pipeline.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/ifuri_app/webrtc_pipeline.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c559201a
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/webrtc_pipeline.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/webrtc_pipeline.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-91177e85
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in src/ifuri_app/voice_planner.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/ifuri_app/voice_planner.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-9c9dcc35
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in src/ifuri_app/voice_planner.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/voice_planner.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-40dac566
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/ifuri_app/voice_planner.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/voice_planner.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-acdfaf9f
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in src/ifuri_app/voice_planner.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/voice_planner.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-89b53e74
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in src/ifuri_app/webrtc_signal.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/ifuri_app/webrtc_signal.py
+    rule_id: relative-imports
     count: 2
     model_hints:
       planning: balanced

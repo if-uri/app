@@ -1,10 +1,10 @@
-# code2llm/evolution | 440 func | 40f | 2026-06-19
+# code2llm/evolution | 498 func | 43f | 2026-06-21
 # generated in 0.00s
 
 NEXT[10] (ranked by impact):
-  [1] !! SPLIT           src/ifuri_app/runtime.py
-      WHY: 783L, 4 classes, max CC=17
-      EFFORT: ~4h  IMPACT: 13311
+  [1] !! SPLIT           src/ifuri_app/gui.py
+      WHY: 1005L, 2 classes, max CC=15
+      EFFORT: ~4h  IMPACT: 15075
 
   [2] !! SPLIT-FUNC      channels_from_scan  CC=34  fan=16
       WHY: CC=34 exceeds 15
@@ -26,33 +26,33 @@ NEXT[10] (ranked by impact):
       WHY: CC=17 exceeds 15
       EFFORT: ~1h  IMPACT: 391
 
-  [7] !  SPLIT-FUNC      scan_urisys_nodes  CC=15  fan=18
+  [7] !! SPLIT-FUNC      normalize_packages  CC=31  fan=11
+      WHY: CC=31 exceeds 15
+      EFFORT: ~1h  IMPACT: 341
+
+  [8] !  SPLIT-FUNC      scan_urisys_nodes  CC=15  fan=18
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 270
 
-  [8] !  SPLIT-FUNC      renderChannelList  CC=21  fan=12
+  [9] !  SPLIT-FUNC      renderChannelList  CC=21  fan=12
       WHY: CC=21 exceeds 15
       EFFORT: ~1h  IMPACT: 252
 
-  [9] !  SPLIT-FUNC      ChatTabMixin._apply_chat_channels  CC=16  fan=15
-      WHY: CC=16 exceeds 15
-      EFFORT: ~1h  IMPACT: 240
-
-  [10] !  SPLIT-FUNC      migrate_local_chat_to_urisys  CC=16  fan=15
+  [10] !  SPLIT-FUNC      ChatTabMixin._apply_chat_channels  CC=16  fan=15
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 240
 
 
 RISKS[3]:
   ⚠ Splitting desktop/src-tauri/gen/schemas/desktop-schema.json may break 0 import paths
-  ⚠ Splitting desktop/src-tauri/gen/schemas/linux-schema.json may break 0 import paths
-  ⚠ Splitting src/ifuri_app/runtime.py may break 16 import paths
+  ⚠ Splitting planfile.yaml may break 0 import paths
+  ⚠ Splitting src/ifuri_app/gui.py may break 67 import paths
 
 METRICS-TARGET:
   CC̄:          4.1 → ≤2.9
   max-CC:      34 → ≤17
-  god-modules: 7 → 0
-  high-CC(≥15): 16 → ≤8
+  god-modules: 8 → 0
+  high-CC(≥15): 18 → ≤9
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -80,4 +80,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  (first run — no previous data)
+  prev CC̄=4.1 → now CC̄=4.1

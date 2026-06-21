@@ -1,5 +1,49 @@
 # Changelog
 
+## [0.1.10] - 2026-06-21
+
+### Fixed
+- Fix relative-imports issues (ticket-e6d1c485)
+- Fix unused-imports issues (ticket-85220ccf)
+- Fix llm-hallucinations issues (ticket-1e43db1f)
+- Fix llm-generated-code issues (ticket-1b0b41b0)
+- Fix unused-imports issues (ticket-7b69ad63)
+- Fix string-concat issues (ticket-c13b45ad)
+- Fix unused-imports issues (ticket-92ed4ce8)
+- Fix llm-generated-code issues (ticket-6fcc25a3)
+- Fix relative-imports issues (ticket-673f4a57)
+- Fix unused-imports issues (ticket-7060c4e2)
+- Fix unused-imports issues (ticket-394aa712)
+- Fix magic-numbers issues (ticket-fc0c18f6)
+- Fix relative-imports issues (ticket-f12e8cd5)
+- Fix unused-imports issues (ticket-8c7e7e6e)
+- Fix llm-hallucinations issues (ticket-16cd0355)
+- Fix magic-numbers issues (ticket-8a467cb5)
+- Fix relative-imports issues (ticket-0c73d5d7)
+- Fix duplicate-imports issues (ticket-9544f68e)
+- Fix smart-return-type issues (ticket-f072b2b0)
+- Fix unused-imports issues (ticket-64f1bd79)
+- Fix magic-numbers issues (ticket-a2e98726)
+- Fix relative-imports issues (ticket-bac37c6d)
+- Fix duplicate-imports issues (ticket-e9277bd5)
+- Fix unused-imports issues (ticket-efd7f29a)
+- Fix magic-numbers issues (ticket-fda62ad2)
+- Fix relative-imports issues (ticket-0350b758)
+- Fix smart-return-type issues (ticket-e7296f11)
+- Fix string-concat issues (ticket-64833d29)
+- Fix unused-imports issues (ticket-e966cd52)
+- Fix magic-numbers issues (ticket-eae0e65b)
+- Fix unused-imports issues (ticket-0fa28705)
+- Fix relative-imports issues (ticket-a31aac73)
+- Fix unused-imports issues (ticket-f64b0893)
+- Fix relative-imports issues (ticket-0834e6b5)
+- Fix unused-imports issues (ticket-c559201a)
+- Fix relative-imports issues (ticket-91177e85)
+- Fix string-concat issues (ticket-9c9dcc35)
+- Fix unused-imports issues (ticket-40dac566)
+- Fix magic-numbers issues (ticket-acdfaf9f)
+- Fix relative-imports issues (ticket-89b53e74)
+
 ## [Unreleased]
 
 ### Added

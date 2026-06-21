@@ -8,7 +8,7 @@ app {
 dependencies {
   flows: pyyaml>=6.0;
   packs: "uricore>=0.1.8, pyyaml>=6.0";
-  urirun: "urirun @ git+https://github.com/if-uri/urirun.git@v0.3.12#subdirectory=adapters/python";
+  urirun: "urirun @ git+https://github.com/if-uri/urirun.git@v0.3.14#subdirectory=adapters/python";
   build: "pyinstaller>=6.0, pyyaml>=6.0";
   dev: "pytest>=8.0, pyyaml>=6.0, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
 }
@@ -60,13 +60,13 @@ workflow[name="test-api"] {
 
 workflow[name="test-e2e"] {
   trigger: manual;
-  step-1: run cmd=PYTHONPATH=src uv run --group e2e pytest tests/e2e -q;
+  step-1: run cmd=PYTHONPATH=src $(PYTHON) -m pytest tests/e2e -q;
 }
 
 workflow[name="install-e2e"] {
   trigger: manual;
-  step-1: run cmd=uv sync --group e2e;
-  step-2: run cmd=uv run --group e2e python -m playwright install chromium;
+  step-1: run cmd=$(PYTHON) -m pip install pytest-playwright playwright;
+  step-2: run cmd=$(PYTHON) -m playwright install chromium;
 }
 
 workflow[name="test-gui"] {
@@ -77,6 +77,18 @@ workflow[name="test-gui"] {
 workflow[name="test-gui-docker"] {
   trigger: manual;
   step-1: run cmd=bash scripts/test-gui-docker.sh;
+}
+
+workflow[name="smoke-novnc"] {
+  trigger: manual;
+  step-1: run cmd=$(MAKE) -C ../examples/11-novnc_lan_flow up;
+  step-2: run cmd=PYTHONPATH=src xvfb-run -a $(PYTHON) scripts/gui_smoke.py --urisys-endpoint $(NODE) --out dist/gui-smoke --timeout 30;
+}
+
+workflow[name="run-gui-novnc"] {
+  trigger: manual;
+  step-1: run cmd=docker compose -f docker/docker-compose.novnc.yml up --build;
+  step-2: run cmd=echo "open http://localhost:6080/vnc.html?autoconnect=1&resize=remote";
 }
 
 workflow[name="run"] {
@@ -210,8 +222,12 @@ workflow[name="clean"] {
   step-2: run cmd=find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true;
 }
 
+tests {
+  import: testql-scenarios/**/*.testql.toon.yaml;
+}
+
 env_vars {
-  keys: OPENROUTER_API_KEY, LLM_MODEL, PFIX_AUTO_APPLY, PFIX_AUTO_INSTALL_DEPS, PFIX_AUTO_RESTART, PFIX_MAX_RETRIES, PFIX_DRY_RUN, PFIX_ENABLED, PFIX_GIT_COMMIT, PFIX_GIT_PREFIX, PFIX_CREATE_BACKUPS, URI_SERVICE_MAP, IFURI_URIRUN_REGISTRY, URISYS_EXAMPLES_ROOT, IFURI_EXAMPLES_ROOT, IFURI_VOICE_PLANNER, URISYS_WEBRTC_WHEEL, URISYS_WHEEL_HOST, URISYS_NODE_ENDPOINT, IFURI_HOME, URISYS_STT_WHEEL, IFURI_STT_URI, IFURI_TTS_URI;
+  keys: OPENROUTER_API_KEY, LLM_MODEL, PFIX_AUTO_APPLY, PFIX_AUTO_INSTALL_DEPS, PFIX_AUTO_RESTART, PFIX_MAX_RETRIES, PFIX_DRY_RUN, PFIX_ENABLED, PFIX_GIT_COMMIT, PFIX_GIT_PREFIX, PFIX_CREATE_BACKUPS, URI_SERVICE_MAP, IFURI_URIRUN_REGISTRY, IFURI_CONNECT_CATALOG, URISYS_EXAMPLES_ROOT, IFURI_EXAMPLES_ROOT, IFURI_VOICE_PLANNER, URISYS_WEBRTC_WHEEL, URISYS_WHEEL_HOST, IFURI_NOVNC_DEMO_DIR, URISYS_NODE_ENDPOINT, IFURI_HOME, URISYS_STT_WHEEL, IFURI_STT_URI, IFURI_TTS_URI;
 }
 
 deploy {
