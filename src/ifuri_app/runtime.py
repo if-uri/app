@@ -353,7 +353,6 @@ def make_handler(state: RuntimeState):
 
         def _do_GET_impl(self, *, head_only: bool = False) -> None:
             path = urlparse(self.path).path
-            data = state.load()
             if path in {"/voice", "/"}:
                 if head_only:
                     self.send_response(200)
@@ -366,147 +365,15 @@ def make_handler(state: RuntimeState):
                     self.send_response(200)
                     self.end_headers()
                     return
-                self._serve_file(path[len("/web/") :])
-            elif path in {"/health", "/api/health"}:
-                self._send(200, state.health())
-            elif path == "/api/services":
-                self._send(200, {"ok": True, "services": data.get("services", [])})
-            elif path == "/api/flows":
-                self._send(200, {"ok": True, "groups": data.get("groups", [])})
-            elif path == "/api/peers":
-                self._send(200, {"ok": True, "peers": data.get("peers", [])})
-            elif path == "/api/routes":
-                self._send(200, {"ok": True, "schemes": sorted({s.get("scheme", "unknown") for s in data.get("services", [])})})
-            elif path == "/api/examples":
-                self._send(200, {"ok": True, "root": str(examples_root())})
-            elif path == "/api/packs":
-                info = local_runtime_info()
-                self._send(
-                    200,
-                    {
-                        "ok": True,
-                        "packs": pack_summary(),
-                        "loaded": info.get("packs") or [],
-                        "runtime": info,
-                        "uri2flow": uri2flow_available(),
-                    },
-                )
-            elif path == "/api/urirun":
-                qs = parse_qs(urlparse(self.path).query)
-                registry = (qs.get("registry") or [""])[0]
-                out = urirun_info()
-                if registry:
-                    try:
-                        out["registry"] = registry_summary(registry)
-                    except Exception as exc:  # noqa: BLE001 - invalid registry path is API data.
-                        out["registry"] = {"ok": False, "path": registry, "error": str(exc)}
-                self._send(200, out)
-            elif path == "/api/voice/catalog":
-                qs = parse_qs(urlparse(self.path).query)
-                refresh = (qs.get("refresh") or ["0"])[0] == "1"
-                self._send(
-                    200,
-                    {
-                        "ok": True,
-                        "planner": voice_planner_mode(),
-                        "flows": load_flow_catalog(refresh=refresh),
-                    },
-                )
-            elif path == "/api/voice/capabilities":
-                qs = parse_qs(urlparse(self.path).query)
-                ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
-                client = UrisysNodeClient(ep or None) if ep else UrisysNodeClient()
-                self._send(200, voice_capabilities(client))
-            elif path == "/api/webrtc/capabilities":
-                qs = parse_qs(urlparse(self.path).query)
-                ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
-                client = UrisysNodeClient(ep or None) if ep else None
-                out = webrtc_capabilities(client)
-                out["local_api_url"] = local_peer_url(host=state.host, port=state.port)
-                self._send(200, out)
-            elif path == "/api/webrtc/signal":
-                qs = parse_qs(urlparse(self.path).query)
-                room = (qs.get("room") or [""])[0]
-                try:
-                    since = int((qs.get("since") or ["0"])[0])
-                except ValueError:
-                    since = 0
-                self._send(200, poll_signals(room, since=since))
-            elif path == "/api/chat/channels":
-                qs = parse_qs(urlparse(self.path).query)
-                try:
-                    timeout = float((qs.get("timeout") or ["1.5"])[0])
-                except ValueError:
-                    timeout = 1.5
-                payload = list_chat_channels(
-                    timeout=min(max(timeout, 0.5), 5.0),
-                    local_host=state.host,
-                    local_port=state.port,
-                )
-                router = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
-                if router or payload.get("channels"):
-                    hist = fetch_chat_channel_index(router_endpoint=router or None)
-                    if hist.get("ok"):
-                        by_id = {c["channel_id"]: c for c in hist.get("channels") or []}
-                        payload["history_index"] = by_id
-                        for ch in payload.get("channels") or []:
-                            preview = by_id.get(ch.get("id") or "")
-                            if preview:
-                                ch["last_message_at"] = preview.get("last_at")
-                                ch["preview"] = preview.get("preview")
-                self._send(200, payload)
-            elif path == "/api/chat/history":
-                qs = parse_qs(urlparse(self.path).query)
-                channel_id = (qs.get("channel_id") or qs.get("channel") or [""])[0]
-                if not channel_id:
-                    self._send(400, {"ok": False, "error": "missing channel_id"})
-                    return
-                try:
-                    limit = int((qs.get("limit") or ["200"])[0])
-                except ValueError:
-                    limit = 200
-                router = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
-                self._send(
-                    200,
-                    fetch_chat_history(
-                        channel_id,
-                        router_endpoint=router or None,
-                        limit=min(max(limit, 1), 500),
-                    ),
-                )
-            elif path == "/api/chat/status":
-                router = (parse_qs(urlparse(self.path).query).get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
-                self._send(200, urisys_chat_available(router_endpoint=router or None))
-            elif path == "/api/network/scan":
-                qs = parse_qs(urlparse(self.path).query)
-                try:
-                    timeout = float((qs.get("timeout") or ["1.5"])[0])
-                except ValueError:
-                    timeout = 1.5
-                self._send(200, scan_network(timeout=min(max(timeout, 0.5), 5.0)))
-            elif path == "/api/urisys/screen.png":
-                qs = parse_qs(urlparse(self.path).query)
-                ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
-                node_id = (qs.get("node_id") or ["lenovo"])[0]
-                monitor = int((qs.get("monitor") or ["1"])[0])
-                source = (qs.get("source") or ["screen"])[0]
-                shot = capture_remote_screen(
-                    UrisysNodeClient(ep or None),
-                    node_id=node_id,
-                    monitor=monitor,
-                    source=source,
-                )
-                if not shot.get("ok"):
-                    self._send(502, shot)
-                    return
-                self._send_bytes(200, shot["png"], shot.get("mime") or "image/png")
-            elif path == "/api/urisys/control-test":
-                qs = parse_qs(urlparse(self.path).query)
-                ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
-                node_id = (qs.get("node_id") or ["lenovo"])[0]
-                self._send(200, probe_remote_control(UrisysNodeClient(ep or None), node_id=node_id))
+                self._serve_file(path[len("/web/"):])
             else:
-                self._send(404, {"ok": False, "error": "not_found", "path": path})
+                handler = Handler._GET_ROUTES.get(path)
+                if handler:
+                    data = state.load()
+                    qs = parse_qs(urlparse(self.path).query)
+                    handler(self, data, qs)
+                else:
+                    self._send(404, {"ok": False, "error": "not_found", "path": path})
 
         def do_POST(self) -> None:
             try:
@@ -521,266 +388,482 @@ def make_handler(state: RuntimeState):
             if body.get("_error"):
                 self._send(400, {"ok": False, "error": body["_error"]})
                 return
-            data = state.load()
-            if path == "/api/uri/call":
-                uri = str(body.get("uri", "")).strip()
-                if not uri:
-                    self._send(400, {"ok": False, "error": "missing uri"})
-                    return
-                self._send(
-                    200,
-                    state.call_uri(
-                        uri,
-                        body.get("payload") or {},
-                        bool(body.get("dry_run", True)),
-                        approved=bool(body.get("approved", True)),
-                    ),
-                )
-            elif path == "/api/flow/run":
-                flow_text = str(body.get("flow_text", ""))
-                self._send(
-                    200,
-                    state.run_flow(
-                        flow_text,
-                        bool(body.get("dry_run", True)),
-                        approved=bool(body.get("approved", True)),
-                    ),
-                )
-            elif path == "/api/flow/expand":
-                flow_text = str(body.get("flow_text", ""))
-                if not flow_text.strip():
-                    self._send(400, {"ok": False, "error": "missing flow_text"})
-                    return
+            handler = Handler._POST_ROUTES.get(path)
+            if handler:
+                data = state.load()
+                handler(self, body, data)
+            else:
+                self._send(404, {"ok": False, "error": "not_found", "path": path})
+
+        # ── GET handlers ──────────────────────────────────────────────────────
+
+        def _get_health(self, data: dict, qs: dict) -> None:
+            self._send(200, state.health())
+
+        def _get_services(self, data: dict, qs: dict) -> None:
+            self._send(200, {"ok": True, "services": data.get("services", [])})
+
+        def _get_flows(self, data: dict, qs: dict) -> None:
+            self._send(200, {"ok": True, "groups": data.get("groups", [])})
+
+        def _get_peers(self, data: dict, qs: dict) -> None:
+            self._send(200, {"ok": True, "peers": data.get("peers", [])})
+
+        def _get_routes(self, data: dict, qs: dict) -> None:
+            self._send(200, {"ok": True, "schemes": sorted({s.get("scheme", "unknown") for s in data.get("services", [])})})
+
+        def _get_examples(self, data: dict, qs: dict) -> None:
+            self._send(200, {"ok": True, "root": str(examples_root())})
+
+        def _get_packs(self, data: dict, qs: dict) -> None:
+            info = local_runtime_info()
+            self._send(
+                200,
+                {
+                    "ok": True,
+                    "packs": pack_summary(),
+                    "loaded": info.get("packs") or [],
+                    "runtime": info,
+                    "uri2flow": uri2flow_available(),
+                },
+            )
+
+        def _get_urirun(self, data: dict, qs: dict) -> None:
+            registry = (qs.get("registry") or [""])[0]
+            out = urirun_info()
+            if registry:
                 try:
-                    result = expand_flow(flow_text)
-                    self._send(200, {"ok": True, **result})
-                except ImportError as exc:
-                    self._send(501, {"ok": False, "error": str(exc), "hint": "pip install -e '.[packs]'"})
-                except Exception as exc:
-                    self._send(400, {"ok": False, "error": str(exc), "type": type(exc).__name__})
-            elif path == "/api/flow/validate":
-                flow_text = str(body.get("flow_text", ""))
-                if not flow_text.strip():
-                    self._send(400, {"ok": False, "error": "missing flow_text"})
-                    return
-                try:
-                    result = validate_flow_compiled(flow_text)
-                    self._send(200, result)
-                except ImportError as exc:
-                    self._send(501, {"ok": False, "error": str(exc), "hint": "pip install -e '.[packs]'"})
-            elif path == "/api/services":
-                service = body.get("service") or body
-                if not service.get("uri"):
-                    self._send(400, {"ok": False, "error": "missing service.uri"})
-                    return
-                data.setdefault("services", []).append(service)
-                add_event(data, "service.added", uri=service.get("uri"))
-                save_workspace(data)
-                self._send(200, {"ok": True, "service": service})
-            elif path == "/api/peers":
-                peer = body.get("peer") or body
-                if not peer.get("id"):
-                    self._send(400, {"ok": False, "error": "missing peer.id"})
-                    return
-                peers = [p for p in data.get("peers", []) if p.get("id") != peer.get("id")]
-                peers.append(peer)
-                data["peers"] = peers[-100:]
-                add_event(data, "peer.added", peer=peer.get("id"))
-                save_workspace(data)
-                self._send(200, {"ok": True, "peer": peer})
-            elif path == "/api/urisys/health":
-                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-                client = UrisysNodeClient(ep or None)
-                self._send(200, {"ok": True, "endpoint": client.endpoint, "health": client.health()})
-            elif path == "/api/urisys/call":
-                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-                uri = str(body.get("uri", "")).strip()
-                if not uri:
-                    self._send(400, {"ok": False, "error": "missing uri"})
-                    return
-                client = UrisysNodeClient(ep or None)
-                self._send(
-                    200,
-                    client.call_uri(
-                        uri,
-                        body.get("payload") or {},
-                        approved=bool(body.get("approved", True)),
-                        allow_real=bool(body.get("allow_real", True)),
-                        dry_run=bool(body.get("dry_run", False)),
-                    ),
+                    out["registry"] = registry_summary(registry)
+                except Exception as exc:  # noqa: BLE001 - invalid registry path is API data.
+                    out["registry"] = {"ok": False, "path": registry, "error": str(exc)}
+            self._send(200, out)
+
+        def _get_voice_catalog(self, data: dict, qs: dict) -> None:
+            refresh = (qs.get("refresh") or ["0"])[0] == "1"
+            self._send(
+                200,
+                {
+                    "ok": True,
+                    "planner": voice_planner_mode(),
+                    "flows": load_flow_catalog(refresh=refresh),
+                },
+            )
+
+        def _get_voice_capabilities(self, data: dict, qs: dict) -> None:
+            ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+            client = UrisysNodeClient(ep or None) if ep else UrisysNodeClient()
+            self._send(200, voice_capabilities(client))
+
+        def _get_webrtc_capabilities(self, data: dict, qs: dict) -> None:
+            ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+            client = UrisysNodeClient(ep or None) if ep else None
+            out = webrtc_capabilities(client)
+            out["local_api_url"] = local_peer_url(host=state.host, port=state.port)
+            self._send(200, out)
+
+        def _get_webrtc_signal(self, data: dict, qs: dict) -> None:
+            room = (qs.get("room") or [""])[0]
+            try:
+                since = int((qs.get("since") or ["0"])[0])
+            except ValueError:
+                since = 0
+            self._send(200, poll_signals(room, since=since))
+
+        def _get_chat_channels(self, data: dict, qs: dict) -> None:
+            try:
+                timeout = float((qs.get("timeout") or ["1.5"])[0])
+            except ValueError:
+                timeout = 1.5
+            payload = list_chat_channels(
+                timeout=min(max(timeout, 0.5), 5.0),
+                local_host=state.host,
+                local_port=state.port,
+            )
+            router = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+            if router or payload.get("channels"):
+                hist = fetch_chat_channel_index(router_endpoint=router or None)
+                if hist.get("ok"):
+                    by_id = {c["channel_id"]: c for c in hist.get("channels") or []}
+                    payload["history_index"] = by_id
+                    for ch in payload.get("channels") or []:
+                        preview = by_id.get(ch.get("id") or "")
+                        if preview:
+                            ch["last_message_at"] = preview.get("last_at")
+                            ch["preview"] = preview.get("preview")
+            self._send(200, payload)
+
+        def _get_chat_history(self, data: dict, qs: dict) -> None:
+            channel_id = (qs.get("channel_id") or qs.get("channel") or [""])[0]
+            if not channel_id:
+                self._send(400, {"ok": False, "error": "missing channel_id"})
+                return
+            try:
+                limit = int((qs.get("limit") or ["200"])[0])
+            except ValueError:
+                limit = 200
+            router = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+            self._send(
+                200,
+                fetch_chat_history(
+                    channel_id,
+                    router_endpoint=router or None,
+                    limit=min(max(limit, 1), 500),
+                ),
+            )
+
+        def _get_chat_status(self, data: dict, qs: dict) -> None:
+            router = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+            self._send(200, urisys_chat_available(router_endpoint=router or None))
+
+        def _get_network_scan(self, data: dict, qs: dict) -> None:
+            try:
+                timeout = float((qs.get("timeout") or ["1.5"])[0])
+            except ValueError:
+                timeout = 1.5
+            self._send(200, scan_network(timeout=min(max(timeout, 0.5), 5.0)))
+
+        def _get_urisys_screen(self, data: dict, qs: dict) -> None:
+            ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+            node_id = (qs.get("node_id") or ["lenovo"])[0]
+            monitor = int((qs.get("monitor") or ["1"])[0])
+            source = (qs.get("source") or ["screen"])[0]
+            shot = capture_remote_screen(
+                UrisysNodeClient(ep or None),
+                node_id=node_id,
+                monitor=monitor,
+                source=source,
+            )
+            if not shot.get("ok"):
+                self._send(502, shot)
+                return
+            self._send_bytes(200, shot["png"], shot.get("mime") or "image/png")
+
+        def _get_urisys_control(self, data: dict, qs: dict) -> None:
+            ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
+            node_id = (qs.get("node_id") or ["lenovo"])[0]
+            self._send(200, probe_remote_control(UrisysNodeClient(ep or None), node_id=node_id))
+
+        # ── POST handlers ─────────────────────────────────────────────────────
+
+        def _post_uri_call(self, body: dict, data: dict) -> None:
+            uri = str(body.get("uri", "")).strip()
+            if not uri:
+                self._send(400, {"ok": False, "error": "missing uri"})
+                return
+            self._send(
+                200,
+                state.call_uri(
+                    uri,
+                    body.get("payload") or {},
+                    bool(body.get("dry_run", True)),
+                    approved=bool(body.get("approved", True)),
+                ),
+            )
+
+        def _post_flow_run(self, body: dict, data: dict) -> None:
+            flow_text = str(body.get("flow_text", ""))
+            self._send(
+                200,
+                state.run_flow(
+                    flow_text,
+                    bool(body.get("dry_run", True)),
+                    approved=bool(body.get("approved", True)),
+                ),
+            )
+
+        def _post_flow_expand(self, body: dict, data: dict) -> None:
+            flow_text = str(body.get("flow_text", ""))
+            if not flow_text.strip():
+                self._send(400, {"ok": False, "error": "missing flow_text"})
+                return
+            try:
+                result = expand_flow(flow_text)
+                self._send(200, {"ok": True, **result})
+            except ImportError as exc:
+                self._send(501, {"ok": False, "error": str(exc), "hint": "pip install -e '.[packs]'"})
+            except Exception as exc:
+                self._send(400, {"ok": False, "error": str(exc), "type": type(exc).__name__})
+
+        def _post_flow_validate(self, body: dict, data: dict) -> None:
+            flow_text = str(body.get("flow_text", ""))
+            if not flow_text.strip():
+                self._send(400, {"ok": False, "error": "missing flow_text"})
+                return
+            try:
+                result = validate_flow_compiled(flow_text)
+                self._send(200, result)
+            except ImportError as exc:
+                self._send(501, {"ok": False, "error": str(exc), "hint": "pip install -e '.[packs]'"})
+
+        def _post_services(self, body: dict, data: dict) -> None:
+            service = body.get("service") or body
+            if not service.get("uri"):
+                self._send(400, {"ok": False, "error": "missing service.uri"})
+                return
+            data.setdefault("services", []).append(service)
+            add_event(data, "service.added", uri=service.get("uri"))
+            save_workspace(data)
+            self._send(200, {"ok": True, "service": service})
+
+        def _post_peers(self, body: dict, data: dict) -> None:
+            peer = body.get("peer") or body
+            if not peer.get("id"):
+                self._send(400, {"ok": False, "error": "missing peer.id"})
+                return
+            peers = [p for p in data.get("peers", []) if p.get("id") != peer.get("id")]
+            peers.append(peer)
+            data["peers"] = peers[-100:]
+            add_event(data, "peer.added", peer=peer.get("id"))
+            save_workspace(data)
+            self._send(200, {"ok": True, "peer": peer})
+
+        def _post_urisys_health(self, body: dict, data: dict) -> None:
+            ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+            client = UrisysNodeClient(ep or None)
+            self._send(200, {"ok": True, "endpoint": client.endpoint, "health": client.health()})
+
+        def _post_urisys_call(self, body: dict, data: dict) -> None:
+            ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+            uri = str(body.get("uri", "")).strip()
+            if not uri:
+                self._send(400, {"ok": False, "error": "missing uri"})
+                return
+            client = UrisysNodeClient(ep or None)
+            self._send(
+                200,
+                client.call_uri(
+                    uri,
+                    body.get("payload") or {},
+                    approved=bool(body.get("approved", True)),
+                    allow_real=bool(body.get("allow_real", True)),
+                    dry_run=bool(body.get("dry_run", False)),
+                ),
+            )
+
+        def _post_urirun_call(self, body: dict, data: dict) -> None:
+            uri = str(body.get("uri", "")).strip()
+            if not uri:
+                self._send(400, {"ok": False, "error": "missing uri"})
+                return
+            try:
+                service_map = parse_json_object(body.get("service_map") or body.get("serviceMap"), name="service_map")
+            except Exception as exc:  # noqa: BLE001 - API should return a JSON error.
+                self._send(400, {"ok": False, "error": str(exc)})
+                return
+            registry_path = body.get("registry") or body.get("registry_path")
+            registry_json = body.get("registry_json") if isinstance(body.get("registry_json"), dict) else None
+            payload = body.get("payload") or {}
+            execute = bool(body.get("execute", False))
+            if service_map:
+                result = call_urirun(
+                    uri,
+                    payload,
+                    registry_path=registry_path,
+                    registry=registry_json,
+                    execute=execute,
+                    service_map=service_map,
+                    timeout=float(body.get("timeout", 30.0)),
+                    validate=not bool(body.get("no_validate", False)),
                 )
-            elif path == "/api/urirun/call":
-                uri = str(body.get("uri", "")).strip()
-                if not uri:
-                    self._send(400, {"ok": False, "error": "missing uri"})
-                    return
-                try:
-                    service_map = parse_json_object(body.get("service_map") or body.get("serviceMap"), name="service_map")
-                except Exception as exc:  # noqa: BLE001 - API should return a JSON error.
-                    self._send(400, {"ok": False, "error": str(exc)})
-                    return
-                registry_path = body.get("registry") or body.get("registry_path")
-                registry_json = body.get("registry_json") if isinstance(body.get("registry_json"), dict) else None
-                payload = body.get("payload") or {}
-                execute = bool(body.get("execute", False))
-                if service_map:
+            else:
+                policy = {"execute": {"allow": ["**"]}} if execute else None
+                result = urirun_dispatch(
+                    uri,
+                    payload,
+                    registry_path=registry_path,
+                    registry=registry_json,
+                    execute=execute,
+                    policy=policy,
+                )
+                if result is None:
+                    # Compatibility path: without a local registry, keep the
+                    # old dry-run service envelope for clients that use this
+                    # endpoint as a transport planner.
                     result = call_urirun(
                         uri,
                         payload,
                         registry_path=registry_path,
                         registry=registry_json,
                         execute=execute,
-                        service_map=service_map,
                         timeout=float(body.get("timeout", 30.0)),
                         validate=not bool(body.get("no_validate", False)),
                     )
-                else:
-                    policy = {"execute": {"allow": ["**"]}} if execute else None
-                    result = urirun_dispatch(
-                        uri,
-                        payload,
-                        registry_path=registry_path,
-                        registry=registry_json,
-                        execute=execute,
-                        policy=policy,
-                    )
-                    if result is None:
-                        # Compatibility path: without a local registry, keep the
-                        # old dry-run service envelope for clients that use this
-                        # endpoint as a transport planner.
-                        result = call_urirun(
-                            uri,
-                            payload,
-                            registry_path=registry_path,
-                            registry=registry_json,
-                            execute=execute,
-                            timeout=float(body.get("timeout", 30.0)),
-                            validate=not bool(body.get("no_validate", False)),
-                        )
-                self._send(200, result)
-            elif path == "/api/urisys/screen":
-                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-                node_id = str(body.get("node_id") or "lenovo")
-                monitor = int(body.get("monitor") or 1)
-                source = str(body.get("source") or "screen")
-                shot = capture_remote_screen(
-                    UrisysNodeClient(ep or None),
-                    node_id=node_id,
-                    monitor=monitor,
-                    source=source,
-                )
-                if shot.get("ok") and shot.get("png"):
-                    shot = dict(shot)
-                    shot["png_b64"] = base64.b64encode(shot.pop("png")).decode("ascii")
-                self._send(200, shot)
-            elif path == "/api/urisys/control-test":
-                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-                node_id = str(body.get("node_id") or "lenovo")
-                self._send(200, probe_remote_control(UrisysNodeClient(ep or None), node_id=node_id))
-            elif path == "/api/chat/send":
-                channel = body.get("channel") or {}
-                text = str(body.get("text") or body.get("prompt") or "").strip()
-                router = str(body.get("router_endpoint") or body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-                self._send(
-                    200,
-                    send_chat_message_routed(
-                        channel,
-                        text,
-                        router_endpoint=router or None,
-                        dry_run=bool(body.get("dry_run", False)),
-                    ),
-                )
-            elif path == "/api/chat/migrate":
-                router = str(body.get("router_endpoint") or body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-                self._send(
-                    200,
-                    migrate_local_chat_to_urisys(
-                        router_endpoint=router or None,
-                        dry_run=bool(body.get("dry_run", False)),
-                        force=bool(body.get("force", False)),
-                    ),
-                )
-            elif path == "/api/webrtc/signal":
-                room = str(body.get("room") or "").strip()
-                from_peer = str(body.get("from") or "").strip()
-                signal_type = str(body.get("type") or "").strip()
-                self._send(
-                    200,
-                    post_signal(
-                        room,
-                        from_peer=from_peer,
-                        signal_type=signal_type,
-                        data=body.get("data"),
-                    ),
-                )
-            elif path == "/api/chat/channels":
-                self._send(
-                    200,
-                    list_chat_channels(
-                        timeout=min(max(float(body.get("timeout", 1.5)), 0.5), 5.0),
-                        scan_subnet=bool(body.get("scan_subnet", True)),
-                        local_host=state.host,
-                        local_port=state.port,
-                    ),
-                )
-            elif path == "/api/network/scan":
-                self._send(
-                    200,
-                    scan_network(
-                        timeout=min(max(float(body.get("timeout", 1.5)), 0.5), 5.0),
-                        scan_subnet=bool(body.get("scan_subnet", True)),
-                    ),
-                )
-            elif path == "/api/voice/plan":
-                text = str(body.get("text", "")).strip()
-                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-                client = UrisysNodeClient(ep or None) if ep else UrisysNodeClient()
-                planner = body.get("planner")
-                self._send(
-                    200,
-                    plan_voice_command(text, client=client, planner=str(planner) if planner else None),
-                )
-            elif path == "/api/voice/run":
-                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-                text = str(body.get("text", "")).strip()
-                client = UrisysNodeClient(ep or None) if ep else None
-                self._send(
-                    200,
-                    run_voice_command(
-                        text,
-                        client=client,
-                        dry_run=bool(body.get("dry_run", False)),
-                        speak=bool(body.get("speak", True)),
-                    ),
-                )
-            elif path == "/api/voice/install-packs":
-                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-                client = UrisysNodeClient(ep or None) if ep else None
-                self._send(
-                    200,
-                    install_voice_packs(
-                        client=client,
-                        dry_run=bool(body.get("dry_run", False)),
-                    ),
-                )
-            elif path == "/api/flow/run-file":
-                ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-                flow_ref = str(body.get("flow") or body.get("flow_ref") or "").strip()
-                if not flow_ref:
-                    self._send(400, {"ok": False, "error": "missing flow"})
-                    return
-                client = UrisysNodeClient(ep or None) if ep else None
-                self._send(
-                    200,
-                    run_flow_file(
-                        flow_ref,
-                        client=client,
-                        dry_run=bool(body.get("dry_run", False)),
-                    ),
-                )
-            else:
-                self._send(404, {"ok": False, "error": "not_found", "path": path})
+            self._send(200, result)
 
+        def _post_urisys_screen(self, body: dict, data: dict) -> None:
+            ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+            node_id = str(body.get("node_id") or "lenovo")
+            monitor = int(body.get("monitor") or 1)
+            source = str(body.get("source") or "screen")
+            shot = capture_remote_screen(
+                UrisysNodeClient(ep or None),
+                node_id=node_id,
+                monitor=monitor,
+                source=source,
+            )
+            if shot.get("ok") and shot.get("png"):
+                shot = dict(shot)
+                shot["png_b64"] = base64.b64encode(shot.pop("png")).decode("ascii")
+            self._send(200, shot)
+
+        def _post_urisys_control(self, body: dict, data: dict) -> None:
+            ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+            node_id = str(body.get("node_id") or "lenovo")
+            self._send(200, probe_remote_control(UrisysNodeClient(ep or None), node_id=node_id))
+
+        def _post_chat_send(self, body: dict, data: dict) -> None:
+            channel = body.get("channel") or {}
+            text = str(body.get("text") or body.get("prompt") or "").strip()
+            router = str(body.get("router_endpoint") or body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+            self._send(
+                200,
+                send_chat_message_routed(
+                    channel,
+                    text,
+                    router_endpoint=router or None,
+                    dry_run=bool(body.get("dry_run", False)),
+                ),
+            )
+
+        def _post_chat_migrate(self, body: dict, data: dict) -> None:
+            router = str(body.get("router_endpoint") or body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+            self._send(
+                200,
+                migrate_local_chat_to_urisys(
+                    router_endpoint=router or None,
+                    dry_run=bool(body.get("dry_run", False)),
+                    force=bool(body.get("force", False)),
+                ),
+            )
+
+        def _post_webrtc_signal(self, body: dict, data: dict) -> None:
+            room = str(body.get("room") or "").strip()
+            from_peer = str(body.get("from") or "").strip()
+            signal_type = str(body.get("type") or "").strip()
+            self._send(
+                200,
+                post_signal(
+                    room,
+                    from_peer=from_peer,
+                    signal_type=signal_type,
+                    data=body.get("data"),
+                ),
+            )
+
+        def _post_chat_channels(self, body: dict, data: dict) -> None:
+            self._send(
+                200,
+                list_chat_channels(
+                    timeout=min(max(float(body.get("timeout", 1.5)), 0.5), 5.0),
+                    scan_subnet=bool(body.get("scan_subnet", True)),
+                    local_host=state.host,
+                    local_port=state.port,
+                ),
+            )
+
+        def _post_network_scan(self, body: dict, data: dict) -> None:
+            self._send(
+                200,
+                scan_network(
+                    timeout=min(max(float(body.get("timeout", 1.5)), 0.5), 5.0),
+                    scan_subnet=bool(body.get("scan_subnet", True)),
+                ),
+            )
+
+        def _post_voice_plan(self, body: dict, data: dict) -> None:
+            text = str(body.get("text", "")).strip()
+            ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+            client = UrisysNodeClient(ep or None) if ep else UrisysNodeClient()
+            planner = body.get("planner")
+            self._send(
+                200,
+                plan_voice_command(text, client=client, planner=str(planner) if planner else None),
+            )
+
+        def _post_voice_run(self, body: dict, data: dict) -> None:
+            ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+            text = str(body.get("text", "")).strip()
+            client = UrisysNodeClient(ep or None) if ep else None
+            self._send(
+                200,
+                run_voice_command(
+                    text,
+                    client=client,
+                    dry_run=bool(body.get("dry_run", False)),
+                    speak=bool(body.get("speak", True)),
+                ),
+            )
+
+        def _post_voice_install_packs(self, body: dict, data: dict) -> None:
+            ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+            client = UrisysNodeClient(ep or None) if ep else None
+            self._send(
+                200,
+                install_voice_packs(
+                    client=client,
+                    dry_run=bool(body.get("dry_run", False)),
+                ),
+            )
+
+        def _post_flow_run_file(self, body: dict, data: dict) -> None:
+            ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
+            flow_ref = str(body.get("flow") or body.get("flow_ref") or "").strip()
+            if not flow_ref:
+                self._send(400, {"ok": False, "error": "missing flow"})
+                return
+            client = UrisysNodeClient(ep or None) if ep else None
+            self._send(
+                200,
+                run_flow_file(
+                    flow_ref,
+                    client=client,
+                    dry_run=bool(body.get("dry_run", False)),
+                ),
+            )
+
+    Handler._GET_ROUTES = {
+        "/health": Handler._get_health,
+        "/api/health": Handler._get_health,
+        "/api/services": Handler._get_services,
+        "/api/flows": Handler._get_flows,
+        "/api/peers": Handler._get_peers,
+        "/api/routes": Handler._get_routes,
+        "/api/examples": Handler._get_examples,
+        "/api/packs": Handler._get_packs,
+        "/api/urirun": Handler._get_urirun,
+        "/api/voice/catalog": Handler._get_voice_catalog,
+        "/api/voice/capabilities": Handler._get_voice_capabilities,
+        "/api/webrtc/capabilities": Handler._get_webrtc_capabilities,
+        "/api/webrtc/signal": Handler._get_webrtc_signal,
+        "/api/chat/channels": Handler._get_chat_channels,
+        "/api/chat/history": Handler._get_chat_history,
+        "/api/chat/status": Handler._get_chat_status,
+        "/api/network/scan": Handler._get_network_scan,
+        "/api/urisys/screen.png": Handler._get_urisys_screen,
+        "/api/urisys/control-test": Handler._get_urisys_control,
+    }
+    Handler._POST_ROUTES = {
+        "/api/uri/call": Handler._post_uri_call,
+        "/api/flow/run": Handler._post_flow_run,
+        "/api/flow/expand": Handler._post_flow_expand,
+        "/api/flow/validate": Handler._post_flow_validate,
+        "/api/services": Handler._post_services,
+        "/api/peers": Handler._post_peers,
+        "/api/urisys/health": Handler._post_urisys_health,
+        "/api/urisys/call": Handler._post_urisys_call,
+        "/api/urirun/call": Handler._post_urirun_call,
+        "/api/urisys/screen": Handler._post_urisys_screen,
+        "/api/urisys/control-test": Handler._post_urisys_control,
+        "/api/chat/send": Handler._post_chat_send,
+        "/api/chat/migrate": Handler._post_chat_migrate,
+        "/api/webrtc/signal": Handler._post_webrtc_signal,
+        "/api/chat/channels": Handler._post_chat_channels,
+        "/api/network/scan": Handler._post_network_scan,
+        "/api/voice/plan": Handler._post_voice_plan,
+        "/api/voice/run": Handler._post_voice_run,
+        "/api/voice/install-packs": Handler._post_voice_install_packs,
+        "/api/flow/run-file": Handler._post_flow_run_file,
+    }
     return Handler
 
 
