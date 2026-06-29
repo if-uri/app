@@ -37,9 +37,14 @@ def resolve_flow_path(ref: str) -> Path:
     if p.is_file():
         return p.resolve()
     root = examples_root()
-    for candidate in (root / ref, root / "lenovo-remote" / ref, root / ref.lstrip("/")):
+    for candidate in (root / ref, root / ref.lstrip("/")):
         if candidate.is_file():
             return candidate.resolve()
+    if p.name:
+        matches = sorted(root.rglob(p.name)) if root.is_dir() else []
+        for candidate in matches:
+            if candidate.is_file():
+                return candidate.resolve()
     return (root / ref).resolve()
 
 

@@ -11,7 +11,7 @@ from typing import Any
 from .flow_runner import run_flow_file
 from .urisys_client import UrisysNodeClient, node_webrtc_available
 
-WEBRTC_PACKS_FLOW = "lenovo-remote/02c-install-webrtc-pack.uri.flow.yaml"
+WEBRTC_PACKS_FLOW = "02c-install-webrtc-pack.uri.flow.yaml"
 WEBRTC_WHEEL = os.environ.get(
     "URISYS_WEBRTC_WHEEL",
     f"{os.environ.get('URISYS_WHEEL_HOST', 'http://localhost:8765')}/uriwebrtc-0.1.0-py3-none-any.whl",

@@ -46,6 +46,18 @@ def test_run_flow_file_dry_run(tmp_path, capsys):
     assert data is not None
 
 
+def test_resolve_flow_path_finds_filename_in_any_examples_subdir(tmp_path, monkeypatch):
+    from ifuri_app import flow_runner
+
+    flow_dir = tmp_path / "office"
+    flow_dir.mkdir()
+    flow = flow_dir / "health.uri.flow.yaml"
+    flow.write_text("do:\n  - sys://local/echo/hello\n", encoding="utf-8")
+    monkeypatch.setattr(flow_runner, "examples_root", lambda: tmp_path)
+
+    assert flow_runner.resolve_flow_path("health.uri.flow.yaml") == flow.resolve()
+
+
 def test_run_invalid_payload_json(capsys):
     code, data = run_cli(["sys://x/y", "--payload", "{not json"], capsys)
     assert code == 2

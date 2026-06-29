@@ -65,7 +65,7 @@ def cmd_init(args) -> int:
         if not nodes:
             print("No urisys-node found on LAN", file=sys.stderr)
             return 1
-        preferred = next((n for n in nodes if n.get("node_id") == "lenovo"), nodes[0])
+        preferred = nodes[0]
         data.setdefault("urisys", {})["endpoint"] = preferred["endpoint"]
     save_workspace(data)
     client = UrisysNodeClient()
@@ -518,19 +518,19 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_nct = sub.add_parser("node-control-test", help="probe remote node control (health + screen)")
     p_nct.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
-    p_nct.add_argument("--node-id", default="lenovo")
+    p_nct.add_argument("--node-id", default="")
     p_nct.set_defaults(func=cmd_node_control_test)
 
     p_ns = sub.add_parser("node-screen", help="capture remote screen PNG via screen:// or kvm://")
     p_ns.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
-    p_ns.add_argument("--node-id", default="lenovo")
+    p_ns.add_argument("--node-id", default="")
     p_ns.add_argument("--monitor", type=int, default=1)
     p_ns.add_argument("--source", choices=["screen", "kvm"], default="screen")
     p_ns.add_argument("--out", help="save PNG to file")
     p_ns.set_defaults(func=cmd_node_screen)
 
     p_fr = sub.add_parser("flow-run", help="run urisys-examples *.uri.flow.yaml via node")
-    p_fr.add_argument("flow", help="e.g. lenovo-remote/08-kvm-linkedin.uri.flow.yaml")
+    p_fr.add_argument("flow", help="flow path or filename, e.g. 08-kvm-linkedin.uri.flow.yaml")
     p_fr.add_argument("--endpoint", default=UrisysNodeClient().endpoint)
     p_fr.add_argument("--dry-run", action="store_true")
     p_fr.set_defaults(func=cmd_flow_run)

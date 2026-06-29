@@ -18,11 +18,11 @@ LLM_PACK_NAMES = frozenset({"llm", "urillm"})
 
 # Fast path — kept for offline / zero-latency matches.
 VOICE_FLOW_TRIGGERS: list[tuple[re.Pattern[str], str]] = [
-    (re.compile(r"\b(health|zdrow|status node|sprawd[źz] health)\b", re.I), "lenovo-remote/01-health-probe.uri.flow.yaml"),
-    (re.compile(r"\b(linkedin|post|kvm|compose)\b", re.I), "lenovo-remote/08-kvm-linkedin.uri.flow.yaml"),
-    (re.compile(r"\b(playwright|browser test)\b", re.I), "lenovo-remote/07-playwright-linkedin.uri.flow.yaml"),
-    (re.compile(r"\b(install pack|packi|hot.?load|voice pack|głos)\b", re.I), "lenovo-remote/02b-install-voice-packs.uri.flow.yaml"),
-    (re.compile(r"\b(introspect|screen|discover)\b", re.I), "lenovo-remote/03-system-introspect.uri.flow.yaml"),
+    (re.compile(r"\b(health|zdrow|status node|sprawd[źz] health)\b", re.I), "01-health-probe.uri.flow.yaml"),
+    (re.compile(r"\b(linkedin|post|kvm|compose)\b", re.I), "08-kvm-linkedin.uri.flow.yaml"),
+    (re.compile(r"\b(playwright|browser test)\b", re.I), "07-playwright-linkedin.uri.flow.yaml"),
+    (re.compile(r"\b(install pack|packi|hot.?load|voice pack|głos)\b", re.I), "02b-install-voice-packs.uri.flow.yaml"),
+    (re.compile(r"\b(introspect|screen|discover)\b", re.I), "03-system-introspect.uri.flow.yaml"),
 ]
 
 _CATALOG_CACHE: list[dict[str, Any]] | None = None
@@ -215,7 +215,7 @@ def plan_with_llm(text: str, client: UrisysNodeClient, catalog: list[dict[str, A
     )
     if plan_resp.get("ok") and plan_resp.get("uri"):
         uri = str(plan_resp["uri"])
-        if uri.endswith(".uri.flow.yaml") or "lenovo-remote/" in uri:
+        if uri.endswith(".uri.flow.yaml"):
             ref = uri.split("flows/", 1)[-1] if "flows/" in uri else uri
             return _flow_plan(ref, text, planner="llm", message="llm://text/query/plan")
         return {

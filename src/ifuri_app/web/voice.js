@@ -426,7 +426,7 @@ async function sendMessage() {
 function screenImageUrl() {
   if (!activeChannel || activeChannel.type !== "urisys-node") return "";
   const ep = encodeURIComponent(activeChannel.endpoint);
-  const nodeId = encodeURIComponent(activeChannel.node_id || "lenovo");
+  const nodeId = encodeURIComponent(activeChannel.node_id || "");
   return `/api/urisys/screen.png?endpoint=${ep}&node_id=${nodeId}&source=screen&monitor=1&_=${Date.now()}`;
 }
 

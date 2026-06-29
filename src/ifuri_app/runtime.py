@@ -524,7 +524,7 @@ def make_handler(state: RuntimeState):
 
         def _get_urisys_screen(self, data: dict, qs: dict) -> None:
             ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
-            node_id = (qs.get("node_id") or ["lenovo"])[0]
+            node_id = (qs.get("node_id") or [""])[0]
             monitor = int((qs.get("monitor") or ["1"])[0])
             source = (qs.get("source") or ["screen"])[0]
             shot = capture_remote_screen(
@@ -540,7 +540,7 @@ def make_handler(state: RuntimeState):
 
         def _get_urisys_control(self, data: dict, qs: dict) -> None:
             ep = (qs.get("endpoint") or [""])[0] or data.get("urisys", {}).get("endpoint") or ""
-            node_id = (qs.get("node_id") or ["lenovo"])[0]
+            node_id = (qs.get("node_id") or [""])[0]
             self._send(200, probe_remote_control(UrisysNodeClient(ep or None), node_id=node_id))
 
         # ── POST handlers ─────────────────────────────────────────────────────
@@ -692,7 +692,7 @@ def make_handler(state: RuntimeState):
 
         def _post_urisys_screen(self, body: dict, data: dict) -> None:
             ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-            node_id = str(body.get("node_id") or "lenovo")
+            node_id = str(body.get("node_id") or "")
             monitor = int(body.get("monitor") or 1)
             source = str(body.get("source") or "screen")
             shot = capture_remote_screen(
@@ -708,7 +708,7 @@ def make_handler(state: RuntimeState):
 
         def _post_urisys_control(self, body: dict, data: dict) -> None:
             ep = str(body.get("endpoint") or data.get("urisys", {}).get("endpoint") or "")
-            node_id = str(body.get("node_id") or "lenovo")
+            node_id = str(body.get("node_id") or "")
             self._send(200, probe_remote_control(UrisysNodeClient(ep or None), node_id=node_id))
 
         def _post_chat_send(self, body: dict, data: dict) -> None:

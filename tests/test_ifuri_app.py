@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from ifuri_app.flow_engine import expand_flow
 from ifuri_app.network_scan import scan_network
-from ifuri_app.remote_screen import unwrap_result, screen_uri, capture_remote_screen
+from ifuri_app.remote_screen import unwrap_result, screen_uri, capture_remote_screen, resolve_node_id
 from ifuri_app.urisys_client import node_voice_capabilities
 from ifuri_app.voice_pipeline import plan_voice_command, _connection_hint
 
@@ -97,6 +97,19 @@ def test_screen_uri():
     assert screen_uri(source="kvm").startswith("kvm://")
 
 
+def test_resolve_node_id_order(monkeypatch):
+    class FakeClient:
+        def health(self):
+            return {"ok": True, "node_id": "from-health"}
+
+    assert resolve_node_id(FakeClient(), "explicit") == "explicit"
+    monkeypatch.setenv("IFURI_DEFAULT_NODE_ID", "from-env")
+    assert resolve_node_id(FakeClient(), "") == "from-env"
+    monkeypatch.delenv("IFURI_DEFAULT_NODE_ID")
+    assert resolve_node_id(FakeClient(), "") == "from-health"
+    assert resolve_node_id(None, "") == "local"
+
+
 def test_unwrap_result_nested():
     data = {"ok": True, "result": {"result": {"width": 100, "base64": "abc"}}}
     assert unwrap_result(data)["width"] == 100
@@ -127,4 +140,3 @@ def test_connection_hint_on_refused():
     )
     assert hint
     assert "127.0.0.1:8790" in hint
-
