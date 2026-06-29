@@ -1,4 +1,4 @@
-project: /home/tom/github/if-uri/app
+project: ~/github/if-uri/app
 generated_from: code2llm call graph analysis
 stats:
   total_nodes: 345

@@ -1,7 +1,7 @@
 source: code2llm
 # generated in 0.06s
 schema: code2llm.planfile_tickets.v1
-project_root: /home/tom/github/if-uri/app
+project_root: ~/github/if-uri/app
 tickets:
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: src.ifuri_app.chat_channels.channels_from_scan

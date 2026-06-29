@@ -6,7 +6,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PORT="${PORT:-8766}"
-URISYS="${URISYS:-http://192.168.188.201:8790}"
+URISYS="${URISYS:-http://localhost:8790}"
 PYTHON="${PYTHON:-python3}"
 
 health() {

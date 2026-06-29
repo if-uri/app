@@ -22,8 +22,7 @@ from typing import Any
 
 
 INSTALL_HINT = (
-    'python -m pip install "git+https://github.com/if-uri/urirun.git@v0.3.14'
-    '#subdirectory=adapters/python"'
+    'python -m pip install "urirun>=0.4.190"'
 )
 
 
@@ -173,6 +172,18 @@ def default_urirun_registry() -> str | None:
     return None
 
 
+def _is_route_not_found(result: Any) -> bool:
+    """True when urirun reports a missing route, so callers may try fallback I/O."""
+    if not isinstance(result, dict) or result.get("ok") is not False:
+        return False
+    error = result.get("error")
+    if not isinstance(error, dict):
+        return False
+    message = str(error.get("message") or "").lower()
+    category = str(error.get("category") or "").upper()
+    return category == "NOT_FOUND" and "route not found" in message
+
+
 def dispatch_local(
     uri: str,
     payload: dict[str, Any] | None = None,
@@ -207,6 +218,8 @@ def dispatch_local(
         return None
     except Exception as exc:  # noqa: BLE001 - report adapter/runtime errors as envelope
         return {"ok": False, "via": "urirun", "uri": uri, "error": str(exc)}
+    if _is_route_not_found(result):
+        return None
     result.setdefault("ok", False)
     result["via"] = "urirun"
     result["execute"] = execute

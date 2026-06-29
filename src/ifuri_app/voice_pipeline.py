@@ -19,7 +19,7 @@ from .voice_planner import (
 VOICE_PACKS_FLOW = "lenovo-remote/02b-install-voice-packs.uri.flow.yaml"
 VOICE_STT_WHEEL = os.environ.get(
     "URISYS_STT_WHEEL",
-    f"{os.environ.get('URISYS_WHEEL_HOST', 'http://192.168.188.212:8765')}/uristt-0.1.0-py3-none-any.whl",
+    f"{os.environ.get('URISYS_WHEEL_HOST', 'http://localhost:8765')}/uristt-0.1.0-py3-none-any.whl",
 )
 
 __all__ = [
@@ -192,6 +192,6 @@ def _connection_hint(result: dict[str, Any], endpoint: str) -> str | None:
             return (
                 f"urisys-node unreachable at {endpoint}. "
                 "Start local node (urisys node serve) or point to lenovo: "
-                f"--endpoint http://192.168.188.201:8790"
+                f"--endpoint http://localhost:8790"
             )
     return None

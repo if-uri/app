@@ -3,7 +3,7 @@
 
 ## Overview
 
-- **Project**: /home/tom/github/if-uri/app
+- **Project**: ~/github/if-uri/app
 - **Primary Language**: python
 - **Languages**: python: 41, shell: 11, yaml: 10, javascript: 10, json: 5
 - **Analysis Mode**: static

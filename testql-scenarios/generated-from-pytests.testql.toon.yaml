@@ -40,7 +40,7 @@ ASSERT[82]{field, operator, expected}:
   out.messages[0].text, ==, "cached"
   out.via, ==, "local"
   len(local_store.list_messages("node:x")), ==, 2
-  any(c.endpoint, ==, "http://192.168.1.10:8790" for c in channels)
+  any(c.endpoint, ==, "http://192.0.2.1:8790" for c in channels)
   any(c.type, ==, "webrtc-peer" for c in channels)
   len(result.ifuri_peers), ==, 1
   len(result.urisys_nodes), ==, 1
@@ -81,7 +81,7 @@ ASSERT[82]{field, operator, expected}:
   out.messages[0].text, ==, "cached"
   out.via, ==, "local"
   len(local_store.list_messages("node:x")), ==, 2
-  any(c.endpoint, ==, "http://192.168.1.10:8790" for c in channels)
+  any(c.endpoint, ==, "http://192.0.2.1:8790" for c in channels)
   any(c.type, ==, "webrtc-peer" for c in channels)
   len(result.ifuri_peers), ==, 1
   len(result.urisys_nodes), ==, 1

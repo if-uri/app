@@ -478,7 +478,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_app.set_defaults(func=cmd_app)
 
     p_init = sub.add_parser("init", help="create workspace and configure urisys-node endpoint")
-    p_init.add_argument("--endpoint", help="urisys-node base URL, e.g. http://192.168.188.201:8790")
+    p_init.add_argument("--endpoint", help="urisys-node base URL, e.g. http://192.0.2.1:8765")
     p_init.add_argument("--scan-lan", action="store_true", help="discover urisys-node on /24 and save first hit")
     p_init.add_argument("--timeout", type=float, default=2.0, help="LAN scan timeout when using --scan-lan")
     p_init.set_defaults(func=cmd_init)
