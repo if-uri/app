@@ -79,6 +79,37 @@ def _version_of(install: dict[str, Any], pkg: dict[str, Any]) -> str:
     return match.group(1) if match else ""
 
 
+def _normalize_package_item(pkg: Any) -> "dict[str, Any] | None":
+    """Normalize one catalog entry; returns None if the entry is unusable."""
+    if not isinstance(pkg, dict):
+        return None
+    name = pkg.get("name") or pkg.get("id")
+    if not name:
+        return None
+    install = _normalize_install(pkg.get("install") if isinstance(pkg.get("install"), dict) else {})
+    schemes = pkg.get("uriSchemes") or ([pkg["scheme"]] if pkg.get("scheme") else [])
+    routes = [r for r in (_normalize_route(r) for r in (pkg.get("routes") or [])) if r]
+    examples = [
+        {"title": str(e.get("title") or ""), "uri": str(e.get("uri") or ""),
+         "payload": e["payload"] if isinstance(e.get("payload"), dict) else {}}
+        for e in (pkg.get("examples") or [])
+        if isinstance(e, dict) and e.get("uri")
+    ]
+    return {
+        "id": str(pkg.get("id") or name),
+        "name": str(name),
+        "version": _version_of(install, pkg),
+        "scheme": str(schemes[0]) if schemes else "",
+        "schemes": [str(s) for s in schemes],
+        "summary": str(pkg.get("summary") or pkg.get("description") or ""),
+        "category": str(pkg.get("category") or ""),
+        "status": str(pkg.get("status") or ""),
+        "install": install,
+        "routes": routes,
+        "examples": examples,
+    }
+
+
 def normalize_packages(payload: Any) -> list[dict[str, Any]]:
     """Flatten a catalog payload into a stable list of connector-package dicts.
 
@@ -91,33 +122,7 @@ def normalize_packages(payload: Any) -> list[dict[str, Any]]:
         packages = payload
     if not isinstance(packages, (list, tuple)):
         return []
-    out: list[dict[str, Any]] = []
-    for pkg in packages:
-        name = pkg.get("name") or pkg.get("id") if isinstance(pkg, dict) else None
-        if not isinstance(pkg, dict) or not name:
-            continue
-        install = _normalize_install(pkg.get("install") if isinstance(pkg.get("install"), dict) else {})
-        schemes = pkg.get("uriSchemes") or ([pkg["scheme"]] if pkg.get("scheme") else [])
-        routes = [r for r in (_normalize_route(r) for r in (pkg.get("routes") or [])) if r]
-        examples = [
-            {"title": str(e.get("title") or ""), "uri": str(e.get("uri") or ""),
-             "payload": e["payload"] if isinstance(e.get("payload"), dict) else {}}
-            for e in (pkg.get("examples") or [])
-            if isinstance(e, dict) and e.get("uri")
-        ]
-        out.append({
-            "id": str(pkg.get("id") or name),
-            "name": str(name),
-            "version": _version_of(install, pkg),
-            "scheme": str(schemes[0]) if schemes else "",
-            "schemes": [str(s) for s in schemes],
-            "summary": str(pkg.get("summary") or pkg.get("description") or ""),
-            "category": str(pkg.get("category") or ""),
-            "status": str(pkg.get("status") or ""),
-            "install": install,
-            "routes": routes,
-            "examples": examples,
-        })
+    out = [item for pkg in packages for item in [_normalize_package_item(pkg)] if item]
     out.sort(key=lambda p: p["name"].lower())
     return out
 
