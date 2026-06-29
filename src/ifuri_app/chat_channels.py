@@ -22,66 +22,46 @@ def _channel_id(kind: str, key: str) -> str:
     return f"{kind}:{safe}"
 
 
-def channels_from_scan(scan: dict[str, Any], *, local_api_url: str | None = None) -> list[dict[str, Any]]:
-    """Build chat channel list from network scan payload."""
-    out: list[dict[str, Any]] = []
-
-    for node in scan.get("urisys_nodes") or []:
+def _urisys_node_channels(nodes: list) -> list[dict[str, Any]]:
+    out = []
+    for node in nodes:
         endpoint = str(node.get("endpoint") or "")
         if not endpoint:
             continue
         node_id = str(node.get("node_id") or node.get("host") or "node")
-        out.append(
-            {
-                "id": _channel_id("urisys-node", endpoint),
-                "type": "urisys-node",
-                "kind": "node",
-                "title": node_id,
-                "subtitle": f"{endpoint} · {node.get('routes_count', '?')} routes",
-                "endpoint": endpoint,
-                "node_id": node_id,
-                "meta": {
-                    "him_driver": node.get("him_driver"),
-                    "packs_loaded": node.get("packs_loaded") or [],
-                },
-            }
-        )
+        out.append({"id": _channel_id("urisys-node", endpoint), "type": "urisys-node",
+                    "kind": "node", "title": node_id,
+                    "subtitle": f"{endpoint} · {node.get('routes_count', '?')} routes",
+                    "endpoint": endpoint, "node_id": node_id,
+                    "meta": {"him_driver": node.get("him_driver"),
+                             "packs_loaded": node.get("packs_loaded") or []}})
+    return out
 
-    for peer in scan.get("ifuri_peers") or []:
+
+def _ifuri_peer_channels(peers: list, local_api_url: str | None) -> list[dict[str, Any]]:
+    out = []
+    for peer in peers:
         url = peer.get("api_url") or (
-            f"http://{peer.get('address')}:{peer.get('api_port', 8765)}" if peer.get("address") else ""
-        )
+            f"http://{peer.get('address')}:{peer.get('api_port', 8765)}" if peer.get("address") else "")
         if not url:
             continue
         name = str(peer.get("name") or peer.get("id") or peer.get("address") or "ifURI")
         peer_url = url.rstrip("/")
-        out.append(
-            {
-                "id": _channel_id("ifuri", peer_url),
-                "type": "ifuri",
-                "kind": "ifuri",
-                "title": name,
-                "subtitle": peer_url,
-                "peer_url": peer_url,
-                "meta": {"schemes": peer.get("schemes") or []},
-            }
-        )
+        out.append({"id": _channel_id("ifuri", peer_url), "type": "ifuri", "kind": "ifuri",
+                    "title": name, "subtitle": peer_url, "peer_url": peer_url,
+                    "meta": {"schemes": peer.get("schemes") or []}})
         if local_api_url and peer_url.rstrip("/") != local_api_url.rstrip("/"):
             room = webrtc_room_id(local_api_url, peer_url)
-            out.append(
-                {
-                    "id": _channel_id("webrtc-peer", peer_url),
-                    "type": "webrtc-peer",
-                    "kind": "webrtc",
-                    "title": f"{name} (WebRTC)",
-                    "subtitle": peer_url,
-                    "peer_url": peer_url,
-                    "signaling_room": room,
-                    "meta": {"local_url": local_api_url, "remote_url": peer_url},
-                }
-            )
+            out.append({"id": _channel_id("webrtc-peer", peer_url), "type": "webrtc-peer",
+                        "kind": "webrtc", "title": f"{name} (WebRTC)", "subtitle": peer_url,
+                        "peer_url": peer_url, "signaling_room": room,
+                        "meta": {"local_url": local_api_url, "remote_url": peer_url}})
+    return out
 
-    for svc in (scan.get("services") or []) + (scan.get("mcp_agent_services") or []) + (scan.get("llm_services") or []):
+
+def _service_channels(services: list) -> list[dict[str, Any]]:
+    out = []
+    for svc in services:
         uri = str(svc.get("uri") or "")
         if not uri or "://" not in uri:
             continue
@@ -95,26 +75,27 @@ def channels_from_scan(scan: dict[str, Any], *, local_api_url: str | None = None
         else:
             continue
         name = str(svc.get("name") or uri)
-        out.append(
-            {
-                "id": _channel_id(kind, uri),
-                "type": kind,
-                "kind": kind,
-                "title": name,
-                "subtitle": f"{uri} · {svc.get('source', 'local')}",
-                "uri": uri,
-                "meta": {"scope": svc.get("scope"), "source": svc.get("source"), "peer_url": svc.get("peer_url")},
-            }
-        )
+        out.append({"id": _channel_id(kind, uri), "type": kind, "kind": kind,
+                    "title": name, "subtitle": f"{uri} · {svc.get('source', 'local')}",
+                    "uri": uri, "meta": {"scope": svc.get("scope"),
+                                          "source": svc.get("source"),
+                                          "peer_url": svc.get("peer_url")}})
+    return out
 
-    # Dedupe by id preserving order
+
+def channels_from_scan(scan: dict[str, Any], *, local_api_url: str | None = None) -> list[dict[str, Any]]:
+    """Build chat channel list from network scan payload."""
+    all_svcs = ((scan.get("services") or []) + (scan.get("mcp_agent_services") or [])
+                + (scan.get("llm_services") or []))
+    out = (_urisys_node_channels(scan.get("urisys_nodes") or [])
+           + _ifuri_peer_channels(scan.get("ifuri_peers") or [], local_api_url)
+           + _service_channels(all_svcs))
     seen: set[str] = set()
     deduped: list[dict[str, Any]] = []
     for ch in out:
-        if ch["id"] in seen:
-            continue
-        seen.add(ch["id"])
-        deduped.append(ch)
+        if ch["id"] not in seen:
+            seen.add(ch["id"])
+            deduped.append(ch)
     return deduped
 
 
