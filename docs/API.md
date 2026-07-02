@@ -64,8 +64,8 @@ from GitHub. Without it, endpoints return a stable JSON install hint.
 | GET | `/api/network/scan?timeout=1.5` | Full LAN scan |
 | GET | `/api/services`, `/api/flows`, `/api/peers` | Workspace data |
 | GET | `/api/packs` | Local URI packs (`packages/`) + `uri2flow` flag |
-| POST | `/api/flow/expand` | Body: `{ flow_text }` — compile via uri2flow |
-| POST | `/api/flow/validate` | Body: `{ flow_text }` — uri2flow validation |
+| POST | `/api/flow/expand` | Body: `{ flow_text }` — compile via uri2flow when installed, otherwise legacy URI extraction |
+| POST | `/api/flow/validate` | Body: `{ flow_text }` — validate via uri2flow when installed, otherwise legacy URI extraction |
 | POST | `/api/flow/run-file` | Run urisys-examples YAML |
 
 ## URL state (`/voice`)

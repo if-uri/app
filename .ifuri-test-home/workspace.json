@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "node": {
+    "id": "ifuri-59427759",
+    "name": "Lenovo.ifuri",
+    "role": "host",
+    "port": 8194,
+    "public": false
+  },
+  "urisys": {
+    "endpoint": "http://127.0.0.1:8790",
+    "role": "client",
+    "examples_root": ""
+  },
+  "groups": [
+    {
+      "id": "dev-ops",
+      "name": "DevOps flows",
+      "description": "Grouped uri2flow tasks for local automation.",
+      "flows": [
+        {
+          "id": "local-review-and-share",
+          "name": "Local review and remote browser",
+          "filename": "local-review-and-share.uri.flow.yaml",
+          "text": "flow:\n  id: local-review-and-share\n  group: dev-ops\n\ndo:\n  - mcp://filesystem/list:\n      path: ./project\n  - llm://local/qwen/analyze:\n      input: file://project-summary\n  - agent://code-reviewer/run\n  - ifuri://office-node.local/services/browser/open:\n      url: https://ifuri.com\n",
+          "updated_at": ""
+        }
+      ]
+    },
+    {
+      "id": "office",
+      "name": "Office workflows",
+      "description": "Examples for office, browser, mail and agent actions.",
+      "flows": []
+    }
+  ],
+  "services": [
+    {
+      "name": "Local filesystem MCP",
+      "scheme": "mcp",
+      "uri": "mcp://filesystem/list",
+      "scope": "private",
+      "enabled": true
+    },
+    {
+      "name": "Code reviewer agent",
+      "scheme": "agent",
+      "uri": "agent://code-reviewer/run",
+      "scope": "private",
+      "enabled": true
+    },
+    {
+      "name": "Local LLM",
+      "scheme": "llm",
+      "uri": "llm://local/qwen/analyze",
+      "scope": "private",
+      "enabled": true
+    },
+    {
+      "name": "Browser operator",
+      "scheme": "browser",
+      "uri": "browser://chrome/page/open",
+      "scope": "shared",
+      "enabled": true
+    },
+    {
+      "name": "Shell dry-run",
+      "scheme": "shell",
+      "uri": "shell://local/echo",
+      "scope": "private",
+      "enabled": true
+    },
+    {
+      "name": "ifURI peer call",
+      "scheme": "ifuri",
+      "uri": "ifuri://peer.local/api/uri/call",
+      "scope": "shared",
+      "enabled": true
+    }
+  ],
+  "peers": [
+    {
+      "type": "ifuri.peer",
+      "id": "ifuri-8946fda3",
+      "name": "Lenovo.ifuri",
+      "role": "host",
+      "api_port": 8766,
+      "api_path": "/api/uri/call",
+      "schemes": [
+        "browser",
+        "ifuri"
+      ],
+      "services": [
+        {
+          "name": "Browser operator",
+          "scheme": "browser",
+          "uri": "browser://chrome/page/open",
+          "scope": "shared",
+          "enabled": true
+        },
+        {
+          "name": "ifURI peer call",
+          "scheme": "ifuri",
+          "uri": "ifuri://peer.local/api/uri/call",
+          "scope": "shared",
+          "enabled": true
+        }
+      ],
+      "time": "2026-07-02T09:17:46Z",
+      "address": "192.168.8.176",
+      "api_url": "http://192.168.8.176:8766"
+    },
+    {
+      "type": "ifuri.peer",
+      "id": "ifuri-59427759",
+      "name": "Lenovo.ifuri",
+      "role": "host",
+      "api_port": 8194,
+      "api_path": "/api/uri/call",
+      "schemes": [
+        "browser",
+        "ifuri"
+      ],
+      "services": [
+        {
+          "name": "Browser operator",
+          "scheme": "browser",
+          "uri": "browser://chrome/page/open",
+          "scope": "shared",
+          "enabled": true
+        },
+        {
+          "name": "ifURI peer call",
+          "scheme": "ifuri",
+          "uri": "ifuri://peer.local/api/uri/call",
+          "scope": "shared",
+          "enabled": true
+        }
+      ],
+      "time": "2026-07-02T09:17:46Z",
+      "address": "192.168.8.176",
+      "api_url": "http://192.168.8.176:8194"
+    }
+  ],
+  "events": []
+}

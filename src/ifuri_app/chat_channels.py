@@ -166,6 +166,25 @@ def _urisys_chat_unavailable(data: dict[str, Any]) -> bool:
     return "404" in err or "not found" in err or typ == "route_not_found"
 
 
+def _router_unreachable(data: dict[str, Any]) -> bool:
+    """True when urisys-node cannot be reached at all."""
+    if data.get("ok"):
+        return False
+    err = str(data.get("error") or "").lower()
+    return any(
+        marker in err
+        for marker in (
+            "urlopen error",
+            "connection refused",
+            "actively refused",
+            "timed out",
+            "timeout",
+            "10061",
+            "10060",
+        )
+    )
+
+
 def _local_chat_store() -> LocalChatStore:
     return LocalChatStore()
 
@@ -186,7 +205,7 @@ def fetch_chat_history(
             data.setdefault("endpoint", ep)
             data["via"] = "urisys"
             return data
-        if not _urisys_chat_unavailable(data):
+        if not _router_unreachable(data) and not _urisys_chat_unavailable(data):
             uri_data = client.call_uri(
                 "app://local/chat/query/messages",
                 {"channel_id": channel_id, "limit": limit},
@@ -261,7 +280,9 @@ def persist_chat_turn(
         )
         if user_row.get("ok") and asst_row.get("ok"):
             return {"ok": True, "endpoint": ep, "saved": 2, "via": "urisys"}
-        if not (_urisys_chat_unavailable(user_row) or _urisys_chat_unavailable(asst_row)):
+        if not (_router_unreachable(user_row) or _router_unreachable(asst_row)) and not (
+            _urisys_chat_unavailable(user_row) or _urisys_chat_unavailable(asst_row)
+        ):
             uri_user = client.call_uri(
                 "app://local/chat/command/append",
                 {"channel_id": channel_id, "role": "user", "text": user_text},
@@ -458,14 +479,29 @@ def send_chat_message_routed(
         payload = _payload_for_scheme(ctype, text)
         client = UrisysNodeClient(router_endpoint)
         result = client.call_uri(uri, payload, approved=True, allow_real=not dry_run, dry_run=dry_run)
-        out = {
-            "ok": bool(result.get("ok", True)),
-            "channel": channel,
-            "user_text": text,
-            "reply": {"kind": "uri_call", "uri": uri, "body": result},
-            "text": _format_json_reply(result),
-            "router": router_endpoint,
-        }
+        if result.get("ok"):
+            out = {
+                "ok": True,
+                "channel": channel,
+                "user_text": text,
+                "reply": {"kind": "uri_call", "uri": uri, "body": result},
+                "text": _format_json_reply(result),
+                "router": router_endpoint,
+            }
+        elif _router_unreachable(result):
+            out = send_chat_message(channel, text, dry_run=dry_run)
+            out["router_fallback"] = True
+            out["router"] = router_endpoint
+            out["router_error"] = result.get("error")
+        else:
+            out = {
+                "ok": False,
+                "channel": channel,
+                "user_text": text,
+                "reply": {"kind": "uri_call", "uri": uri, "body": result},
+                "text": _format_json_reply(result),
+                "router": router_endpoint,
+            }
     else:
         out = send_chat_message(channel, text, dry_run=dry_run)
 
