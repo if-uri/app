@@ -148,6 +148,46 @@ def validate_flow_compiled(flow: str | dict[str, Any] | Path) -> dict[str, Any]:
         return {"ok": False, "error": str(exc)}
 
 
+def validate_flow(flow: str | dict[str, Any] | Path) -> dict[str, Any]:
+    """Validate compact flow with uri2flow when present, else legacy URI extraction."""
+    if uri2flow_available():
+        return validate_flow_compiled(flow)
+
+    from .flow_engine import _legacy_expand_flow
+
+    if isinstance(flow, Path):
+        text = flow.read_text(encoding="utf-8")
+    elif isinstance(flow, dict):
+        import yaml
+
+        text = yaml.safe_dump(flow, allow_unicode=True)
+    else:
+        text = str(flow)
+
+    try:
+        graph = _legacy_expand_flow(text)
+    except Exception as exc:  # noqa: BLE001 - validation API should return JSON errors.
+        return {"ok": False, "compiler": "legacy", "error": str(exc), "type": type(exc).__name__}
+
+    nodes = (graph.get("workflow_graph") or {}).get("nodes") or []
+    if not nodes:
+        return {
+            "ok": False,
+            "compiler": "legacy",
+            "error": "flow contains no URI steps",
+            "document_warnings": ["uri2flow unavailable; legacy validation only checks URI extraction"],
+            "expanded_warnings": [],
+        }
+
+    return {
+        "ok": True,
+        "compiler": "legacy",
+        "document_warnings": ["uri2flow unavailable; legacy validation only checks URI extraction"],
+        "expanded_warnings": [],
+        "steps": len(nodes),
+    }
+
+
 def _scheme(uri: str) -> str:
     if "://" not in uri:
         return "unknown"

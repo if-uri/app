@@ -18,7 +18,7 @@ from typing import Any
 from urllib.parse import parse_qs, urlparse
 
 from . import __version__
-from .flow_compile import uri2flow_available, validate_flow_compiled
+from .flow_compile import uri2flow_available, validate_flow
 from .flow_engine import dry_run_flow, dry_run_uri, expand_flow
 from .packs.loader import pack_summary
 from .packs.runtime import dispatch_local_uri, get_local_uri_runtime, local_runtime_info
@@ -589,11 +589,8 @@ def make_handler(state: RuntimeState):
             if not flow_text.strip():
                 self._send(400, {"ok": False, "error": "missing flow_text"})
                 return
-            try:
-                result = validate_flow_compiled(flow_text)
-                self._send(200, result)
-            except ImportError as exc:
-                self._send(501, {"ok": False, "error": str(exc), "hint": "pip install -e '.[packs]'"})
+            result = validate_flow(flow_text)
+            self._send(200 if result.get("ok") else 400, result)
 
         def _post_services(self, body: dict, data: dict) -> None:
             service = body.get("service") or body
