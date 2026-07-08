@@ -28,6 +28,16 @@ Published at [github.com/if-uri/app](https://github.com/if-uri/app) · [ifuri.co
 - call local or service-backed **urirun** registries through `ifuri-app urirun-call` and `/api/urirun/call`,
 - use the **Tkinter desktop** app (flows + LAN + czaty).
 
+### Autonomy (koru + twin-human)
+
+Aplikacja integruje się z **koru** autonomous loop + **urirun-twin-human**:
+
+- Zadania planfile z labelami `kvm`, `lenovo`, `signal-gui` (np. IFURI-226: wysyłka Signal na desktopie lenovo) są automatycznie delegowane do twin-human.
+- Realne komendy URI (`kvm://laptop/...`) są wykonywane i logowane.
+- Uruchomienie: `urirun start` lub `make koru-cycle`.
+- Logi widoczne w dashboardzie "Na żywo — koru (realne komendy URI)".
+- Wsparcie dla Digital Twin (osoby + grants + unblock_ledger).
+
 ## Makefile (recommended)
 
 ```bash
@@ -43,6 +53,16 @@ make chat-migrate-dry URISYS=http://192.168.188.201:8790   # po upgrade node
 make webrtc-install-pack URISYS=http://192.168.188.201:8790
 make webrtc-smoke URISYS=http://192.168.188.201:8790
 make run ARGS="urirun-info"
+```
+
+### Koru autonomy + twin-human (kvm / lenovo desktop)
+
+```bash
+make koru-cycle          # uruchom cykl z apply (używa twin-human dla ticketów kvm/lenovo)
+make koru-plan           # dry-run plan pętli
+make koru-execute-twin   # bezpośrednie wywołanie twin-human dla IFURI-226 itp.
+make koru-logs           # tail .planfile/.koru/queue.log (to co widać w panelu "Na żywo")
+make koru-status         # stan koru + otwarte tickety
 ```
 
 Zmienne: `PORT=8766`, `URISYS=http://192.168.188.201:8790`, `PYTHON=python3`
@@ -127,6 +147,18 @@ ifuri-app webrtc-smoke --endpoint http://192.168.188.201:8790
 ifuri-app discover
 ```
 
+## Autonomy & Koru (new)
+
+```bash
+urirun start                 # start koru autonomous loop (twin-human for kvm/lenovo)
+urirun start --apply
+```
+
+- Zadania z `labels: kvm,lenovo,signal-gui` (np. wysyłka Signal na desktopie Lenovo) są obsługiwane przez **urirun-twin-human**.
+- Rzeczywiste komendy URI (`kvm://laptop/...`) są wykonywane i logowane.
+- Panel "Na żywo — koru (realne komendy URI)" pokazuje co naprawdę leci na węzeł.
+- Make targets: `koru-cycle`, `koru-plan`, `koru-logs`, `koru-status`.
+
 ## Runtime API
 
 Pełna dokumentacja: **[docs/API.md](docs/API.md)** · diagram: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** · WebRTC: **[docs/WEBRTC.md](docs/WEBRTC.md)**
@@ -160,7 +192,9 @@ Override: `IFURI_HOME`, `IFURI_CHAT_STORE`
 
 ## Related ifURI projects
 
-- Runtime: [if-uri/urirun](https://github.com/if-uri/urirun)
+- Runtime: [if-uri/urirun](https://github.com/if-uri/urirun) (w tym `urirun start`, twin-human, host work/koru)
+- Koru autonomy + loop: urirun-connector-loop + urirun-connector-work
+- Twin for desktop/KVM: [urirun-twin-human](https://github.com/if-uri/if-uri/tree/main/urirun-twin-human)
 - Public docs: [if-uri/docs](https://github.com/if-uri/docs)
 - Examples and Docker/noVNC flows: [if-uri/examples](https://github.com/if-uri/examples)
 - Connector hub: [connect.ifuri.com](https://connect.ifuri.com)

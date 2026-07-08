@@ -48,6 +48,13 @@ help:
 	@echo "  wheel            build wheel to dist/"
 	@echo "  build            native platform tarball/zip"
 	@echo "  clean            remove caches and dist artifacts"
+	@echo ""
+	@echo "Koru + twin-human (kvm/lenovo desktop):"
+	@echo "  koru-cycle       uruchom cykl z apply (twin-human dla kvm ticketów + logi URI)"
+	@echo "  koru-plan        dry-run plan (pokaże co zrobi)"
+	@echo "  koru-execute-twin  bezpośrednie wywołanie twin dla IFURI-226"
+	@echo "  koru-logs        tail queue.log (to co widać w panelu Na żywo)"
+	@echo "  koru-status      stan koru + otwarte tickety"
 
 install:
 	$(PYTHON) -m pip install -e .
@@ -182,3 +189,40 @@ build:
 clean:
 	rm -rf dist/*.whl dist/*.tar.gz dist/*.zip .pytest_cache **/__pycache__
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+
+# --- Koru autonomy + twin-human for kvm/lenovo tasks (IFURI-226 style) ---
+# Po zmianach w loop + executor + twin: dla ticketów z labelami kvm/lenovo
+# cykl używa execute-via-twin-human zamiast chat-drive.
+# To sprawia, że realne komendy (kvm://laptop/...) trafiają do queue.log
+# i są widoczne w panelu "Na żywo — koru (realne komendy URI)".
+
+.PHONY: koru-cycle koru-plan koru-execute-twin koru-logs koru-status
+
+koru-cycle:
+	@echo "▶ Koru cycle (apply=true) — użyje execute-via-twin-human dla kvm/lenovo (realne kvm://laptop/... do queue.log + done z actor)"
+	$(PYTHON) -m urirun_connector_loop cycle --project . --apply || $(PYTHON) -c '\
+import sys; sys.path.insert(0, "urirun-connector-loop"); \
+from urirun_connector_loop.core import _execute_via_twin_human; \
+print(_execute_via_twin_human(".", "IFURI-226"))'
+
+koru-plan:
+	@echo "▶ Dry-run plan (bez apply)"
+	$(PYTHON) -m urirun_connector_loop cycle --project .
+
+koru-execute-twin:
+	@echo "▶ Bezpośrednie wykonanie przez twin-human (dla testu IFURI-226 lub podobnego)"
+	$(PYTHON) -c '\
+import sys; sys.path.insert(0, "urirun-connector-loop"); \
+from urirun_connector_loop.core import _execute_via_twin_human; \
+print(_execute_via_twin_human(".", "IFURI-226"))'
+
+koru-logs:
+	@echo "▶ Ostatnie linie queue.log (to co widać w panelu Na żywo)"
+	tail -30 ../.planfile/.koru/queue.log 2>/dev/null || tail -30 .planfile/.koru/queue.log 2>/dev/null || echo "brak queue.log"
+
+koru-status:
+	@echo "▶ Stan koru + queue"
+	$(PYTHON) -c '\
+from urirun.host import work_queue; \
+print(work_queue.koru_status()); \
+print("tickets open:", len([t for t in work_queue.tickets() if t.get("status")=="open"]))'
