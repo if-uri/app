@@ -126,7 +126,13 @@ make run-tauri-dev URISYS=http://192.168.188.201:8790
 ```bash
 ifuri-app app                         # Tkinter desktop
 ifuri-app init --scan-lan             # create workspace, discover urisys-node on /24
+ifuri-app serve                       # start local runtime HTTP API (no voice UI)
 ifuri-app voice --prompt "health"     # voice UI + URL z prompt=
+ifuri-app node-health --endpoint http://192.168.188.201:8790
+ifuri-app node-call uri://... --endpoint http://192.168.188.201:8790
+ifuri-app node-control-test --endpoint http://192.168.188.201:8790
+ifuri-app node-screen --endpoint http://192.168.188.201:8790 --out screen.png
+ifuri-app flow-run 08-kvm-linkedin.uri.flow.yaml --endpoint http://192.168.188.201:8790
 ifuri-app chat-channels
 ifuri-app chat-send "status" --endpoint http://192.168.188.201:8790
 ifuri-app chat-status --endpoint http://192.168.188.201:8790
@@ -134,6 +140,7 @@ ifuri-app chat-migrate --endpoint http://192.168.188.201:8790
 ifuri-app packs
 ifuri-app run tool://local/report/render --payload '{"format":"html"}' --dry-run
 ifuri-app run tool://local/report/render --payload '{"format":"html"}' --execute
+ifuri-app expand lenovo-remote/01-health-probe.uri.flow.yaml
 ifuri-app urirun-info
 ifuri-app urirun-call tool://local/report/render --registry generated/registry.json --payload '{"format":"html"}'
 ifuri-app urirun-scan . --out generated/bindings.json
@@ -141,6 +148,10 @@ ifuri-app urirun-serve --registry generated/registry.json   # HTTP /health /rout
 ifuri-app urirun-mcp tools --registry generated/registry.json   # tools|card|serve (MCP / A2A)
 ifuri-app flow-validate lenovo-remote/01-health-probe.uri.flow.yaml
 ifuri-app voice-plan "sprawdź health"
+ifuri-app voice-catalog
+ifuri-app voice-run "sprawdź health" --dry-run
+ifuri-app voice-capabilities --endpoint http://192.168.188.201:8790
+ifuri-app voice-install-packs --endpoint http://192.168.188.201:8790
 ifuri-app webrtc-capabilities --endpoint http://192.168.188.201:8790
 ifuri-app webrtc-install-pack --endpoint http://192.168.188.201:8790
 ifuri-app webrtc-smoke --endpoint http://192.168.188.201:8790
