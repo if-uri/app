@@ -256,6 +256,36 @@ workflow[name="clean"] {
   step-2: run cmd=find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true;
 }
 
+workflow[name="koru-cycle"] {
+  trigger: manual;
+  step-1: run cmd=echo "▶ Koru cycle (apply=true) — użyje execute-via-twin-human dla kvm/lenovo (realne kvm://laptop/... do queue.log + done z actor)";
+  step-2: run cmd=$(PYTHON) -m urirun_connector_loop cycle --project . --apply || $(PYTHON) -c '\;
+}
+
+workflow[name="koru-plan"] {
+  trigger: manual;
+  step-1: run cmd=echo "▶ Dry-run plan (bez apply)";
+  step-2: run cmd=$(PYTHON) -m urirun_connector_loop cycle --project .;
+}
+
+workflow[name="koru-execute-twin"] {
+  trigger: manual;
+  step-1: run cmd=echo "▶ Bezpośrednie wykonanie przez twin-human (dla testu IFURI-226 lub podobnego)";
+  step-2: run cmd=$(PYTHON) -c '\;
+}
+
+workflow[name="koru-logs"] {
+  trigger: manual;
+  step-1: run cmd=echo "▶ Ostatnie linie queue.log (to co widać w panelu Na żywo)";
+  step-2: run cmd=tail -30 ../.planfile/.koru/queue.log 2>/dev/null || tail -30 .planfile/.koru/queue.log 2>/dev/null || echo "brak queue.log";
+}
+
+workflow[name="koru-status"] {
+  trigger: manual;
+  step-1: run cmd=echo "▶ Stan koru + queue";
+  step-2: run cmd=$(PYTHON) -c '\;
+}
+
 tests {
   import: testql-scenarios/**/*.testql.toon.yaml;
 }
@@ -299,41 +329,37 @@ pfix>=0.1.60
 
 ## Call Graph
 
-*345 nodes · 491 edges · 39 modules · CC̄=4.1*
+*351 nodes · 500 edges · 41 modules · CC̄=4.1*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
-| `make_handler` *(in src.ifuri_app.runtime)* | 1 | 1 | 453 | **454** |
+| `make_handler` *(in src.ifuri_app.runtime_handlers)* | 1 | 1 | 436 | **437** |
 | `build_parser` *(in src.ifuri_app.cli)* | 1 | 1 | 174 | **175** |
 | `run_gui_smoke` *(in scripts.gui_smoke)* | 2 | 1 | 93 | **94** |
-| `channels_from_scan` *(in src.ifuri_app.chat_channels)* | 34 ⚠ | 1 | 49 | **50** |
 | `serve_http` *(in src.ifuri_app.urirun_bridge)* | 7 | 1 | 46 | **47** |
-| `normalize_packages` *(in src.ifuri_app.connect_store)* | 31 ⚠ | 1 | 41 | **42** |
-| `run_flow` *(in src.ifuri_app.runtime.RuntimeState)* | 17 ⚠ | 0 | 41 | **41** |
+| `run_flow` *(in src.ifuri_app.runtime_state.RuntimeState)* | 17 ⚠ | 0 | 41 | **41** |
 | `scan_network` *(in src.ifuri_app.network_scan)* | 17 ⚠ | 5 | 35 | **40** |
+| `print_json` *(in src.ifuri_app.cli)* | 1 | 36 | 2 | **38** |
+| `save_workspace` *(in src.ifuri_app.storage)* | 2 | 22 | 14 | **36** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/if-uri/app
-# generated in 0.15s
-# nodes: 345 | edges: 491 | modules: 39
+# generated in 0.18s
+# nodes: 351 | edges: 500 | modules: 41
 # CC̄=4.1
 
 HUBS[20]:
-  src.ifuri_app.runtime.make_handler
-    CC=1  in:1  out:453  total:454
+  src.ifuri_app.runtime_handlers.make_handler
+    CC=1  in:1  out:436  total:437
   src.ifuri_app.cli.build_parser
     CC=1  in:1  out:174  total:175
   scripts.gui_smoke.run_gui_smoke
     CC=2  in:1  out:93  total:94
-  src.ifuri_app.chat_channels.channels_from_scan
-    CC=34  in:1  out:49  total:50
   src.ifuri_app.urirun_bridge.serve_http
     CC=7  in:1  out:46  total:47
-  src.ifuri_app.connect_store.normalize_packages
-    CC=31  in:1  out:41  total:42
-  src.ifuri_app.runtime.RuntimeState.run_flow
+  src.ifuri_app.runtime_state.RuntimeState.run_flow
     CC=17  in:0  out:41  total:41
   src.ifuri_app.network_scan.scan_network
     CC=17  in:5  out:35  total:40
@@ -341,26 +367,30 @@ HUBS[20]:
     CC=1  in:36  out:2  total:38
   src.ifuri_app.storage.save_workspace
     CC=2  in:22  out:14  total:36
+  src.ifuri_app.chat_channels.send_chat_message
+    CC=18  in:2  out:33  total:35
   src.ifuri_app.storage.load_workspace
     CC=3  in:17  out:18  total:35
-  src.ifuri_app.chat_channels.send_chat_message
-    CC=18  in:1  out:33  total:34
+  src.ifuri_app.connect_store._normalize_package_item
+    CC=25  in:1  out:33  total:34
   src.ifuri_app.voice_pipeline.run_voice_command
     CC=23  in:3  out:30  total:33
+  src.ifuri_app.chat_channels.send_chat_message_routed
+    CC=19  in:3  out:28  total:31
+  src.ifuri_app.remote_screen.probe_remote_control
+    CC=7  in:4  out:27  total:31
   src.ifuri_app.discovery.discover
     CC=9  in:2  out:29  total:31
-  src.ifuri_app.remote_screen.probe_remote_control
-    CC=7  in:4  out:26  total:30
-  src.ifuri_app.chat_channels.send_chat_message_routed
-    CC=17  in:3  out:25  total:28
   src.ifuri_app.chat_channels.migrate_local_chat_to_urisys
     CC=16  in:2  out:26  total:28
   src.ifuri_app.remote_screen.capture_remote_screen
-    CC=11  in:5  out:22  total:27
+    CC=11  in:5  out:23  total:28
   src.ifuri_app.flow_compile.expand_flow_compiled
     CC=15  in:1  out:26  total:27
   src.ifuri_app.voice_planner.load_flow_catalog
     CC=13  in:5  out:21  total:26
+  src.ifuri_app.runtime_state.RuntimeState.call_uri
+    CC=11  in:0  out:25  total:25
 
 MODULES:
   packages.ifuri-bridge.handlers.urisys_call  [3 funcs]
@@ -388,17 +418,17 @@ MODULES:
     main  CC=2  out:9
     parse_args  CC=1  out:6
     run_gui_smoke  CC=2  out:93
-  src.ifuri_app.chat_channels  [15 funcs]
+  src.ifuri_app.chat_channels  [20 funcs]
+    _channel_id  CC=1  out:1
     _format_json_reply  CC=1  out:1
     _format_voice_reply  CC=16  out:23
+    _ifuri_peer_channels  CC=11  out:17
     _local_chat_store  CC=1  out:1
     _payload_for_scheme  CC=4  out:0
+    _router_unreachable  CC=4  out:5
+    _service_channels  CC=11  out:14
     _urisys_chat_unavailable  CC=6  out:7
-    channels_from_scan  CC=34  out:49
-    fetch_chat_channel_index  CC=3  out:8
-    fetch_chat_history  CC=9  out:18
-    list_chat_channels  CC=2  out:7
-    migrate_local_chat_to_urisys  CC=16  out:26
+    _urisys_node_channels  CC=7  out:10
   src.ifuri_app.chat_store  [2 funcs]
     __init__  CC=2  out:3
     chat_store_path  CC=2  out:6
@@ -413,13 +443,15 @@ MODULES:
     cmd_expand  CC=1  out:4
     cmd_flow_run  CC=2  out:3
     cmd_flow_validate  CC=1  out:4
-  src.ifuri_app.connect_store  [7 funcs]
+  src.ifuri_app.connect_store  [9 funcs]
     _normalize_install  CC=6  out:7
+    _normalize_package_item  CC=25  out:33
+    _version_of  CC=4  out:5
     catalog_url  CC=2  out:1
     fetch_catalog  CC=6  out:11
     install_command  CC=5  out:4
     local_registry_status  CC=5  out:12
-    normalize_packages  CC=31  out:41
+    normalize_packages  CC=8  out:7
     payload_form_fields  CC=8  out:17
   src.ifuri_app.connectors  [5 funcs]
     _detail  CC=5  out:5
@@ -431,11 +463,12 @@ MODULES:
     _loop  CC=9  out:16
     discover  CC=9  out:29
     local_descriptor  CC=5  out:12
-  src.ifuri_app.flow_compile  [5 funcs]
+  src.ifuri_app.flow_compile  [6 funcs]
     _parse_flow_input  CC=12  out:11
     expand_flow_compiled  CC=15  out:26
     flow_steps_from_document  CC=11  out:11
     uri2flow_available  CC=2  out:0
+    validate_flow  CC=8  out:13
     validate_flow_compiled  CC=3  out:6
   src.ifuri_app.flow_engine  [10 funcs]
     _legacy_expand_flow  CC=4  out:5
@@ -451,7 +484,7 @@ MODULES:
   src.ifuri_app.flow_runner  [4 funcs]
     examples_root  CC=4  out:9
     load_flow_steps  CC=3  out:3
-    resolve_flow_path  CC=4  out:8
+    resolve_flow_path  CC=8  out:13
     run_flow_file  CC=9  out:14
   src.ifuri_app.gui  [24 funcs]
     _finish  CC=2  out:3
@@ -501,22 +534,29 @@ MODULES:
     packages_dir  CC=1  out:1
     repo_root  CC=1  out:1
     web_dir  CC=1  out:1
-  src.ifuri_app.remote_screen  [4 funcs]
-    capture_remote_screen  CC=11  out:22
-    probe_remote_control  CC=7  out:26
+  src.ifuri_app.remote_screen  [5 funcs]
+    capture_remote_screen  CC=11  out:23
+    probe_remote_control  CC=7  out:27
+    resolve_node_id  CC=10  out:8
     screen_uri  CC=2  out:0
     unwrap_result  CC=5  out:4
-  src.ifuri_app.runtime  [13 funcs]
+  src.ifuri_app.runtime  [1 funcs]
     __init__  CC=1  out:4
-    call_uri  CC=11  out:25
-    health  CC=2  out:17
-    load  CC=2  out:4
-    run_flow  CC=17  out:41
-    _load_urirun_policy  CC=5  out:6
+  src.ifuri_app.runtime_bind  [5 funcs]
     _port_available  CC=2  out:3
     _port_listeners  CC=4  out:4
     bind_runtime_server  CC=3  out:4
     find_free_port  CC=3  out:4
+    format_port_in_use_error  CC=3  out:4
+  src.ifuri_app.runtime_handlers  [2 funcs]
+    json_bytes  CC=1  out:2
+    make_handler  CC=1  out:436
+  src.ifuri_app.runtime_state  [5 funcs]
+    call_uri  CC=11  out:25
+    health  CC=2  out:17
+    load  CC=2  out:4
+    run_flow  CC=17  out:41
+    load_urirun_policy  CC=5  out:6
   src.ifuri_app.sample_data  [1 funcs]
     default_workspace  CC=3  out:4
   src.ifuri_app.storage  [8 funcs]
@@ -528,17 +568,17 @@ MODULES:
     now_iso  CC=1  out:2
     save_workspace  CC=2  out:14
     workspace_path  CC=1  out:1
-  src.ifuri_app.urirun_bridge  [14 funcs]
+  src.ifuri_app.urirun_bridge  [15 funcs]
+    _is_route_not_found  CC=7  out:10
     a2a_card  CC=6  out:6
     call_urirun  CC=9  out:7
     default_urirun_registry  CC=5  out:5
-    dispatch_local  CC=10  out:7
+    dispatch_local  CC=11  out:8
     list_routes  CC=6  out:6
     load_registry  CC=2  out:4
     mcp_tools  CC=6  out:6
     parse_json_object  CC=5  out:4
     registry_summary  CC=9  out:18
-    scan_project  CC=10  out:13
   src.ifuri_app.urisys_client  [5 funcs]
     __init__  CC=2  out:2
     default_node_endpoint  CC=6  out:7
@@ -562,17 +602,12 @@ MODULES:
     node_has_llm  CC=4  out:6
     plan_voice_command  CC=11  out:14
     plan_with_catalog  CC=11  out:15
-    plan_with_llm  CC=14  out:19
+    plan_with_llm  CC=13  out:19
     plan_with_regex  CC=3  out:2
     voice_planner_mode  CC=2  out:3
   src.ifuri_app.web.i18n  [2 funcs]
     t  CC=4  out:1
     val  CC=1  out:0
-  src.ifuri_app.web.page.handlers  [4 funcs]
-    get_url_state  CC=10  out:2
-    set_url_state  CC=9  out:2
-    toggle_view  CC=9  out:4
-    urlState  CC=3  out:0
   src.ifuri_app.web.theme  [5 funcs]
     applyLang  CC=2  out:0
     applyTheme  CC=2  out:2
@@ -589,7 +624,7 @@ MODULES:
     set  CC=1  out:1
     withParams  CC=9  out:6
     write  CC=8  out:9
-  src.ifuri_app.web.voice  [74 funcs]
+  src.ifuri_app.web.voice  [73 funcs]
     I  CC=1  out:0
     SR  CC=4  out:2
     T  CC=1  out:0
@@ -616,41 +651,53 @@ MODULES:
     webrtc_capabilities  CC=2  out:3
     webrtc_pack_install_hint  CC=2  out:1
     webrtc_smoke  CC=6  out:14
-  src.ifuri_app.webrtc_signal  [4 funcs]
+  src.ifuri_app.webrtc_signal  [5 funcs]
     _purge_room  CC=3  out:4
     local_peer_url  CC=4  out:2
     poll_signals  CC=10  out:9
     post_signal  CC=9  out:12
+    webrtc_room_id  CC=1  out:3
 
 EDGES:
+  packages.ifuri-voice.handlers.plan.plan → src.ifuri_app.voice_planner.plan_voice_command
   packages.ifuri-page.handlers.get_url_state → packages.ifuri-page.handlers.urlState
   packages.ifuri-page.handlers.set_url_state → packages.ifuri-page.handlers.urlState
   packages.ifuri-page.handlers.toggle_view → packages.ifuri-page.handlers.urlState
-  src.ifuri_app.url_params.voice_url → src.ifuri_app.url_params.voice_query
-  src.ifuri_app.connect_store.normalize_packages → src.ifuri_app.connect_store._normalize_install
-  src.ifuri_app.connect_store.fetch_catalog → src.ifuri_app.connect_store.catalog_url
-  src.ifuri_app.connect_store.fetch_catalog → src.ifuri_app.connect_store.normalize_packages
-  src.ifuri_app.connect_store.local_registry_status → src.ifuri_app.urirun_bridge.urirun_info
-  src.ifuri_app.connect_store.local_registry_status → src.ifuri_app.urirun_bridge.default_urirun_registry
-  src.ifuri_app.connect_store.local_registry_status → src.ifuri_app.urirun_bridge.registry_summary
-  src.ifuri_app.connect_store.payload_form_fields → src.ifuri_app.web.url_state.set
   packages.ifuri-bridge.handlers.urisys_call.urisys_call → packages.ifuri-bridge.handlers.urisys_call._endpoint
   packages.ifuri-bridge.handlers.urisys_call.node_health → packages.ifuri-bridge.handlers.urisys_call._endpoint
-  src.ifuri_app.paths.web_dir → src.ifuri_app.paths.app_package_dir
-  src.ifuri_app.paths.assets_dir → src.ifuri_app.paths.app_package_dir
-  src.ifuri_app.paths.repo_root → src.ifuri_app.paths.app_package_dir
-  src.ifuri_app.paths.packages_dir → src.ifuri_app.paths.repo_root
   src.ifuri_app.webrtc_signal.local_peer_url → src.ifuri_app.network_scan._local_ipv4
   src.ifuri_app.webrtc_signal.post_signal → src.ifuri_app.webrtc_signal._purge_room
   src.ifuri_app.webrtc_signal.poll_signals → src.ifuri_app.webrtc_signal._purge_room
-  src.ifuri_app.flow_compile.expand_flow_compiled → src.ifuri_app.flow_compile._parse_flow_input
-  src.ifuri_app.flow_compile.expand_flow_compiled → src.ifuri_app.flow_compile.uri2flow_available
-  src.ifuri_app.flow_compile.flow_steps_from_document → src.ifuri_app.flow_compile.uri2flow_available
-  src.ifuri_app.flow_compile.flow_steps_from_document → src.ifuri_app.flow_compile._parse_flow_input
-  src.ifuri_app.flow_compile.flow_steps_from_document → src.ifuri_app.flow_engine.extract_steps
-  src.ifuri_app.flow_compile.validate_flow_compiled → src.ifuri_app.flow_compile._parse_flow_input
-  src.ifuri_app.flow_compile.validate_flow_compiled → src.ifuri_app.flow_compile.uri2flow_available
-  packages.ifuri-voice.handlers.plan.plan → src.ifuri_app.voice_planner.plan_voice_command
+  src.ifuri_app.gui.IfuriDesktop.__init__ → src.ifuri_app.storage.load_workspace
+  src.ifuri_app.gui.IfuriDesktop._set_app_icon → src.ifuri_app.paths.assets_dir
+  src.ifuri_app.gui.IfuriDesktop._connector_endpoints → src.ifuri_app.web.url_state.set
+  src.ifuri_app.gui.IfuriDesktop.refresh_connectors → src.ifuri_app.connectors.fetch_node_routes
+  src.ifuri_app.gui.IfuriDesktop.refresh_catalog → src.ifuri_app.connect_store.fetch_catalog
+  src.ifuri_app.gui.IfuriDesktop._on_package_select → src.ifuri_app.connect_store.install_command
+  src.ifuri_app.gui.IfuriDesktop._render_payload_form → packages.ifuri-page.handlers.next
+  src.ifuri_app.gui.IfuriDesktop._render_payload_form → src.ifuri_app.connect_store.payload_form_fields
+  src.ifuri_app.gui.IfuriDesktop.install_selected_connector → src.ifuri_app.connect_store.install_command
+  src.ifuri_app.gui.IfuriDesktop.refresh_registry_status → src.ifuri_app.connect_store.local_registry_status
+  src.ifuri_app.gui.IfuriDesktop.save_current_flow → src.ifuri_app.storage.add_event
+  src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow → src.ifuri_app.flow_engine.dry_run_flow
+  src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow → src.ifuri_app.storage.add_event
+  src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow → src.ifuri_app.storage.save_workspace
+  src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow → src.ifuri_app.flow_engine.as_pretty_json
+  src.ifuri_app.gui.IfuriDesktop.add_service → src.ifuri_app.storage.add_event
+  src.ifuri_app.gui.IfuriDesktop.start_runtime → src.ifuri_app.storage.save_workspace
+  src.ifuri_app.gui.IfuriDesktop.open_voice_ui → src.ifuri_app.url_params.voice_url
+  src.ifuri_app.gui.IfuriDesktop.discover_peers → src.ifuri_app.network_scan.scan_network
+  src.ifuri_app.gui.IfuriDesktop.discover_peers → src.ifuri_app.storage.load_workspace
+  src.ifuri_app.gui.IfuriDesktop.discover_peers → src.ifuri_app.flow_engine.as_pretty_json
+  src.ifuri_app.gui.IfuriDesktop._novnc_precheck → src.ifuri_app.novnc_demo.demo_dir
+  src.ifuri_app.gui.IfuriDesktop._novnc_precheck → src.ifuri_app.novnc_demo.docker_available
+  src.ifuri_app.gui.IfuriDesktop._run_compose → src.ifuri_app.novnc_demo.compose_args
+  src.ifuri_app.gui.IfuriDesktop.open_novnc_dashboard → src.ifuri_app.novnc_demo.dashboard_url
+  src.ifuri_app.gui.IfuriDesktop._apply_node_endpoint → src.ifuri_app.storage.save_workspace
+  src.ifuri_app.gui.IfuriDesktop.refresh_log → src.ifuri_app.storage.load_workspace
+  src.ifuri_app.gui.IfuriDesktop.save_all → src.ifuri_app.storage.save_workspace
+  src.ifuri_app.gui.FirstRunWizard._scan → src.ifuri_app.network_scan.scan_network
+  src.ifuri_app.gui.FirstRunWizard._finish → src.ifuri_app.storage.save_workspace
   src.ifuri_app.flow_engine.expand_flow → src.ifuri_app.flow_compile.uri2flow_available
   src.ifuri_app.flow_engine.expand_flow → src.ifuri_app.flow_engine._legacy_expand_flow
   src.ifuri_app.flow_engine.expand_flow → src.ifuri_app.flow_compile.expand_flow_compiled
@@ -662,17 +709,6 @@ EDGES:
   src.ifuri_app.flow_engine.dry_run_uri → src.ifuri_app.flow_engine.classify_route
   src.ifuri_app.flow_engine.dry_run_flow → src.ifuri_app.flow_engine.expand_flow
   src.ifuri_app.flow_engine.dry_run_flow → src.ifuri_app.flow_engine.dry_run_uri
-  src.ifuri_app.webrtc_pipeline.webrtc_capabilities → src.ifuri_app.urisys_client.node_webrtc_available
-  src.ifuri_app.webrtc_pipeline.webrtc_capabilities → src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint
-  src.ifuri_app.webrtc_pipeline.install_webrtc_pack → src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint
-  src.ifuri_app.webrtc_pipeline.install_webrtc_pack → src.ifuri_app.flow_runner.run_flow_file
-  src.ifuri_app.webrtc_pipeline.install_webrtc_pack → src.ifuri_app.urisys_client.node_webrtc_available
-  src.ifuri_app.webrtc_pipeline.webrtc_smoke → src.ifuri_app.urisys_client.node_webrtc_available
-  src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint → src.ifuri_app.urisys_client.node_webrtc_available
-  src.ifuri_app.chat_store.chat_store_path → src.ifuri_app.storage.app_home
-  src.ifuri_app.chat_store.LocalChatStore.__init__ → src.ifuri_app.storage.ensure_home
-  src.ifuri_app.chat_store.LocalChatStore.__init__ → src.ifuri_app.chat_store.chat_store_path
-  src.ifuri_app.urisys_client.default_node_endpoint → src.ifuri_app.storage.load_workspace
 ```
 
 ## Test Contracts
@@ -698,24 +734,20 @@ EDGES:
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/if-uri/app
-# generated in 0.15s
-# nodes: 345 | edges: 491 | modules: 39
+# generated in 0.18s
+# nodes: 351 | edges: 500 | modules: 41
 # CC̄=4.1
 
 HUBS[20]:
-  src.ifuri_app.runtime.make_handler
-    CC=1  in:1  out:453  total:454
+  src.ifuri_app.runtime_handlers.make_handler
+    CC=1  in:1  out:436  total:437
   src.ifuri_app.cli.build_parser
     CC=1  in:1  out:174  total:175
   scripts.gui_smoke.run_gui_smoke
     CC=2  in:1  out:93  total:94
-  src.ifuri_app.chat_channels.channels_from_scan
-    CC=34  in:1  out:49  total:50
   src.ifuri_app.urirun_bridge.serve_http
     CC=7  in:1  out:46  total:47
-  src.ifuri_app.connect_store.normalize_packages
-    CC=31  in:1  out:41  total:42
-  src.ifuri_app.runtime.RuntimeState.run_flow
+  src.ifuri_app.runtime_state.RuntimeState.run_flow
     CC=17  in:0  out:41  total:41
   src.ifuri_app.network_scan.scan_network
     CC=17  in:5  out:35  total:40
@@ -723,26 +755,30 @@ HUBS[20]:
     CC=1  in:36  out:2  total:38
   src.ifuri_app.storage.save_workspace
     CC=2  in:22  out:14  total:36
+  src.ifuri_app.chat_channels.send_chat_message
+    CC=18  in:2  out:33  total:35
   src.ifuri_app.storage.load_workspace
     CC=3  in:17  out:18  total:35
-  src.ifuri_app.chat_channels.send_chat_message
-    CC=18  in:1  out:33  total:34
+  src.ifuri_app.connect_store._normalize_package_item
+    CC=25  in:1  out:33  total:34
   src.ifuri_app.voice_pipeline.run_voice_command
     CC=23  in:3  out:30  total:33
+  src.ifuri_app.chat_channels.send_chat_message_routed
+    CC=19  in:3  out:28  total:31
+  src.ifuri_app.remote_screen.probe_remote_control
+    CC=7  in:4  out:27  total:31
   src.ifuri_app.discovery.discover
     CC=9  in:2  out:29  total:31
-  src.ifuri_app.remote_screen.probe_remote_control
-    CC=7  in:4  out:26  total:30
-  src.ifuri_app.chat_channels.send_chat_message_routed
-    CC=17  in:3  out:25  total:28
   src.ifuri_app.chat_channels.migrate_local_chat_to_urisys
     CC=16  in:2  out:26  total:28
   src.ifuri_app.remote_screen.capture_remote_screen
-    CC=11  in:5  out:22  total:27
+    CC=11  in:5  out:23  total:28
   src.ifuri_app.flow_compile.expand_flow_compiled
     CC=15  in:1  out:26  total:27
   src.ifuri_app.voice_planner.load_flow_catalog
     CC=13  in:5  out:21  total:26
+  src.ifuri_app.runtime_state.RuntimeState.call_uri
+    CC=11  in:0  out:25  total:25
 
 MODULES:
   packages.ifuri-bridge.handlers.urisys_call  [3 funcs]
@@ -770,17 +806,17 @@ MODULES:
     main  CC=2  out:9
     parse_args  CC=1  out:6
     run_gui_smoke  CC=2  out:93
-  src.ifuri_app.chat_channels  [15 funcs]
+  src.ifuri_app.chat_channels  [20 funcs]
+    _channel_id  CC=1  out:1
     _format_json_reply  CC=1  out:1
     _format_voice_reply  CC=16  out:23
+    _ifuri_peer_channels  CC=11  out:17
     _local_chat_store  CC=1  out:1
     _payload_for_scheme  CC=4  out:0
+    _router_unreachable  CC=4  out:5
+    _service_channels  CC=11  out:14
     _urisys_chat_unavailable  CC=6  out:7
-    channels_from_scan  CC=34  out:49
-    fetch_chat_channel_index  CC=3  out:8
-    fetch_chat_history  CC=9  out:18
-    list_chat_channels  CC=2  out:7
-    migrate_local_chat_to_urisys  CC=16  out:26
+    _urisys_node_channels  CC=7  out:10
   src.ifuri_app.chat_store  [2 funcs]
     __init__  CC=2  out:3
     chat_store_path  CC=2  out:6
@@ -795,13 +831,15 @@ MODULES:
     cmd_expand  CC=1  out:4
     cmd_flow_run  CC=2  out:3
     cmd_flow_validate  CC=1  out:4
-  src.ifuri_app.connect_store  [7 funcs]
+  src.ifuri_app.connect_store  [9 funcs]
     _normalize_install  CC=6  out:7
+    _normalize_package_item  CC=25  out:33
+    _version_of  CC=4  out:5
     catalog_url  CC=2  out:1
     fetch_catalog  CC=6  out:11
     install_command  CC=5  out:4
     local_registry_status  CC=5  out:12
-    normalize_packages  CC=31  out:41
+    normalize_packages  CC=8  out:7
     payload_form_fields  CC=8  out:17
   src.ifuri_app.connectors  [5 funcs]
     _detail  CC=5  out:5
@@ -813,11 +851,12 @@ MODULES:
     _loop  CC=9  out:16
     discover  CC=9  out:29
     local_descriptor  CC=5  out:12
-  src.ifuri_app.flow_compile  [5 funcs]
+  src.ifuri_app.flow_compile  [6 funcs]
     _parse_flow_input  CC=12  out:11
     expand_flow_compiled  CC=15  out:26
     flow_steps_from_document  CC=11  out:11
     uri2flow_available  CC=2  out:0
+    validate_flow  CC=8  out:13
     validate_flow_compiled  CC=3  out:6
   src.ifuri_app.flow_engine  [10 funcs]
     _legacy_expand_flow  CC=4  out:5
@@ -833,7 +872,7 @@ MODULES:
   src.ifuri_app.flow_runner  [4 funcs]
     examples_root  CC=4  out:9
     load_flow_steps  CC=3  out:3
-    resolve_flow_path  CC=4  out:8
+    resolve_flow_path  CC=8  out:13
     run_flow_file  CC=9  out:14
   src.ifuri_app.gui  [24 funcs]
     _finish  CC=2  out:3
@@ -883,22 +922,29 @@ MODULES:
     packages_dir  CC=1  out:1
     repo_root  CC=1  out:1
     web_dir  CC=1  out:1
-  src.ifuri_app.remote_screen  [4 funcs]
-    capture_remote_screen  CC=11  out:22
-    probe_remote_control  CC=7  out:26
+  src.ifuri_app.remote_screen  [5 funcs]
+    capture_remote_screen  CC=11  out:23
+    probe_remote_control  CC=7  out:27
+    resolve_node_id  CC=10  out:8
     screen_uri  CC=2  out:0
     unwrap_result  CC=5  out:4
-  src.ifuri_app.runtime  [13 funcs]
+  src.ifuri_app.runtime  [1 funcs]
     __init__  CC=1  out:4
-    call_uri  CC=11  out:25
-    health  CC=2  out:17
-    load  CC=2  out:4
-    run_flow  CC=17  out:41
-    _load_urirun_policy  CC=5  out:6
+  src.ifuri_app.runtime_bind  [5 funcs]
     _port_available  CC=2  out:3
     _port_listeners  CC=4  out:4
     bind_runtime_server  CC=3  out:4
     find_free_port  CC=3  out:4
+    format_port_in_use_error  CC=3  out:4
+  src.ifuri_app.runtime_handlers  [2 funcs]
+    json_bytes  CC=1  out:2
+    make_handler  CC=1  out:436
+  src.ifuri_app.runtime_state  [5 funcs]
+    call_uri  CC=11  out:25
+    health  CC=2  out:17
+    load  CC=2  out:4
+    run_flow  CC=17  out:41
+    load_urirun_policy  CC=5  out:6
   src.ifuri_app.sample_data  [1 funcs]
     default_workspace  CC=3  out:4
   src.ifuri_app.storage  [8 funcs]
@@ -910,17 +956,17 @@ MODULES:
     now_iso  CC=1  out:2
     save_workspace  CC=2  out:14
     workspace_path  CC=1  out:1
-  src.ifuri_app.urirun_bridge  [14 funcs]
+  src.ifuri_app.urirun_bridge  [15 funcs]
+    _is_route_not_found  CC=7  out:10
     a2a_card  CC=6  out:6
     call_urirun  CC=9  out:7
     default_urirun_registry  CC=5  out:5
-    dispatch_local  CC=10  out:7
+    dispatch_local  CC=11  out:8
     list_routes  CC=6  out:6
     load_registry  CC=2  out:4
     mcp_tools  CC=6  out:6
     parse_json_object  CC=5  out:4
     registry_summary  CC=9  out:18
-    scan_project  CC=10  out:13
   src.ifuri_app.urisys_client  [5 funcs]
     __init__  CC=2  out:2
     default_node_endpoint  CC=6  out:7
@@ -944,17 +990,12 @@ MODULES:
     node_has_llm  CC=4  out:6
     plan_voice_command  CC=11  out:14
     plan_with_catalog  CC=11  out:15
-    plan_with_llm  CC=14  out:19
+    plan_with_llm  CC=13  out:19
     plan_with_regex  CC=3  out:2
     voice_planner_mode  CC=2  out:3
   src.ifuri_app.web.i18n  [2 funcs]
     t  CC=4  out:1
     val  CC=1  out:0
-  src.ifuri_app.web.page.handlers  [4 funcs]
-    get_url_state  CC=10  out:2
-    set_url_state  CC=9  out:2
-    toggle_view  CC=9  out:4
-    urlState  CC=3  out:0
   src.ifuri_app.web.theme  [5 funcs]
     applyLang  CC=2  out:0
     applyTheme  CC=2  out:2
@@ -971,7 +1012,7 @@ MODULES:
     set  CC=1  out:1
     withParams  CC=9  out:6
     write  CC=8  out:9
-  src.ifuri_app.web.voice  [74 funcs]
+  src.ifuri_app.web.voice  [73 funcs]
     I  CC=1  out:0
     SR  CC=4  out:2
     T  CC=1  out:0
@@ -998,41 +1039,53 @@ MODULES:
     webrtc_capabilities  CC=2  out:3
     webrtc_pack_install_hint  CC=2  out:1
     webrtc_smoke  CC=6  out:14
-  src.ifuri_app.webrtc_signal  [4 funcs]
+  src.ifuri_app.webrtc_signal  [5 funcs]
     _purge_room  CC=3  out:4
     local_peer_url  CC=4  out:2
     poll_signals  CC=10  out:9
     post_signal  CC=9  out:12
+    webrtc_room_id  CC=1  out:3
 
 EDGES:
+  packages.ifuri-voice.handlers.plan.plan → src.ifuri_app.voice_planner.plan_voice_command
   packages.ifuri-page.handlers.get_url_state → packages.ifuri-page.handlers.urlState
   packages.ifuri-page.handlers.set_url_state → packages.ifuri-page.handlers.urlState
   packages.ifuri-page.handlers.toggle_view → packages.ifuri-page.handlers.urlState
-  src.ifuri_app.url_params.voice_url → src.ifuri_app.url_params.voice_query
-  src.ifuri_app.connect_store.normalize_packages → src.ifuri_app.connect_store._normalize_install
-  src.ifuri_app.connect_store.fetch_catalog → src.ifuri_app.connect_store.catalog_url
-  src.ifuri_app.connect_store.fetch_catalog → src.ifuri_app.connect_store.normalize_packages
-  src.ifuri_app.connect_store.local_registry_status → src.ifuri_app.urirun_bridge.urirun_info
-  src.ifuri_app.connect_store.local_registry_status → src.ifuri_app.urirun_bridge.default_urirun_registry
-  src.ifuri_app.connect_store.local_registry_status → src.ifuri_app.urirun_bridge.registry_summary
-  src.ifuri_app.connect_store.payload_form_fields → src.ifuri_app.web.url_state.set
   packages.ifuri-bridge.handlers.urisys_call.urisys_call → packages.ifuri-bridge.handlers.urisys_call._endpoint
   packages.ifuri-bridge.handlers.urisys_call.node_health → packages.ifuri-bridge.handlers.urisys_call._endpoint
-  src.ifuri_app.paths.web_dir → src.ifuri_app.paths.app_package_dir
-  src.ifuri_app.paths.assets_dir → src.ifuri_app.paths.app_package_dir
-  src.ifuri_app.paths.repo_root → src.ifuri_app.paths.app_package_dir
-  src.ifuri_app.paths.packages_dir → src.ifuri_app.paths.repo_root
   src.ifuri_app.webrtc_signal.local_peer_url → src.ifuri_app.network_scan._local_ipv4
   src.ifuri_app.webrtc_signal.post_signal → src.ifuri_app.webrtc_signal._purge_room
   src.ifuri_app.webrtc_signal.poll_signals → src.ifuri_app.webrtc_signal._purge_room
-  src.ifuri_app.flow_compile.expand_flow_compiled → src.ifuri_app.flow_compile._parse_flow_input
-  src.ifuri_app.flow_compile.expand_flow_compiled → src.ifuri_app.flow_compile.uri2flow_available
-  src.ifuri_app.flow_compile.flow_steps_from_document → src.ifuri_app.flow_compile.uri2flow_available
-  src.ifuri_app.flow_compile.flow_steps_from_document → src.ifuri_app.flow_compile._parse_flow_input
-  src.ifuri_app.flow_compile.flow_steps_from_document → src.ifuri_app.flow_engine.extract_steps
-  src.ifuri_app.flow_compile.validate_flow_compiled → src.ifuri_app.flow_compile._parse_flow_input
-  src.ifuri_app.flow_compile.validate_flow_compiled → src.ifuri_app.flow_compile.uri2flow_available
-  packages.ifuri-voice.handlers.plan.plan → src.ifuri_app.voice_planner.plan_voice_command
+  src.ifuri_app.gui.IfuriDesktop.__init__ → src.ifuri_app.storage.load_workspace
+  src.ifuri_app.gui.IfuriDesktop._set_app_icon → src.ifuri_app.paths.assets_dir
+  src.ifuri_app.gui.IfuriDesktop._connector_endpoints → src.ifuri_app.web.url_state.set
+  src.ifuri_app.gui.IfuriDesktop.refresh_connectors → src.ifuri_app.connectors.fetch_node_routes
+  src.ifuri_app.gui.IfuriDesktop.refresh_catalog → src.ifuri_app.connect_store.fetch_catalog
+  src.ifuri_app.gui.IfuriDesktop._on_package_select → src.ifuri_app.connect_store.install_command
+  src.ifuri_app.gui.IfuriDesktop._render_payload_form → packages.ifuri-page.handlers.next
+  src.ifuri_app.gui.IfuriDesktop._render_payload_form → src.ifuri_app.connect_store.payload_form_fields
+  src.ifuri_app.gui.IfuriDesktop.install_selected_connector → src.ifuri_app.connect_store.install_command
+  src.ifuri_app.gui.IfuriDesktop.refresh_registry_status → src.ifuri_app.connect_store.local_registry_status
+  src.ifuri_app.gui.IfuriDesktop.save_current_flow → src.ifuri_app.storage.add_event
+  src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow → src.ifuri_app.flow_engine.dry_run_flow
+  src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow → src.ifuri_app.storage.add_event
+  src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow → src.ifuri_app.storage.save_workspace
+  src.ifuri_app.gui.IfuriDesktop.dry_run_current_flow → src.ifuri_app.flow_engine.as_pretty_json
+  src.ifuri_app.gui.IfuriDesktop.add_service → src.ifuri_app.storage.add_event
+  src.ifuri_app.gui.IfuriDesktop.start_runtime → src.ifuri_app.storage.save_workspace
+  src.ifuri_app.gui.IfuriDesktop.open_voice_ui → src.ifuri_app.url_params.voice_url
+  src.ifuri_app.gui.IfuriDesktop.discover_peers → src.ifuri_app.network_scan.scan_network
+  src.ifuri_app.gui.IfuriDesktop.discover_peers → src.ifuri_app.storage.load_workspace
+  src.ifuri_app.gui.IfuriDesktop.discover_peers → src.ifuri_app.flow_engine.as_pretty_json
+  src.ifuri_app.gui.IfuriDesktop._novnc_precheck → src.ifuri_app.novnc_demo.demo_dir
+  src.ifuri_app.gui.IfuriDesktop._novnc_precheck → src.ifuri_app.novnc_demo.docker_available
+  src.ifuri_app.gui.IfuriDesktop._run_compose → src.ifuri_app.novnc_demo.compose_args
+  src.ifuri_app.gui.IfuriDesktop.open_novnc_dashboard → src.ifuri_app.novnc_demo.dashboard_url
+  src.ifuri_app.gui.IfuriDesktop._apply_node_endpoint → src.ifuri_app.storage.save_workspace
+  src.ifuri_app.gui.IfuriDesktop.refresh_log → src.ifuri_app.storage.load_workspace
+  src.ifuri_app.gui.IfuriDesktop.save_all → src.ifuri_app.storage.save_workspace
+  src.ifuri_app.gui.FirstRunWizard._scan → src.ifuri_app.network_scan.scan_network
+  src.ifuri_app.gui.FirstRunWizard._finish → src.ifuri_app.storage.save_workspace
   src.ifuri_app.flow_engine.expand_flow → src.ifuri_app.flow_compile.uri2flow_available
   src.ifuri_app.flow_engine.expand_flow → src.ifuri_app.flow_engine._legacy_expand_flow
   src.ifuri_app.flow_engine.expand_flow → src.ifuri_app.flow_compile.expand_flow_compiled
@@ -1044,151 +1097,137 @@ EDGES:
   src.ifuri_app.flow_engine.dry_run_uri → src.ifuri_app.flow_engine.classify_route
   src.ifuri_app.flow_engine.dry_run_flow → src.ifuri_app.flow_engine.expand_flow
   src.ifuri_app.flow_engine.dry_run_flow → src.ifuri_app.flow_engine.dry_run_uri
-  src.ifuri_app.webrtc_pipeline.webrtc_capabilities → src.ifuri_app.urisys_client.node_webrtc_available
-  src.ifuri_app.webrtc_pipeline.webrtc_capabilities → src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint
-  src.ifuri_app.webrtc_pipeline.install_webrtc_pack → src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint
-  src.ifuri_app.webrtc_pipeline.install_webrtc_pack → src.ifuri_app.flow_runner.run_flow_file
-  src.ifuri_app.webrtc_pipeline.install_webrtc_pack → src.ifuri_app.urisys_client.node_webrtc_available
-  src.ifuri_app.webrtc_pipeline.webrtc_smoke → src.ifuri_app.urisys_client.node_webrtc_available
-  src.ifuri_app.webrtc_pipeline.webrtc_pack_install_hint → src.ifuri_app.urisys_client.node_webrtc_available
-  src.ifuri_app.chat_store.chat_store_path → src.ifuri_app.storage.app_home
-  src.ifuri_app.chat_store.LocalChatStore.__init__ → src.ifuri_app.storage.ensure_home
-  src.ifuri_app.chat_store.LocalChatStore.__init__ → src.ifuri_app.chat_store.chat_store_path
-  src.ifuri_app.urisys_client.default_node_endpoint → src.ifuri_app.storage.load_workspace
 ```
 
 ### Code Analysis (`project/analysis.toon.yaml`)
 
 ```toon markpact:analysis path=project/analysis.toon.yaml
-# code2llm | 86f 13762L | python:41,shell:11,yaml:10,javascript:10,json:5,rust:3,toml:2,yml:2,gui-novnc:1 | 2026-06-21
+# code2llm | 89f 13955L | python:44,shell:11,yaml:10,javascript:8,json:5,rust:3,toml:2,yml:2,txt:2,gui-test:1 | 2026-07-14
 # generated in 0.02s
-# CC̅=4.1 | critical:18/512 | dups:0 | cycles:0
+# CC̅=4.1 | critical:17/510 | dups:0 | cycles:0
 
-HEALTH[19]:
-  🔴 GOD   src/ifuri_app/runtime.py = 811L, 4 classes, 16m, max CC=17
-  🟡 CC    normalize_packages CC=31 (limit:15)
-  🟡 CC    expand_flow_compiled CC=15 (limit:15)
+HEALTH[17]:
+  🟡 CC    _refresh_network_views CC=15 (limit:15)
   🟡 CC    scan_urisys_nodes CC=15 (limit:15)
   🟡 CC    scan_network CC=17 (limit:15)
+  🟡 CC    _apply_chat_channels CC=16 (limit:15)
   🟡 CC    normalize_routes CC=15 (limit:15)
   🟡 CC    cmd_chat_send CC=19 (limit:15)
-  🟡 CC    _apply_chat_channels CC=16 (limit:15)
-  🟡 CC    run_voice_command CC=23 (limit:15)
-  🟡 CC    channels_from_scan CC=34 (limit:15)
+  🟡 CC    _normalize_package_item CC=25 (limit:15)
   🟡 CC    migrate_local_chat_to_urisys CC=16 (limit:15)
   🟡 CC    send_chat_message CC=18 (limit:15)
-  🟡 CC    send_chat_message_routed CC=17 (limit:15)
+  🟡 CC    send_chat_message_routed CC=19 (limit:15)
   🟡 CC    _format_voice_reply CC=16 (limit:15)
+  🟡 CC    expand_flow_compiled CC=15 (limit:15)
+  🟡 CC    run_flow CC=17 (limit:15)
+  🟡 CC    run_voice_command CC=23 (limit:15)
   🟡 CC    renderChannelList CC=21 (limit:15)
   🟡 CC    handleWebRtcEnvelope CC=17 (limit:15)
   🟡 CC    connectWebRtc CC=15 (limit:15)
-  🟡 CC    run_flow CC=17 (limit:15)
-  🟡 CC    _refresh_network_views CC=15 (limit:15)
 
-REFACTOR[2]:
-  1. split src/ifuri_app/runtime.py  (god module)
-  2. split 18 high-CC methods  (CC>15)
+REFACTOR[1]:
+  1. split 17 high-CC methods  (CC>15)
 
-PIPELINES[236]:
-  [1] Src [get_url_state]: get_url_state → urlState
+PIPELINES[230]:
+  [1] Src [list_messages]: list_messages
       PURITY: 100% pure
-  [2] Src [state]: state
+  [2] Src [list_channels]: list_channels
       PURITY: 100% pure
-  [3] Src [set_url_state]: set_url_state → urlState
+  [3] Src [plan]: plan → plan_voice_command → load_flow_catalog → examples_root
       PURITY: 100% pure
-  [4] Src [toggle_view]: toggle_view → urlState
+  [4] Src [get_url_state]: get_url_state → urlState
       PURITY: 100% pure
-  [5] Src [current]: current
+  [5] Src [state]: state
       PURITY: 100% pure
-  [6] Src [merge_voice_url]: merge_voice_url
+  [6] Src [set_url_state]: set_url_state → urlState
       PURITY: 100% pure
-  [7] Src [urisys_call]: urisys_call → _endpoint
+  [7] Src [toggle_view]: toggle_view → urlState
       PURITY: 100% pure
-  [8] Src [node_health]: node_health → _endpoint
+  [8] Src [current]: current
       PURITY: 100% pure
-  [9] Src [web_dir]: web_dir → app_package_dir
+  [9] Src [urisys_call]: urisys_call → _endpoint
       PURITY: 100% pure
-  [10] Src [packages_dir]: packages_dir → repo_root → app_package_dir
+  [10] Src [node_health]: node_health → _endpoint
       PURITY: 100% pure
   [11] Src [is_webrtc_initiator]: is_webrtc_initiator
       PURITY: 100% pure
   [12] Src [room_stats]: room_stats
       PURITY: 100% pure
-  [13] Src [plan]: plan → plan_voice_command → load_flow_catalog → examples_root
+  [13] Src [__init__]: __init__ → load_workspace → ensure_home → app_home
       PURITY: 100% pure
-  [14] Src [list_messages]: list_messages
+  [14] Src [_set_app_icon]: _set_app_icon → assets_dir → app_package_dir
       PURITY: 100% pure
-  [15] Src [list_channels]: list_channels
+  [15] Src [_build_style]: _build_style
       PURITY: 100% pure
-  [16] Src [__init__]: __init__ → ensure_home → app_home
+  [16] Src [_build_ui]: _build_ui
       PURITY: 100% pure
-  [17] Src [append]: append
+  [17] Src [_build_flows_tab]: _build_flows_tab
       PURITY: 100% pure
-  [18] Src [list_messages]: list_messages
+  [18] Src [_build_services_tab]: _build_services_tab
       PURITY: 100% pure
-  [19] Src [list_channels]: list_channels
+  [19] Src [_build_network_tab]: _build_network_tab
       PURITY: 100% pure
-  [20] Src [__init__]: __init__ → default_node_endpoint → load_workspace → ensure_home → ...(1 more)
+  [20] Src [_build_connectors_tab]: _build_connectors_tab
       PURITY: 100% pure
-  [21] Src [health]: health
+  [21] Src [_connector_endpoints]: _connector_endpoints → set → patch → write → ...(1 more)
       PURITY: 100% pure
-  [22] Src [call_uri]: call_uri
+  [22] Src [refresh_connectors]: refresh_connectors → fetch_node_routes → normalize_routes → set → ...(3 more)
       PURITY: 100% pure
-  [23] Src [app_chat_messages]: app_chat_messages
+  [23] Src [_connectors_done]: _connectors_done → group_by_scheme
       PURITY: 100% pure
-  [24] Src [app_chat_channels]: app_chat_channels
+  [24] Src [_toggle_connectors]: _toggle_connectors
       PURITY: 100% pure
-  [25] Src [app_chat_append]: app_chat_append
+  [25] Src [_build_connect_tab]: _build_connect_tab → catalog_url
       PURITY: 100% pure
-  [26] Src [_get]: _get
+  [26] Src [refresh_catalog]: refresh_catalog → fetch_catalog → catalog_url
       PURITY: 100% pure
-  [27] Src [_post]: _post
+  [27] Src [_catalog_done]: _catalog_done
       PURITY: 100% pure
-  [28] Src [registry]: registry
+  [28] Src [_selected_package]: _selected_package
       PURITY: 100% pure
-  [29] Src [runtime]: runtime
+  [29] Src [_on_package_select]: _on_package_select → install_command
       PURITY: 100% pure
-  [30] Src [t]: t → val
+  [30] Src [_render_payload_form]: _render_payload_form → next
       PURITY: 100% pure
-  [31] Src [initFromUrl]: initFromUrl → applyTheme
+  [31] Src [install_selected_connector]: install_selected_connector → install_command
       PURITY: 100% pure
-  [32] Src [setTheme]: setTheme → applyTheme
+  [32] Src [_install_done]: _install_done
       PURITY: 100% pure
-  [33] Src [setLang]: setLang → applyLang
+  [33] Src [refresh_registry_status]: refresh_registry_status → local_registry_status → urirun_info
       PURITY: 100% pure
-  [34] Src [cmd_init]: cmd_init → load_workspace → ensure_home → app_home
+  [34] Src [_connect_log]: _connect_log
       PURITY: 100% pure
-  [35] Src [cmd_serve]: cmd_serve → load_workspace → ensure_home → app_home
+  [35] Src [_build_events_tab]: _build_events_tab
       PURITY: 100% pure
-  [36] Src [cmd_discover]: cmd_discover → discover → load_workspace → ensure_home → ...(1 more)
+  [36] Src [_groups]: _groups
       PURITY: 100% pure
-  [37] Src [cmd_voice]: cmd_voice → load_workspace → ensure_home → app_home
+  [37] Src [_flows]: _flows
       PURITY: 100% pure
-  [38] Src [cmd_node_health]: cmd_node_health → print_json
+  [38] Src [_load_groups]: _load_groups
       PURITY: 100% pure
-  [39] Src [cmd_node_call]: cmd_node_call → print_json
+  [39] Src [_load_flows]: _load_flows
       PURITY: 100% pure
-  [40] Src [cmd_node_control_test]: cmd_node_control_test → probe_remote_control → set → patch → ...(2 more)
+  [40] Src [_load_current_flow_text]: _load_current_flow_text
       PURITY: 100% pure
-  [41] Src [cmd_node_screen]: cmd_node_screen → capture_remote_screen → screen_uri
+  [41] Src [_on_group_select]: _on_group_select
       PURITY: 100% pure
-  [42] Src [cmd_flow_run]: cmd_flow_run → print_json
+  [42] Src [_on_flow_select]: _on_flow_select
       PURITY: 100% pure
-  [43] Src [cmd_voice_plan]: cmd_voice_plan → print_json
+  [43] Src [new_group]: new_group
       PURITY: 100% pure
-  [44] Src [cmd_voice_catalog]: cmd_voice_catalog → print_json
+  [44] Src [new_flow]: new_flow
       PURITY: 100% pure
-  [45] Src [cmd_voice_capabilities]: cmd_voice_capabilities → print_json
+  [45] Src [save_current_flow]: save_current_flow → add_event → now_iso
       PURITY: 100% pure
-  [46] Src [cmd_voice_install_packs]: cmd_voice_install_packs → install_voice_packs → voice_pack_install_hint → node_voice_capabilities → ...(1 more)
+  [46] Src [dry_run_current_flow]: dry_run_current_flow → dry_run_flow → expand_flow → uri2flow_available
       PURITY: 100% pure
-  [47] Src [cmd_webrtc_capabilities]: cmd_webrtc_capabilities → print_json
+  [47] Src [_refresh_services]: _refresh_services
       PURITY: 100% pure
-  [48] Src [cmd_webrtc_install_pack]: cmd_webrtc_install_pack → install_webrtc_pack → webrtc_pack_install_hint → node_webrtc_available
+  [48] Src [add_service]: add_service → add_event → now_iso
       PURITY: 100% pure
-  [49] Src [cmd_webrtc_smoke]: cmd_webrtc_smoke → webrtc_smoke → node_webrtc_available
+  [49] Src [start_runtime]: start_runtime → save_workspace → normalize_workspace → default_workspace
       PURITY: 100% pure
-  [50] Src [cmd_voice_run]: cmd_voice_run → run_voice_command → plan_voice_command → load_flow_catalog → ...(1 more)
+  [50] Src [open_voice_ui]: open_voice_ui → voice_url → voice_query
       PURITY: 100% pure
 
 LAYERS:
@@ -1207,38 +1246,39 @@ LAYERS:
   │
   src/                            CC̄=4.1    ←in:0  →out:0
   │ !! gui                       1005L  2C   67m  CC=15     ←1
-  │ !! runtime                    811L  4C   16m  CC=17     ←2
   │ !! cli                        675L  0C   34m  CC=19     ←0
   │ !! voice.js                   641L  0C  118m  CC=21     ←0
-  │ !! chat_channels              531L  0C   17m  CC=34     ←3
-  │ urirun_bridge              415L  0C   14m  CC=10     ←3
+  │ !! runtime_handlers           638L  0C    2m  CC=1      ←1
+  │ !! chat_channels              548L  0C   21m  CC=19     ←3
+  │ urirun_bridge              428L  0C   15m  CC=11     ←4
   │ !! gui_chat                   292L  1C   15m  CC=16     ←0
-  │ voice_planner              289L  0C   11m  CC=14     ←5
+  │ voice_planner              289L  0C   11m  CC=13     ←5
   │ webrtc_peer.js             232L  1C   25m  CC=14     ←0
   │ !! network_scan               228L  0C    9m  CC=17     ←5
-  │ !! connect_store              211L  0C   10m  CC=31     ←1
+  │ !! connect_store              216L  0C   11m  CC=25     ←1
   │ !! voice_pipeline             197L  0C    6m  CC=23     ←3
+  │ !! flow_compile               194L  1C    7m  CC=15     ←5
+  │ !! runtime_state              171L  1C    6m  CC=17     ←0
   │ urisys_client              158L  1C   12m  CC=8      ←3
-  │ !! flow_compile               154L  1C    6m  CC=15     ←4
+  │ remote_screen              145L  0C    5m  CC=11     ←3
   │ webrtc_pipeline            131L  0C    4m  CC=8      ←2
-  │ flow_engine                129L  0C   10m  CC=6      ←6
+  │ flow_engine                129L  0C   10m  CC=6      ←7
   │ discovery                  126L  1C    6m  CC=9      ←2
-  │ !! connectors                 121L  0C    6m  CC=15     ←1
   │ novnc_demo                 121L  0C    7m  CC=7      ←1
-  │ remote_screen              116L  0C    4m  CC=11     ←3
+  │ !! connectors                 121L  0C    6m  CC=15     ←1
   │ i18n.js                    114L  0C    4m  CC=4      ←0
   │ webrtc_signal              106L  0C    7m  CC=10     ←2
-  │ storage                     97L  0C    8m  CC=3      ←11
+  │ storage                     97L  0C    8m  CC=3      ←12
+  │ flow_runner                 95L  0C    4m  CC=9      ←6
   │ chat_store                  90L  1C    5m  CC=9      ←0
-  │ flow_runner                 90L  0C    4m  CC=9      ←5
   │ sample_data                 79L  0C    1m  CC=3      ←1
+  │ runtime_bind                78L  2C    5m  CC=4      ←3
   │ loader                      77L  0C    5m  CC=6      ←3
   │ url_state.js                70L  0C   15m  CC=9      ←7
-  │ runtime                     62L  0C    3m  CC=5      ←2
-  │ handlers.js                 54L  0C   10m  CC=10     ←0
+  │ runtime                     62L  0C    3m  CC=5      ←3
+  │ runtime                     44L  1C    3m  CC=3      ←0
   │ url_params                  43L  0C    3m  CC=5      ←3
   │ theme.js                    42L  0C    8m  CC=2      ←0
-  │ manifest.js                 38L  0C    0m  CC=0.0    ←0
   │ paths                       36L  0C    5m  CC=4      ←2
   │ page_runtime.js             23L  0C    2m  CC=1      ←0
   │ __init__                    16L  0C    0m  CC=0.0    ←0
@@ -1265,6 +1305,7 @@ LAYERS:
   │ lib.rs                      19L  0C    1m  CC=4      ←0
   │ default.json                11L  0C    0m  CC=0.0    ←0
   │ main.rs                      9L  0C    1m  CC=1      ←0
+  │ local.dev.txt                8L  0C    0m  CC=0.0    ←0
   │ build.rs                     6L  0C    1m  CC=1      ←0
   │ acl-manifests.json           1L  0C    0m  CC=0.0    ←0
   │ capabilities.json            1L  0C    0m  CC=0.0    ←0
@@ -1274,16 +1315,17 @@ LAYERS:
   │ docker-compose.gui.yml      44L  0C    0m  CC=0.0    ←0
   │ install-gui-deps.sh         42L  0C    0m  CC=0.0    ←0
   │ entrypoint-gui-novnc.sh     39L  0C    0m  CC=0.0    ←0
-  │ Dockerfile.gui-novnc        37L  0C    0m  CC=0.0    ←0
+  │ Dockerfile.gui-test         29L  0C    0m  CC=0.0    ←0
   │ docker-compose.novnc.yml    25L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
   │ !! planfile.yaml             1319L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  527L  0C    0m  CC=0.0    ←0
-  │ Makefile                   184L  0C    0m  CC=0.0    ←0
+  │ Makefile                   228L  0C    0m  CC=0.0    ←0
   │ pyproject.toml             117L  0C    0m  CC=0.0    ←0
   │ prefact.yaml                99L  0C    0m  CC=0.0    ←0
   │ project.sh                  66L  0C    0m  CC=0.0    ←0
+  │ local.dev.txt               12L  0C    0m  CC=0.0    ←0
   │ nlp2uri.yaml                 8L  0C    0m  CC=0.0    ←0
   │ tree.sh                      4L  0C    0m  CC=0.0    ←0
   │
@@ -1296,13 +1338,13 @@ LAYERS:
   │
 
 COUPLING:
-                               src.ifuri_app   packages.ifuri-page               scripts  packages.ifuri-voice
-         src.ifuri_app                    ──                     6                    ←6                    ←1  hub
-   packages.ifuri-page                    ←6                    ──                                              hub
-               scripts                     6                                          ──                      
+                               src.ifuri_app               scripts   packages.ifuri-page  packages.ifuri-voice
+         src.ifuri_app                    ──                    ←6                     5                    ←1  hub
+               scripts                     6                    ──                                            
+   packages.ifuri-page                    ←5                                          ──                        hub
   packages.ifuri-voice                     1                                                                ──
   CYCLES: none
-  HUB: packages.ifuri-page/ (fan-in=6)
+  HUB: packages.ifuri-page/ (fan-in=5)
   HUB: src.ifuri_app/ (fan-in=7)
 
 EXTERNAL:
@@ -1313,79 +1355,90 @@ EXTERNAL:
 ### Duplication (`project/duplication.toon.yaml`)
 
 ```toon markpact:analysis path=project/duplication.toon.yaml
-# redup/duplication | 7 groups | 41f 7030L | 2026-06-21
+# redup/duplication | 8 groups | 44f 7259L | 2026-07-14
 
 SUMMARY:
-  files_scanned: 41
-  total_lines:   7030
-  dup_groups:    7
-  dup_fragments: 14
-  saved_lines:   50
-  scan_ms:       2321
+  files_scanned: 44
+  total_lines:   7259
+  dup_groups:    8
+  dup_fragments: 17
+  saved_lines:   62
+  scan_ms:       10265
 
-HOTSPOTS[5] (files with most duplication):
+HOTSPOTS[6] (files with most duplication):
   src/ifuri_app/cli.py  dup=44L  groups=4  frags=8  (0.6%)
   src/ifuri_app/urirun_bridge.py  dup=30L  groups=1  frags=2  (0.4%)
+  src/ifuri_app/runtime_handlers.py  dup=18L  groups=1  frags=3  (0.2%)
   src/ifuri_app/urisys_client.py  dup=14L  groups=1  frags=2  (0.2%)
   src/ifuri_app/flow_compile.py  dup=4L  groups=1  frags=1  (0.1%)
   src/ifuri_app/flow_engine.py  dup=4L  groups=1  frags=1  (0.1%)
 
-DUPLICATES[7] (ranked by impact):
-  [71b0c91d36991313]   STRU  list_routes  L=17 N=2 saved=17 sim=1.00
-      src/ifuri_app/urirun_bridge.py:216-232  (list_routes)
-      src/ifuri_app/urirun_bridge.py:366-378  (mcp_tools)
-  [0de8715c258857c0]   STRU  cmd_flow_run  L=10 N=2 saved=10 sim=1.00
+DUPLICATES[8] (ranked by impact):
+  [8decaefbe0aaf2a3]   STRU  list_routes  L=17 N=2 saved=17 sim=1.00
+      src/ifuri_app/urirun_bridge.py:229-245  (list_routes)
+      src/ifuri_app/urirun_bridge.py:379-391  (mcp_tools)
+  [F0001]   FUZZ  do_GET  L=6 N=3 saved=12 sim=0.95
+      src/ifuri_app/runtime_handlers.py:114-119  (do_GET)
+      src/ifuri_app/runtime_handlers.py:121-126  (do_HEAD)
+      src/ifuri_app/runtime_handlers.py:152-157  (do_POST)
+  [0d64c1477b6f2c9b]   STRU  cmd_flow_run  L=10 N=2 saved=10 sim=1.00
       src/ifuri_app/cli.py:205-214  (cmd_flow_run)
       src/ifuri_app/cli.py:217-226  (cmd_voice_plan)
-  [befabce1a989deb4]   STRU  node_llm_available  L=7 N=2 saved=7 sim=1.00
+  [08ba3cbb4ef3a6cb]   STRU  node_llm_available  L=7 N=2 saved=7 sim=1.00
       src/ifuri_app/urisys_client.py:39-45  (node_llm_available)
       src/ifuri_app/urisys_client.py:48-54  (node_webrtc_available)
-  [47d5a29ae4df3970]   STRU  cmd_voice_install_packs  L=5 N=2 saved=5 sim=1.00
+  [48db60c4c3f4ae11]   STRU  cmd_voice_install_packs  L=5 N=2 saved=5 sim=1.00
       src/ifuri_app/cli.py:242-246  (cmd_voice_install_packs)
       src/ifuri_app/cli.py:255-259  (cmd_webrtc_install_pack)
-  [bc6e3b103bbf2be5]   STRU  cmd_voice_capabilities  L=4 N=2 saved=4 sim=1.00
+  [36a10000a7bbf0b0]   STRU  cmd_voice_capabilities  L=4 N=2 saved=4 sim=1.00
       src/ifuri_app/cli.py:236-239  (cmd_voice_capabilities)
       src/ifuri_app/cli.py:249-252  (cmd_webrtc_capabilities)
-  [4626c3d55952124f]   STRU  _scheme  L=4 N=2 saved=4 sim=1.00
-      src/ifuri_app/flow_compile.py:151-154  (_scheme)
+  [ee2d4f3362ecb3c5]   STRU  _scheme  L=4 N=2 saved=4 sim=1.00
+      src/ifuri_app/flow_compile.py:191-194  (_scheme)
       src/ifuri_app/flow_engine.py:60-63  (uri_scheme)
   [81b8d023ddbd7602]   EXAC  _stop  L=3 N=2 saved=3 sim=1.00
       src/ifuri_app/cli.py:108-110  (_stop)
       src/ifuri_app/cli.py:149-151  (_stop)
 
-REFACTOR[7] (ranked by priority):
+REFACTOR[8] (ranked by priority):
   [1] ○ extract_function   → src/ifuri_app/utils/list_routes.py
       WHY: 2 occurrences of 17-line block across 1 files — saves 17 lines
       FILES: src/ifuri_app/urirun_bridge.py
-  [2] ○ extract_function   → src/ifuri_app/utils/cmd_flow_run.py
+  [2] ○ extract_class      → src/ifuri_app/utils/do_GET.py
+      WHY: 3 occurrences of 6-line block across 1 files — saves 12 lines
+      FILES: src/ifuri_app/runtime_handlers.py
+  [3] ○ extract_function   → src/ifuri_app/utils/cmd_flow_run.py
       WHY: 2 occurrences of 10-line block across 1 files — saves 10 lines
       FILES: src/ifuri_app/cli.py
-  [3] ○ extract_function   → src/ifuri_app/utils/node_llm_available.py
+  [4] ○ extract_function   → src/ifuri_app/utils/node_llm_available.py
       WHY: 2 occurrences of 7-line block across 1 files — saves 7 lines
       FILES: src/ifuri_app/urisys_client.py
-  [4] ○ extract_function   → src/ifuri_app/utils/cmd_voice_install_packs.py
+  [5] ○ extract_function   → src/ifuri_app/utils/cmd_voice_install_packs.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: src/ifuri_app/cli.py
-  [5] ○ extract_function   → src/ifuri_app/utils/cmd_voice_capabilities.py
+  [6] ○ extract_function   → src/ifuri_app/utils/cmd_voice_capabilities.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
       FILES: src/ifuri_app/cli.py
-  [6] ○ extract_function   → src/ifuri_app/utils/_scheme.py
+  [7] ○ extract_function   → src/ifuri_app/utils/_scheme.py
       WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
       FILES: src/ifuri_app/flow_compile.py, src/ifuri_app/flow_engine.py
-  [7] ○ extract_function   → src/ifuri_app/utils/_stop.py
+  [8] ○ extract_function   → src/ifuri_app/utils/_stop.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: src/ifuri_app/cli.py
 
-QUICK_WINS[3] (low risk, high savings — do first):
+QUICK_WINS[4] (low risk, high savings — do first):
   [1] extract_function   saved=17L  → src/ifuri_app/utils/list_routes.py
       FILES: urirun_bridge.py
-  [2] extract_function   saved=10L  → src/ifuri_app/utils/cmd_flow_run.py
+  [2] extract_class      saved=12L  → src/ifuri_app/utils/do_GET.py
+      FILES: runtime_handlers.py
+  [3] extract_function   saved=10L  → src/ifuri_app/utils/cmd_flow_run.py
       FILES: cli.py
-  [3] extract_function   saved=7L  → src/ifuri_app/utils/node_llm_available.py
+  [4] extract_function   saved=7L  → src/ifuri_app/utils/node_llm_available.py
       FILES: urisys_client.py
 
-EFFORT_ESTIMATE (total ≈ 1.7h):
+EFFORT_ESTIMATE (total ≈ 2.1h):
   medium list_routes                         saved=17L  ~34min
+  easy   do_GET                              saved=12L  ~24min
   easy   cmd_flow_run                        saved=10L  ~20min
   easy   node_llm_available                  saved=7L  ~14min
   easy   cmd_voice_install_packs             saved=5L  ~10min
@@ -1394,14 +1447,14 @@ EFFORT_ESTIMATE (total ≈ 1.7h):
   easy   _stop                               saved=3L  ~6min
 
 METRICS-TARGET:
-  dup_groups:  7 → 0
-  saved_lines: 50 lines recoverable
+  dup_groups:  8 → 0
+  saved_lines: 62 lines recoverable
 ```
 
 ### Evolution / Churn (`project/evolution.toon.yaml`)
 
 ```toon markpact:analysis path=project/evolution.toon.yaml
-# code2llm/evolution | 498 func | 43f | 2026-06-21
+# code2llm/evolution | 496 func | 45f | 2026-07-14
 # generated in 0.00s
 
 NEXT[10] (ranked by impact):
@@ -1409,39 +1462,39 @@ NEXT[10] (ranked by impact):
       WHY: 1005L, 2 classes, max CC=15
       EFFORT: ~4h  IMPACT: 15075
 
-  [2] !! SPLIT-FUNC      channels_from_scan  CC=34  fan=16
-      WHY: CC=34 exceeds 15
-      EFFORT: ~1h  IMPACT: 544
-
-  [3] !  SPLIT-FUNC      run_voice_command  CC=23  fan=18
+  [2] !  SPLIT-FUNC      run_voice_command  CC=23  fan=18
       WHY: CC=23 exceeds 15
       EFFORT: ~1h  IMPACT: 414
 
-  [4] !  SPLIT-FUNC      RuntimeState.run_flow  CC=17  fan=24
+  [3] !  SPLIT-FUNC      RuntimeState.run_flow  CC=17  fan=24
       WHY: CC=17 exceeds 15
       EFFORT: ~1h  IMPACT: 408
 
-  [5] !  SPLIT-FUNC      send_chat_message  CC=18  fan=22
+  [4] !  SPLIT-FUNC      send_chat_message  CC=18  fan=22
       WHY: CC=18 exceeds 15
       EFFORT: ~1h  IMPACT: 396
 
-  [6] !  SPLIT-FUNC      scan_network  CC=17  fan=23
+  [5] !  SPLIT-FUNC      scan_network  CC=17  fan=23
       WHY: CC=17 exceeds 15
       EFFORT: ~1h  IMPACT: 391
 
-  [7] !! SPLIT-FUNC      normalize_packages  CC=31  fan=11
-      WHY: CC=31 exceeds 15
-      EFFORT: ~1h  IMPACT: 341
-
-  [8] !  SPLIT-FUNC      scan_urisys_nodes  CC=15  fan=18
+  [6] !  SPLIT-FUNC      scan_urisys_nodes  CC=15  fan=18
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 270
 
-  [9] !  SPLIT-FUNC      renderChannelList  CC=21  fan=12
+  [7] !  SPLIT-FUNC      send_chat_message_routed  CC=19  fan=14
+      WHY: CC=19 exceeds 15
+      EFFORT: ~1h  IMPACT: 266
+
+  [8] !  SPLIT-FUNC      renderChannelList  CC=21  fan=12
       WHY: CC=21 exceeds 15
       EFFORT: ~1h  IMPACT: 252
 
-  [10] !  SPLIT-FUNC      ChatTabMixin._apply_chat_channels  CC=16  fan=15
+  [9] !  SPLIT-FUNC      ChatTabMixin._apply_chat_channels  CC=16  fan=15
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 240
+
+  [10] !  SPLIT-FUNC      migrate_local_chat_to_urisys  CC=16  fan=15
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 240
 
@@ -1453,9 +1506,9 @@ RISKS[3]:
 
 METRICS-TARGET:
   CC̄:          4.1 → ≤2.9
-  max-CC:      34 → ≤17
+  max-CC:      25 → ≤12
   god-modules: 8 → 0
-  high-CC(≥15): 18 → ≤9
+  high-CC(≥15): 17 → ≤8
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

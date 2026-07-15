@@ -1,4 +1,4 @@
-# code2llm/evolution | 498 func | 43f | 2026-06-21
+# code2llm/evolution | 496 func | 45f | 2026-07-14
 # generated in 0.00s
 
 NEXT[10] (ranked by impact):
@@ -6,39 +6,39 @@ NEXT[10] (ranked by impact):
       WHY: 1005L, 2 classes, max CC=15
       EFFORT: ~4h  IMPACT: 15075
 
-  [2] !! SPLIT-FUNC      channels_from_scan  CC=34  fan=16
-      WHY: CC=34 exceeds 15
-      EFFORT: ~1h  IMPACT: 544
-
-  [3] !  SPLIT-FUNC      run_voice_command  CC=23  fan=18
+  [2] !  SPLIT-FUNC      run_voice_command  CC=23  fan=18
       WHY: CC=23 exceeds 15
       EFFORT: ~1h  IMPACT: 414
 
-  [4] !  SPLIT-FUNC      RuntimeState.run_flow  CC=17  fan=24
+  [3] !  SPLIT-FUNC      RuntimeState.run_flow  CC=17  fan=24
       WHY: CC=17 exceeds 15
       EFFORT: ~1h  IMPACT: 408
 
-  [5] !  SPLIT-FUNC      send_chat_message  CC=18  fan=22
+  [4] !  SPLIT-FUNC      send_chat_message  CC=18  fan=22
       WHY: CC=18 exceeds 15
       EFFORT: ~1h  IMPACT: 396
 
-  [6] !  SPLIT-FUNC      scan_network  CC=17  fan=23
+  [5] !  SPLIT-FUNC      scan_network  CC=17  fan=23
       WHY: CC=17 exceeds 15
       EFFORT: ~1h  IMPACT: 391
 
-  [7] !! SPLIT-FUNC      normalize_packages  CC=31  fan=11
-      WHY: CC=31 exceeds 15
-      EFFORT: ~1h  IMPACT: 341
-
-  [8] !  SPLIT-FUNC      scan_urisys_nodes  CC=15  fan=18
+  [6] !  SPLIT-FUNC      scan_urisys_nodes  CC=15  fan=18
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 270
 
-  [9] !  SPLIT-FUNC      renderChannelList  CC=21  fan=12
+  [7] !  SPLIT-FUNC      send_chat_message_routed  CC=19  fan=14
+      WHY: CC=19 exceeds 15
+      EFFORT: ~1h  IMPACT: 266
+
+  [8] !  SPLIT-FUNC      renderChannelList  CC=21  fan=12
       WHY: CC=21 exceeds 15
       EFFORT: ~1h  IMPACT: 252
 
-  [10] !  SPLIT-FUNC      ChatTabMixin._apply_chat_channels  CC=16  fan=15
+  [9] !  SPLIT-FUNC      ChatTabMixin._apply_chat_channels  CC=16  fan=15
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 240
+
+  [10] !  SPLIT-FUNC      migrate_local_chat_to_urisys  CC=16  fan=15
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 240
 
@@ -50,9 +50,9 @@ RISKS[3]:
 
 METRICS-TARGET:
   CC̄:          4.1 → ≤2.9
-  max-CC:      34 → ≤17
+  max-CC:      25 → ≤12
   god-modules: 8 → 0
-  high-CC(≥15): 18 → ≤9
+  high-CC(≥15): 17 → ≤8
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

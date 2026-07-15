@@ -60,25 +60,6 @@ flowchart TD
         scripts__upgrade_lenovo_remote__main["main"]
     end
     subgraph src__ifuri_app
-        src__ifuri_app__url_params__voice_query["voice_query"]
-        src__ifuri_app__url_params__voice_url["voice_url"]
-        src__ifuri_app__url_params__merge_voice_url["merge_voice_url"]
-        src__ifuri_app__connect_store__catalog_url["catalog_url"]
-        src__ifuri_app__connect_store___normalize_route("_normalize_route CC=8")
-        src__ifuri_app__connect_store___normalize_install["_normalize_install"]
-        src__ifuri_app__connect_store___version_of["_version_of"]
-        src__ifuri_app__connect_store__normalize_packages{{normalize_packages CC=31}}
-        src__ifuri_app__connect_store__fetch_catalog["fetch_catalog"]
-        src__ifuri_app__connect_store__install_command["install_command"]
-        src__ifuri_app__connect_store__local_registry_status["local_registry_status"]
-        src__ifuri_app__connect_store__example_payload_for["example_payload_for"]
-        src__ifuri_app__connect_store__payload_form_fields("payload_form_fields CC=8")
-        src__ifuri_app__sample_data__default_workspace["default_workspace"]
-        src__ifuri_app__paths__app_package_dir["app_package_dir"]
-        src__ifuri_app__paths__web_dir["web_dir"]
-        src__ifuri_app__paths__assets_dir["assets_dir"]
-        src__ifuri_app__paths__repo_root["repo_root"]
-        src__ifuri_app__paths__packages_dir["packages_dir"]
         src__ifuri_app__webrtc_signal__local_peer_url["local_peer_url"]
         src__ifuri_app__webrtc_signal__webrtc_room_id["webrtc_room_id"]
         src__ifuri_app__webrtc_signal__is_webrtc_initiator["is_webrtc_initiator"]
@@ -86,71 +67,100 @@ flowchart TD
         src__ifuri_app__webrtc_signal__post_signal("post_signal CC=9")
         src__ifuri_app__webrtc_signal__poll_signals("poll_signals CC=10")
         src__ifuri_app__webrtc_signal__room_stats["room_stats"]
-        src__ifuri_app__flow_compile__uri2flow_available["uri2flow_available"]
-        src__ifuri_app__flow_compile___parse_flow_input("_parse_flow_input CC=12")
-        src__ifuri_app__flow_compile__expand_flow_compiled{{expand_flow_compiled CC=15}}
-        src__ifuri_app__flow_compile__flow_steps_from_document("flow_steps_from_document CC=11")
-        src__ifuri_app__flow_compile__validate_flow_compiled["validate_flow_compiled"]
-        src__ifuri_app__flow_compile___scheme["_scheme"]
-        src__ifuri_app__flow_engine__expand_flow["expand_flow"]
-        src__ifuri_app__flow_engine___legacy_expand_flow["_legacy_expand_flow"]
-        src__ifuri_app__flow_engine__clean_uri["clean_uri"]
-        src__ifuri_app__flow_engine__uri_scheme["uri_scheme"]
-        src__ifuri_app__flow_engine__extract_steps["extract_steps"]
-        src__ifuri_app__flow_engine__flow_id_from_text["flow_id_from_text"]
-        src__ifuri_app__flow_engine__classify_route["classify_route"]
-        src__ifuri_app__flow_engine__dry_run_uri["dry_run_uri"]
-        src__ifuri_app__flow_engine__dry_run_flow["dry_run_flow"]
-        src__ifuri_app__flow_engine__as_pretty_json["as_pretty_json"]
-        src__ifuri_app__webrtc_pipeline__webrtc_capabilities["webrtc_capabilities"]
-        src__ifuri_app__webrtc_pipeline__install_webrtc_pack("install_webrtc_pack CC=8")
-        src__ifuri_app__webrtc_pipeline__webrtc_smoke["webrtc_smoke"]
-        src__ifuri_app__webrtc_pipeline__webrtc_pack_install_hint["webrtc_pack_install_hint"]
-        src__ifuri_app__chat_store__chat_store_path["chat_store_path"]
-        src__ifuri_app__chat_store__LocalChatStore____init__["__init__"]
-        src__ifuri_app__chat_store__LocalChatStore__append["append"]
-        src__ifuri_app__chat_store__LocalChatStore__list_messages["list_messages"]
-        src__ifuri_app__chat_store__LocalChatStore__list_channels("list_channels CC=9")
-        src__ifuri_app__urisys_client__default_node_endpoint["default_node_endpoint"]
-        src__ifuri_app__urisys_client__node_llm_available["node_llm_available"]
-        src__ifuri_app__urisys_client__node_webrtc_available["node_webrtc_available"]
-        src__ifuri_app__urisys_client__node_voice_capabilities("node_voice_capabilities CC=8")
-        src__ifuri_app__urisys_client__UrisysNodeClient____init__["__init__"]
-        src__ifuri_app__urisys_client__UrisysNodeClient__health["health"]
-        src__ifuri_app__urisys_client__UrisysNodeClient__call_uri["call_uri"]
-        src__ifuri_app__urisys_client__UrisysNodeClient__app_chat_messages["app_chat_messages"]
-        src__ifuri_app__urisys_client__UrisysNodeClient__app_chat_channels["app_chat_channels"]
+        src__ifuri_app__gui__IfuriDesktop____init__["__init__"]
+        src__ifuri_app__gui__IfuriDesktop___set_app_icon["_set_app_icon"]
+        src__ifuri_app__gui__IfuriDesktop___build_style["_build_style"]
+        src__ifuri_app__gui__IfuriDesktop___build_ui["_build_ui"]
+        src__ifuri_app__gui__IfuriDesktop___build_flows_tab["_build_flows_tab"]
+        src__ifuri_app__gui__IfuriDesktop___build_services_tab["_build_services_tab"]
+        src__ifuri_app__gui__IfuriDesktop___build_network_tab["_build_network_tab"]
+        src__ifuri_app__gui__IfuriDesktop___build_connectors_tab["_build_connectors_tab"]
+        src__ifuri_app__gui__IfuriDesktop___connector_endpoints("_connector_endpoints CC=12")
+        src__ifuri_app__gui__IfuriDesktop__refresh_connectors["refresh_connectors"]
+        src__ifuri_app__gui__IfuriDesktop___connectors_done["_connectors_done"]
+        src__ifuri_app__gui__IfuriDesktop___toggle_connectors["_toggle_connectors"]
+        src__ifuri_app__gui__IfuriDesktop___build_connect_tab["_build_connect_tab"]
+        src__ifuri_app__gui__IfuriDesktop__refresh_catalog["refresh_catalog"]
+        src__ifuri_app__gui__IfuriDesktop___catalog_done["_catalog_done"]
+        src__ifuri_app__gui__IfuriDesktop___selected_package["_selected_package"]
+        src__ifuri_app__gui__IfuriDesktop___on_package_select["_on_package_select"]
+        src__ifuri_app__gui__IfuriDesktop___render_payload_form("_render_payload_form CC=10")
+        src__ifuri_app__gui__IfuriDesktop__install_selected_connector["install_selected_connector"]
+        src__ifuri_app__gui__IfuriDesktop___install_done["_install_done"]
+        src__ifuri_app__gui__IfuriDesktop__refresh_registry_status["refresh_registry_status"]
+        src__ifuri_app__gui__IfuriDesktop___connect_log["_connect_log"]
+        src__ifuri_app__gui__IfuriDesktop___build_events_tab["_build_events_tab"]
+        src__ifuri_app__gui__IfuriDesktop___groups["_groups"]
+        src__ifuri_app__gui__IfuriDesktop___flows["_flows"]
+        src__ifuri_app__gui__IfuriDesktop___load_groups["_load_groups"]
+        src__ifuri_app__gui__IfuriDesktop___load_flows["_load_flows"]
+        src__ifuri_app__gui__IfuriDesktop___load_current_flow_text["_load_current_flow_text"]
+        src__ifuri_app__gui__IfuriDesktop___on_group_select["_on_group_select"]
+        src__ifuri_app__gui__IfuriDesktop___on_flow_select["_on_flow_select"]
+        src__ifuri_app__gui__IfuriDesktop__new_group["new_group"]
+        src__ifuri_app__gui__IfuriDesktop__new_flow["new_flow"]
+        src__ifuri_app__gui__IfuriDesktop__save_current_flow["save_current_flow"]
+        src__ifuri_app__gui__IfuriDesktop__dry_run_current_flow["dry_run_current_flow"]
+        src__ifuri_app__gui__IfuriDesktop___refresh_services["_refresh_services"]
+        src__ifuri_app__gui__IfuriDesktop__add_service["add_service"]
+        src__ifuri_app__gui__IfuriDesktop__start_runtime["start_runtime"]
+        src__ifuri_app__gui__IfuriDesktop__open_voice_ui["open_voice_ui"]
+        src__ifuri_app__gui__IfuriDesktop__stop_runtime["stop_runtime"]
+        src__ifuri_app__gui__IfuriDesktop__discover_peers["discover_peers"]
+        src__ifuri_app__gui__IfuriDesktop___refresh_network_views{{_refresh_network_views CC=15}}
+        src__ifuri_app__gui__IfuriDesktop___novnc_precheck["_novnc_precheck"]
+        src__ifuri_app__gui__IfuriDesktop___run_compose["_run_compose"]
+        src__ifuri_app__gui__IfuriDesktop___compose_done["_compose_done"]
+        src__ifuri_app__gui__IfuriDesktop__start_novnc_demo["start_novnc_demo"]
+        src__ifuri_app__gui__IfuriDesktop__stop_novnc_demo["stop_novnc_demo"]
+        src__ifuri_app__gui__IfuriDesktop__open_novnc_dashboard["open_novnc_dashboard"]
+        src__ifuri_app__gui__IfuriDesktop___on_device_select["_on_device_select"]
+        src__ifuri_app__gui__IfuriDesktop___apply_node_endpoint["_apply_node_endpoint"]
+        src__ifuri_app__gui__IfuriDesktop___maybe_first_run["_maybe_first_run"]
+        src__ifuri_app__gui__IfuriDesktop___refresh_peers["_refresh_peers"]
+        src__ifuri_app__gui__IfuriDesktop__refresh_log["refresh_log"]
+        src__ifuri_app__gui__IfuriDesktop__append_log["append_log"]
     end
+    packages__ifuri_voice__handlers__plan__plan --> src__ifuri_app__voice_planner__plan_voice_command
     packages__ifuri_page__handlers__get_url_state --> packages__ifuri_page__handlers__urlState
     packages__ifuri_page__handlers__set_url_state --> packages__ifuri_page__handlers__urlState
     packages__ifuri_page__handlers__toggle_view --> packages__ifuri_page__handlers__urlState
-    src__ifuri_app__url_params__voice_url --> src__ifuri_app__url_params__voice_query
-    src__ifuri_app__connect_store__normalize_packages --> src__ifuri_app__connect_store___normalize_install
-    src__ifuri_app__connect_store__fetch_catalog --> src__ifuri_app__connect_store__catalog_url
-    src__ifuri_app__connect_store__fetch_catalog --> src__ifuri_app__connect_store__normalize_packages
-    src__ifuri_app__connect_store__local_registry_status --> src__ifuri_app__urirun_bridge__urirun_info
-    src__ifuri_app__connect_store__local_registry_status --> src__ifuri_app__urirun_bridge__default_urirun_registry
-    src__ifuri_app__connect_store__local_registry_status --> src__ifuri_app__urirun_bridge__registry_summary
-    src__ifuri_app__connect_store__payload_form_fields --> src__ifuri_app__web__url_state__set
-    src__ifuri_app__connect_store__payload_form_fields --> src__ifuri_app__connect_store__example_payload_for
     packages__ifuri_bridge__handlers__urisys_call__urisys_call --> packages__ifuri_bridge__handlers__urisys_call___endpoint
     packages__ifuri_bridge__handlers__urisys_call__node_health --> packages__ifuri_bridge__handlers__urisys_call___endpoint
-    src__ifuri_app__paths__web_dir --> src__ifuri_app__paths__app_package_dir
-    src__ifuri_app__paths__assets_dir --> src__ifuri_app__paths__app_package_dir
-    src__ifuri_app__paths__repo_root --> src__ifuri_app__paths__app_package_dir
-    src__ifuri_app__paths__packages_dir --> src__ifuri_app__paths__repo_root
     src__ifuri_app__webrtc_signal__local_peer_url --> src__ifuri_app__network_scan___local_ipv4
     src__ifuri_app__webrtc_signal__post_signal --> src__ifuri_app__webrtc_signal___purge_room
     src__ifuri_app__webrtc_signal__poll_signals --> src__ifuri_app__webrtc_signal___purge_room
-    src__ifuri_app__flow_compile__expand_flow_compiled --> src__ifuri_app__flow_compile___parse_flow_input
-    src__ifuri_app__flow_compile__expand_flow_compiled --> src__ifuri_app__flow_compile__uri2flow_available
-    src__ifuri_app__flow_compile__expand_flow_compiled --> src__ifuri_app__flow_compile___scheme
-    src__ifuri_app__flow_compile__flow_steps_from_document --> src__ifuri_app__flow_compile__uri2flow_available
-    src__ifuri_app__flow_compile__flow_steps_from_document --> src__ifuri_app__flow_compile___parse_flow_input
-    src__ifuri_app__flow_compile__flow_steps_from_document --> src__ifuri_app__flow_engine__extract_steps
-    src__ifuri_app__flow_compile__validate_flow_compiled --> src__ifuri_app__flow_compile___parse_flow_input
-    src__ifuri_app__flow_compile__validate_flow_compiled --> src__ifuri_app__flow_compile__uri2flow_available
-    packages__ifuri_voice__handlers__plan__plan --> src__ifuri_app__voice_planner__plan_voice_command
+    src__ifuri_app__gui__IfuriDesktop____init__ --> src__ifuri_app__storage__load_workspace
+    src__ifuri_app__gui__IfuriDesktop___set_app_icon --> src__ifuri_app__paths__assets_dir
+    src__ifuri_app__gui__IfuriDesktop___connector_endpoints --> src__ifuri_app__web__url_state__set
+    src__ifuri_app__gui__IfuriDesktop__refresh_connectors --> src__ifuri_app__connectors__fetch_node_routes
+    src__ifuri_app__gui__IfuriDesktop___connectors_done --> src__ifuri_app__connectors__group_by_scheme
+    src__ifuri_app__gui__IfuriDesktop__refresh_catalog --> src__ifuri_app__connect_store__fetch_catalog
+    src__ifuri_app__gui__IfuriDesktop___on_package_select --> src__ifuri_app__connect_store__install_command
+    src__ifuri_app__gui__IfuriDesktop___render_payload_form --> packages__ifuri_page__handlers__next
+    src__ifuri_app__gui__IfuriDesktop___render_payload_form --> src__ifuri_app__connect_store__payload_form_fields
+    src__ifuri_app__gui__IfuriDesktop__install_selected_connector --> src__ifuri_app__connect_store__install_command
+    src__ifuri_app__gui__IfuriDesktop__refresh_registry_status --> src__ifuri_app__connect_store__local_registry_status
+    src__ifuri_app__gui__IfuriDesktop__save_current_flow --> src__ifuri_app__storage__add_event
+    src__ifuri_app__gui__IfuriDesktop__dry_run_current_flow --> src__ifuri_app__flow_engine__dry_run_flow
+    src__ifuri_app__gui__IfuriDesktop__dry_run_current_flow --> src__ifuri_app__storage__add_event
+    src__ifuri_app__gui__IfuriDesktop__dry_run_current_flow --> src__ifuri_app__storage__save_workspace
+    src__ifuri_app__gui__IfuriDesktop__dry_run_current_flow --> src__ifuri_app__flow_engine__as_pretty_json
+    src__ifuri_app__gui__IfuriDesktop__add_service --> src__ifuri_app__storage__add_event
+    src__ifuri_app__gui__IfuriDesktop__start_runtime --> src__ifuri_app__storage__save_workspace
+    src__ifuri_app__gui__IfuriDesktop__open_voice_ui --> src__ifuri_app__url_params__voice_url
+    src__ifuri_app__gui__IfuriDesktop__discover_peers --> src__ifuri_app__network_scan__scan_network
+    src__ifuri_app__gui__IfuriDesktop__discover_peers --> src__ifuri_app__storage__load_workspace
+    src__ifuri_app__gui__IfuriDesktop__discover_peers --> src__ifuri_app__flow_engine__as_pretty_json
+    src__ifuri_app__gui__IfuriDesktop___novnc_precheck --> src__ifuri_app__novnc_demo__demo_dir
+    src__ifuri_app__gui__IfuriDesktop___novnc_precheck --> src__ifuri_app__novnc_demo__docker_available
+    src__ifuri_app__gui__IfuriDesktop___run_compose --> src__ifuri_app__novnc_demo__compose_args
+    src__ifuri_app__gui__IfuriDesktop__open_novnc_dashboard --> src__ifuri_app__novnc_demo__dashboard_url
+    src__ifuri_app__gui__IfuriDesktop___apply_node_endpoint --> src__ifuri_app__storage__save_workspace
+    src__ifuri_app__gui__IfuriDesktop__refresh_log --> src__ifuri_app__storage__load_workspace
+    src__ifuri_app__gui__IfuriDesktop__save_all --> src__ifuri_app__storage__save_workspace
+    src__ifuri_app__gui__FirstRunWizard___scan --> src__ifuri_app__network_scan__scan_network
+    src__ifuri_app__gui__FirstRunWizard___finish --> src__ifuri_app__storage__save_workspace
     src__ifuri_app__flow_engine__expand_flow --> src__ifuri_app__flow_compile__uri2flow_available
     src__ifuri_app__flow_engine__expand_flow --> src__ifuri_app__flow_engine___legacy_expand_flow
     src__ifuri_app__flow_engine__expand_flow --> src__ifuri_app__flow_compile__expand_flow_compiled
@@ -162,20 +172,41 @@ flowchart TD
     src__ifuri_app__flow_engine__dry_run_uri --> src__ifuri_app__flow_engine__classify_route
     src__ifuri_app__flow_engine__dry_run_flow --> src__ifuri_app__flow_engine__expand_flow
     src__ifuri_app__flow_engine__dry_run_flow --> src__ifuri_app__flow_engine__dry_run_uri
-    src__ifuri_app__webrtc_pipeline__webrtc_capabilities --> src__ifuri_app__urisys_client__node_webrtc_available
-    src__ifuri_app__webrtc_pipeline__webrtc_capabilities --> src__ifuri_app__webrtc_pipeline__webrtc_pack_install_hint
-    src__ifuri_app__webrtc_pipeline__install_webrtc_pack --> src__ifuri_app__webrtc_pipeline__webrtc_pack_install_hint
-    src__ifuri_app__webrtc_pipeline__install_webrtc_pack --> src__ifuri_app__flow_runner__run_flow_file
-    src__ifuri_app__webrtc_pipeline__install_webrtc_pack --> src__ifuri_app__urisys_client__node_webrtc_available
-    src__ifuri_app__webrtc_pipeline__webrtc_smoke --> src__ifuri_app__urisys_client__node_webrtc_available
-    src__ifuri_app__webrtc_pipeline__webrtc_pack_install_hint --> src__ifuri_app__urisys_client__node_webrtc_available
-    src__ifuri_app__chat_store__chat_store_path --> src__ifuri_app__storage__app_home
-    src__ifuri_app__chat_store__LocalChatStore____init__ --> src__ifuri_app__storage__ensure_home
-    src__ifuri_app__chat_store__LocalChatStore____init__ --> src__ifuri_app__chat_store__chat_store_path
+    src__ifuri_app__url_params__voice_url --> src__ifuri_app__url_params__voice_query
     src__ifuri_app__urisys_client__default_node_endpoint --> src__ifuri_app__storage__load_workspace
     src__ifuri_app__urisys_client__node_voice_capabilities --> src__ifuri_app__urisys_client__node_llm_available
     src__ifuri_app__urisys_client__node_voice_capabilities --> src__ifuri_app__urisys_client__node_webrtc_available
     src__ifuri_app__urisys_client__UrisysNodeClient____init__ --> src__ifuri_app__urisys_client__default_node_endpoint
+    src__ifuri_app__paths__web_dir --> src__ifuri_app__paths__app_package_dir
+    src__ifuri_app__paths__assets_dir --> src__ifuri_app__paths__app_package_dir
+    src__ifuri_app__paths__repo_root --> src__ifuri_app__paths__app_package_dir
+    src__ifuri_app__paths__packages_dir --> src__ifuri_app__paths__repo_root
+    src__ifuri_app__novnc_demo__dashboard_ports --> src__ifuri_app__novnc_demo__read_env_file
+    src__ifuri_app__novnc_demo__dashboard_ports --> src__ifuri_app__novnc_demo__demo_dir
+    src__ifuri_app__novnc_demo__dashboard_url --> src__ifuri_app__novnc_demo__dashboard_ports
+    src__ifuri_app__novnc_demo__launch_info --> src__ifuri_app__novnc_demo__demo_dir
+    src__ifuri_app__novnc_demo__launch_info --> src__ifuri_app__novnc_demo__docker_available
+    src__ifuri_app__novnc_demo__launch_info --> src__ifuri_app__novnc_demo__dashboard_url
+    src__ifuri_app__network_scan___collect_local_services --> src__ifuri_app__storage__load_workspace
+    src__ifuri_app__network_scan__scan_urisys_nodes --> src__ifuri_app__storage__load_workspace
+    src__ifuri_app__network_scan__scan_urisys_nodes --> src__ifuri_app__network_scan___local_ipv4
+    src__ifuri_app__network_scan__scan_urisys_nodes --> src__ifuri_app__network_scan___subnet_hosts
+    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__discovery__discover
+    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__network_scan__scan_urisys_nodes
+    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__network_scan__probe_urisys_node
+    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__network_scan___collect_local_services
+    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__web__url_state__set
+    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__network_scan__try_mdns_urisys
+    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__network_scan___services_from_peers
+    src__ifuri_app__chat_store__chat_store_path --> src__ifuri_app__storage__app_home
+    src__ifuri_app__chat_store__LocalChatStore____init__ --> src__ifuri_app__storage__ensure_home
+    src__ifuri_app__chat_store__LocalChatStore____init__ --> src__ifuri_app__chat_store__chat_store_path
+    src__ifuri_app__gui_chat__ChatTabMixin___router_endpoint --> src__ifuri_app__storage__load_workspace
+    src__ifuri_app__gui_chat__ChatTabMixin___sync_chat_prompt_url --> src__ifuri_app__url_params__voice_url
+    src__ifuri_app__gui_chat__ChatTabMixin___refresh_chat_channels --> src__ifuri_app__chat_channels__list_chat_channels
+    src__ifuri_app__gui_chat__ChatTabMixin___on_chat_channel_select --> src__ifuri_app__storage__save_workspace
+    src__ifuri_app__gui_chat__ChatTabMixin___load_chat_history_from_urisys --> src__ifuri_app__chat_channels__fetch_chat_history
+    src__ifuri_app__gui_chat__ChatTabMixin___send_chat_message --> src__ifuri_app__chat_channels__send_chat_message_routed
     src__ifuri_app__storage__workspace_path --> src__ifuri_app__storage__app_home
     src__ifuri_app__storage__ensure_home --> src__ifuri_app__storage__app_home
     src__ifuri_app__storage__load_workspace --> src__ifuri_app__storage__ensure_home
@@ -189,59 +220,122 @@ flowchart TD
     src__ifuri_app__storage__save_workspace --> src__ifuri_app__storage__ensure_home
     src__ifuri_app__storage__save_workspace --> src__ifuri_app__storage__workspace_path
     src__ifuri_app__storage__add_event --> src__ifuri_app__storage__now_iso
-    src__ifuri_app__network_scan___collect_local_services --> src__ifuri_app__storage__load_workspace
-    src__ifuri_app__network_scan__scan_urisys_nodes --> src__ifuri_app__storage__load_workspace
-    src__ifuri_app__network_scan__scan_urisys_nodes --> src__ifuri_app__network_scan___local_ipv4
-    src__ifuri_app__network_scan__scan_urisys_nodes --> src__ifuri_app__network_scan___subnet_hosts
-    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__discovery__discover
-    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__network_scan__scan_urisys_nodes
-    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__network_scan__probe_urisys_node
-    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__network_scan___collect_local_services
-    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__web__url_state__set
-    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__network_scan__try_mdns_urisys
-    src__ifuri_app__network_scan__scan_network --> src__ifuri_app__network_scan___services_from_peers
-    src__ifuri_app__voice_planner__load_flow_catalog --> src__ifuri_app__flow_runner__examples_root
-    src__ifuri_app__voice_planner__plan_with_regex --> src__ifuri_app__voice_planner___flow_plan
-    src__ifuri_app__voice_planner__plan_with_catalog --> src__ifuri_app__voice_planner___flow_plan
-    src__ifuri_app__voice_planner__plan_with_catalog --> src__ifuri_app__voice_planner__load_flow_catalog
-    src__ifuri_app__voice_planner__plan_with_catalog --> src__ifuri_app__voice_planner___catalog_tokens
-    src__ifuri_app__voice_planner___parse_llm_plan_json --> src__ifuri_app__voice_planner___flow_plan
-    src__ifuri_app__voice_planner__plan_with_llm --> src__ifuri_app__voice_planner___parse_llm_plan_json
-    src__ifuri_app__voice_planner__plan_with_llm --> src__ifuri_app__voice_planner__node_has_llm
-    src__ifuri_app__voice_planner__plan_with_llm --> src__ifuri_app__voice_planner__load_flow_catalog
-    src__ifuri_app__voice_planner__plan_with_llm --> src__ifuri_app__voice_planner___unwrap_llm_result
-    src__ifuri_app__voice_planner__plan_with_llm --> src__ifuri_app__voice_planner___flow_plan
-    src__ifuri_app__voice_planner__plan_voice_command --> src__ifuri_app__voice_planner__load_flow_catalog
-    src__ifuri_app__voice_planner__plan_voice_command --> src__ifuri_app__voice_planner__plan_with_regex
-    src__ifuri_app__voice_planner__plan_voice_command --> src__ifuri_app__voice_planner__plan_with_catalog
-    src__ifuri_app__voice_planner__plan_voice_command --> src__ifuri_app__voice_planner__plan_with_llm
-    src__ifuri_app__voice_planner__plan_voice_command --> src__ifuri_app__voice_planner__voice_planner_mode
+    src__ifuri_app__discovery__local_descriptor --> src__ifuri_app__storage__load_workspace
+    src__ifuri_app__discovery__local_descriptor --> src__ifuri_app__storage__now_iso
+    src__ifuri_app__discovery__DiscoveryResponder___loop --> src__ifuri_app__discovery__local_descriptor
+    src__ifuri_app__discovery__discover --> src__ifuri_app__storage__load_workspace
+    src__ifuri_app__discovery__discover --> src__ifuri_app__storage__save_workspace
     src__ifuri_app__connectors___row --> src__ifuri_app__connectors__route_scheme
     src__ifuri_app__connectors___row --> src__ifuri_app__connectors___detail
     src__ifuri_app__connectors__normalize_routes --> src__ifuri_app__web__url_state__set
     src__ifuri_app__connectors__normalize_routes --> src__ifuri_app__connectors___row
     src__ifuri_app__connectors__fetch_node_routes --> src__ifuri_app__connectors__normalize_routes
-    src__ifuri_app__web__i18n__t --> src__ifuri_app__web__i18n__val
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___dispatch --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__clearTimeout
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___dispatch --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__reject
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__clearTimeout --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceReply
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__start --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___setStatus
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__start --> src__ifuri_app__web__webrtc_peer__postRemote
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__start --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___wireChannel
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__start --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___poll
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__offer --> src__ifuri_app__web__webrtc_peer__postRemote
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__posted --> src__ifuri_app__web__webrtc_peer__postRemote
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___wireChannel --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___setStatus
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___wireChannel --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___dispatch
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___poll --> src__ifuri_app__web__webrtc_peer__api
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___poll --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___setStatus
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___poll --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___applySignal
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___applySignal --> src__ifuri_app__web__webrtc_peer__postRemote
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__t --> src__ifuri_app__web__webrtc_peer__postRemote
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__payload --> src__ifuri_app__web__webrtc_peer__postRemote
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__answer --> src__ifuri_app__web__webrtc_peer__postRemote
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendEnvelope --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__isReady
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceRequest --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__isReady
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceRequest --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__reject
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceRequest --> src__ifuri_app__web__webrtc_peer__newId
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceRequest --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__clearTimeout
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__timer --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__reject
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__reject --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceReply
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceReply --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendEnvelope
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__stop --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__clearTimeout
+    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__stop --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___setStatus
     src__ifuri_app__web__theme__initFromUrl --> src__ifuri_app__web__theme__applyTheme
     src__ifuri_app__web__theme__initFromUrl --> src__ifuri_app__web__theme__applyLang
     src__ifuri_app__web__theme__setTheme --> src__ifuri_app__web__theme__applyTheme
     src__ifuri_app__web__theme__setLang --> src__ifuri_app__web__theme__applyLang
+    src__ifuri_app__web__i18n__t --> src__ifuri_app__web__i18n__val
+    src__ifuri_app__web__url_state__write --> src__ifuri_app__web__url_state__read
+    src__ifuri_app__web__url_state__write --> src__ifuri_app__web__url_state__set
+    src__ifuri_app__web__url_state__patch --> src__ifuri_app__web__url_state__write
+    src__ifuri_app__web__url_state__patch --> src__ifuri_app__web__url_state__read
+    src__ifuri_app__web__url_state__get --> src__ifuri_app__web__url_state__read
+    src__ifuri_app__web__url_state__onPopState --> src__ifuri_app__web__url_state__read
+    src__ifuri_app__web__url_state__withParams --> src__ifuri_app__web__url_state__read
+    src__ifuri_app__web__url_state__withParams --> src__ifuri_app__web__url_state__set
+    src__ifuri_app__web__url_state__base --> src__ifuri_app__web__url_state__set
+    src__ifuri_app__web__url_state__cur --> src__ifuri_app__web__url_state__set
+    src__ifuri_app__web__url_state__set --> src__ifuri_app__web__url_state__patch
+    src__ifuri_app__packs__runtime__get_local_uri_runtime --> src__ifuri_app__packs__loader__load_local_registry
+    src__ifuri_app__packs__runtime__dispatch_local_uri --> src__ifuri_app__packs__runtime__get_local_uri_runtime
+    src__ifuri_app__packs__runtime__local_runtime_info --> src__ifuri_app__packs__runtime__get_local_uri_runtime
+    src__ifuri_app__packs__loader__packages_root --> src__ifuri_app__paths__repo_root
+    src__ifuri_app__packs__loader__discover_manifests --> src__ifuri_app__packs__loader__packages_root
+    src__ifuri_app__packs__loader__load_local_registry --> src__ifuri_app__packs__loader__discover_manifests
+    src__ifuri_app__packs__loader__load_local_registry --> src__ifuri_app__packs__loader___ensure_pack_path
+    src__ifuri_app__packs__loader__pack_summary --> src__ifuri_app__packs__loader__discover_manifests
+    src__ifuri_app__packs__loader__pack_summary --> src__ifuri_app__packs__loader__packages_root
+    scripts__bootstrap_lenovo_packs__main --> scripts__bootstrap_lenovo_packs__call
+    scripts__gui_smoke__run_gui_smoke --> src__ifuri_app__storage__load_workspace
+    scripts__gui_smoke__run_gui_smoke --> src__ifuri_app__storage__save_workspace
+    scripts__gui_smoke__main --> scripts__gui_smoke__parse_args
+    scripts__gui_smoke__main --> scripts__gui_smoke__run_gui_smoke
+    scripts__build_platform__run_pyinstaller --> scripts__build_platform__add_data_arg
+    scripts__build_platform__main --> scripts__build_platform__read_version
+    scripts__build_platform__main --> scripts__build_platform__platform_tag
+    scripts__build_platform__main --> scripts__build_platform__run_pyinstaller
+    scripts__build_platform__main --> scripts__build_platform__package_artifact
+    src__ifuri_app__runtime__RuntimeServer____init__ --> src__ifuri_app__runtime_bind__bind_runtime_server
+    src__ifuri_app__runtime__RuntimeServer____init__ --> src__ifuri_app__runtime_handlers__make_handler
+    src__ifuri_app__urirun_bridge__call_urirun --> src__ifuri_app__urirun_bridge__urirun_info
+    src__ifuri_app__urirun_bridge__call_urirun --> src__ifuri_app__urirun_bridge__load_registry
+    src__ifuri_app__urirun_bridge__call_urirun --> src__ifuri_app__urirun_bridge__service_map_env
+    src__ifuri_app__urirun_bridge__registry_summary --> src__ifuri_app__urirun_bridge__load_registry
+    src__ifuri_app__urirun_bridge__default_urirun_registry --> src__ifuri_app__storage__load_workspace
+    src__ifuri_app__urirun_bridge__dispatch_local --> src__ifuri_app__urirun_bridge__urirun_info
+    src__ifuri_app__urirun_bridge__dispatch_local --> src__ifuri_app__urirun_bridge___is_route_not_found
+    src__ifuri_app__urirun_bridge__dispatch_local --> src__ifuri_app__urirun_bridge__load_registry
+    src__ifuri_app__urirun_bridge__dispatch_local --> src__ifuri_app__urirun_bridge__default_urirun_registry
+    src__ifuri_app__urirun_bridge__list_routes --> src__ifuri_app__urirun_bridge__urirun_info
+    src__ifuri_app__urirun_bridge__list_routes --> src__ifuri_app__urirun_bridge__load_registry
+    src__ifuri_app__urirun_bridge__list_routes --> src__ifuri_app__urirun_bridge__default_urirun_registry
+    src__ifuri_app__urirun_bridge__serve_http --> src__ifuri_app__urirun_bridge__urirun_info
+    src__ifuri_app__urirun_bridge__serve_http --> src__ifuri_app__urirun_bridge__load_registry
+    src__ifuri_app__urirun_bridge__serve_http --> src__ifuri_app__urirun_bridge__default_urirun_registry
+    src__ifuri_app__urirun_bridge__scan_project --> src__ifuri_app__urirun_bridge__urirun_info
+    src__ifuri_app__urirun_bridge__mcp_tools --> src__ifuri_app__urirun_bridge__urirun_info
+    src__ifuri_app__urirun_bridge__mcp_tools --> src__ifuri_app__urirun_bridge__load_registry
+    src__ifuri_app__urirun_bridge__mcp_tools --> src__ifuri_app__urirun_bridge__default_urirun_registry
+    src__ifuri_app__urirun_bridge__a2a_card --> src__ifuri_app__urirun_bridge__urirun_info
+    src__ifuri_app__urirun_bridge__a2a_card --> src__ifuri_app__urirun_bridge__load_registry
+    src__ifuri_app__urirun_bridge__a2a_card --> src__ifuri_app__urirun_bridge__default_urirun_registry
+    src__ifuri_app__urirun_bridge__serve_mcp --> src__ifuri_app__urirun_bridge__urirun_info
+    src__ifuri_app__urirun_bridge__serve_mcp --> src__ifuri_app__urirun_bridge__load_registry
+    src__ifuri_app__urirun_bridge__serve_mcp --> src__ifuri_app__urirun_bridge__default_urirun_registry
     src__ifuri_app__cli__cmd_init --> src__ifuri_app__storage__load_workspace
     src__ifuri_app__cli__cmd_init --> src__ifuri_app__storage__save_workspace
     src__ifuri_app__cli__cmd_init --> src__ifuri_app__cli__print_json
     src__ifuri_app__cli__cmd_init --> src__ifuri_app__network_scan__scan_urisys_nodes
-    src__ifuri_app__cli__cmd_init --> packages__ifuri_page__handlers__next
+    src__ifuri_app__cli__cmd_init --> src__ifuri_app__storage__workspace_path
     src__ifuri_app__cli__cmd_app --> src__ifuri_app__gui__launch_gui
     src__ifuri_app__cli__cmd_serve --> src__ifuri_app__storage__load_workspace
     src__ifuri_app__cli__cmd_serve --> src__ifuri_app__storage__save_workspace
-    src__ifuri_app__cli__cmd_serve --> src__ifuri_app__runtime__find_free_port
-    src__ifuri_app__cli__cmd_serve --> src__ifuri_app__runtime___port_available
+    src__ifuri_app__cli__cmd_serve --> src__ifuri_app__runtime_bind__find_free_port
+    src__ifuri_app__cli__cmd_serve --> src__ifuri_app__runtime_bind___port_available
     src__ifuri_app__cli__cmd_discover --> src__ifuri_app__discovery__discover
     src__ifuri_app__cli__cmd_discover --> src__ifuri_app__cli__print_json
     src__ifuri_app__cli__cmd_voice --> src__ifuri_app__storage__load_workspace
     src__ifuri_app__cli__cmd_voice --> src__ifuri_app__storage__save_workspace
-    src__ifuri_app__cli__cmd_voice --> src__ifuri_app__runtime__find_free_port
-    src__ifuri_app__cli__cmd_voice --> src__ifuri_app__runtime___port_available
+    src__ifuri_app__cli__cmd_voice --> src__ifuri_app__runtime_bind__find_free_port
+    src__ifuri_app__cli__cmd_voice --> src__ifuri_app__runtime_bind___port_available
     src__ifuri_app__cli__cmd_node_health --> src__ifuri_app__cli__print_json
     src__ifuri_app__cli__cmd_node_call --> src__ifuri_app__cli__print_json
     src__ifuri_app__cli__cmd_node_control_test --> src__ifuri_app__remote_screen__probe_remote_control
@@ -305,85 +399,29 @@ flowchart TD
     src__ifuri_app__cli__cmd_expand --> src__ifuri_app__flow_engine__expand_flow
     src__ifuri_app__cli__main --> src__ifuri_app__cli__build_parser
     src__ifuri_app__cli__main --> src__ifuri_app__cli__cmd_app
-    src__ifuri_app__web__page__handlers__get_url_state --> src__ifuri_app__web__page__handlers__urlState
-    src__ifuri_app__web__page__handlers__set_url_state --> src__ifuri_app__web__page__handlers__urlState
-    src__ifuri_app__web__page__handlers__toggle_view --> src__ifuri_app__web__page__handlers__urlState
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___dispatch --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__clearTimeout
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___dispatch --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__reject
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__clearTimeout --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceReply
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__start --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___setStatus
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__start --> src__ifuri_app__web__webrtc_peer__postRemote
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__start --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___wireChannel
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__start --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___poll
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__offer --> src__ifuri_app__web__webrtc_peer__postRemote
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__posted --> src__ifuri_app__web__webrtc_peer__postRemote
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___wireChannel --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___setStatus
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___wireChannel --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___dispatch
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___poll --> src__ifuri_app__web__webrtc_peer__api
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___poll --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___setStatus
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___poll --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___applySignal
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___applySignal --> src__ifuri_app__web__webrtc_peer__postRemote
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__t --> src__ifuri_app__web__webrtc_peer__postRemote
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__payload --> src__ifuri_app__web__webrtc_peer__postRemote
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__answer --> src__ifuri_app__web__webrtc_peer__postRemote
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendEnvelope --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__isReady
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceRequest --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__isReady
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceRequest --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__reject
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceRequest --> src__ifuri_app__web__webrtc_peer__newId
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceRequest --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__clearTimeout
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__timer --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__reject
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__reject --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceReply
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceReply --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendEnvelope
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__stop --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__clearTimeout
-    src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__stop --> src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___setStatus
-    src__ifuri_app__discovery__local_descriptor --> src__ifuri_app__storage__load_workspace
-    src__ifuri_app__discovery__local_descriptor --> src__ifuri_app__storage__now_iso
-    src__ifuri_app__discovery__DiscoveryResponder___loop --> src__ifuri_app__discovery__local_descriptor
-    src__ifuri_app__discovery__discover --> src__ifuri_app__storage__load_workspace
-    src__ifuri_app__discovery__discover --> src__ifuri_app__storage__save_workspace
-    src__ifuri_app__remote_screen__capture_remote_screen --> src__ifuri_app__remote_screen__screen_uri
-    src__ifuri_app__remote_screen__capture_remote_screen --> src__ifuri_app__remote_screen__unwrap_result
-    src__ifuri_app__remote_screen__probe_remote_control --> src__ifuri_app__web__url_state__set
-    src__ifuri_app__remote_screen__probe_remote_control --> src__ifuri_app__remote_screen__capture_remote_screen
-    src__ifuri_app__web__url_state__write --> src__ifuri_app__web__url_state__read
-    src__ifuri_app__web__url_state__write --> src__ifuri_app__web__url_state__set
-    src__ifuri_app__web__url_state__patch --> src__ifuri_app__web__url_state__write
-    src__ifuri_app__web__url_state__patch --> src__ifuri_app__web__url_state__read
-    src__ifuri_app__web__url_state__get --> src__ifuri_app__web__url_state__read
-    src__ifuri_app__web__url_state__onPopState --> src__ifuri_app__web__url_state__read
-    src__ifuri_app__web__url_state__withParams --> src__ifuri_app__web__url_state__read
-    src__ifuri_app__web__url_state__withParams --> src__ifuri_app__web__url_state__set
-    src__ifuri_app__web__url_state__base --> src__ifuri_app__web__url_state__set
-    src__ifuri_app__web__url_state__cur --> src__ifuri_app__web__url_state__set
-    src__ifuri_app__web__url_state__set --> src__ifuri_app__web__url_state__patch
-    src__ifuri_app__packs__runtime__get_local_uri_runtime --> src__ifuri_app__packs__loader__load_local_registry
-    src__ifuri_app__packs__runtime__dispatch_local_uri --> src__ifuri_app__packs__runtime__get_local_uri_runtime
-    src__ifuri_app__packs__runtime__local_runtime_info --> src__ifuri_app__packs__runtime__get_local_uri_runtime
-    scripts__bootstrap_lenovo_packs__main --> scripts__bootstrap_lenovo_packs__call
-    src__ifuri_app__packs__loader__packages_root --> src__ifuri_app__paths__repo_root
-    src__ifuri_app__packs__loader__discover_manifests --> src__ifuri_app__packs__loader__packages_root
-    src__ifuri_app__packs__loader__load_local_registry --> src__ifuri_app__packs__loader__discover_manifests
-    src__ifuri_app__packs__loader__load_local_registry --> src__ifuri_app__packs__loader___ensure_pack_path
-    src__ifuri_app__packs__loader__pack_summary --> src__ifuri_app__packs__loader__discover_manifests
-    src__ifuri_app__packs__loader__pack_summary --> src__ifuri_app__packs__loader__packages_root
-    src__ifuri_app__gui_chat__ChatTabMixin___router_endpoint --> src__ifuri_app__storage__load_workspace
-    src__ifuri_app__gui_chat__ChatTabMixin___sync_chat_prompt_url --> src__ifuri_app__url_params__voice_url
-    src__ifuri_app__gui_chat__ChatTabMixin___refresh_chat_channels --> src__ifuri_app__chat_channels__list_chat_channels
-    src__ifuri_app__gui_chat__ChatTabMixin___on_chat_channel_select --> src__ifuri_app__storage__save_workspace
-    src__ifuri_app__gui_chat__ChatTabMixin___load_chat_history_from_urisys --> src__ifuri_app__chat_channels__fetch_chat_history
-    src__ifuri_app__gui_chat__ChatTabMixin___send_chat_message --> src__ifuri_app__chat_channels__send_chat_message_routed
-    src__ifuri_app__voice_pipeline__run_voice_command --> src__ifuri_app__voice_planner__plan_voice_command
-    src__ifuri_app__voice_pipeline__run_voice_command --> src__ifuri_app__urisys_client__node_voice_capabilities
-    src__ifuri_app__voice_pipeline__run_voice_command --> src__ifuri_app__voice_pipeline___extract_stt_text
-    src__ifuri_app__voice_pipeline__run_voice_command --> src__ifuri_app__flow_runner__run_flow_file
-    src__ifuri_app__voice_pipeline__voice_capabilities --> src__ifuri_app__urisys_client__node_voice_capabilities
-    src__ifuri_app__voice_pipeline__voice_capabilities --> src__ifuri_app__voice_pipeline__voice_pack_install_hint
-    src__ifuri_app__voice_pipeline__voice_capabilities --> src__ifuri_app__voice_planner__voice_planner_mode
-    src__ifuri_app__voice_pipeline__install_voice_packs --> src__ifuri_app__voice_pipeline__voice_pack_install_hint
-    src__ifuri_app__voice_pipeline__install_voice_packs --> src__ifuri_app__flow_runner__run_flow_file
-    src__ifuri_app__voice_pipeline__install_voice_packs --> src__ifuri_app__urisys_client__node_voice_capabilities
-    src__ifuri_app__voice_pipeline__voice_pack_install_hint --> src__ifuri_app__urisys_client__node_voice_capabilities
+    src__ifuri_app__connect_store___normalize_package_item --> src__ifuri_app__connect_store___normalize_install
+    src__ifuri_app__connect_store___normalize_package_item --> src__ifuri_app__connect_store___version_of
+    src__ifuri_app__connect_store__normalize_packages --> src__ifuri_app__connect_store___normalize_package_item
+    src__ifuri_app__connect_store__fetch_catalog --> src__ifuri_app__connect_store__catalog_url
+    src__ifuri_app__connect_store__fetch_catalog --> src__ifuri_app__connect_store__normalize_packages
+    src__ifuri_app__connect_store__local_registry_status --> src__ifuri_app__urirun_bridge__urirun_info
+    src__ifuri_app__connect_store__local_registry_status --> src__ifuri_app__urirun_bridge__default_urirun_registry
+    src__ifuri_app__connect_store__local_registry_status --> src__ifuri_app__urirun_bridge__registry_summary
+    src__ifuri_app__connect_store__payload_form_fields --> src__ifuri_app__web__url_state__set
+    src__ifuri_app__connect_store__payload_form_fields --> src__ifuri_app__connect_store__example_payload_for
+    src__ifuri_app__flow_runner__resolve_flow_path --> src__ifuri_app__flow_runner__examples_root
+    src__ifuri_app__flow_runner__load_flow_steps --> src__ifuri_app__flow_compile__flow_steps_from_document
+    src__ifuri_app__flow_runner__load_flow_steps --> src__ifuri_app__flow_engine__extract_steps
+    src__ifuri_app__flow_runner__run_flow_file --> src__ifuri_app__flow_runner__resolve_flow_path
+    src__ifuri_app__flow_runner__run_flow_file --> src__ifuri_app__flow_runner__load_flow_steps
+    src__ifuri_app__chat_channels___urisys_node_channels --> src__ifuri_app__chat_channels___channel_id
+    src__ifuri_app__chat_channels___ifuri_peer_channels --> src__ifuri_app__webrtc_signal__webrtc_room_id
+    src__ifuri_app__chat_channels___ifuri_peer_channels --> src__ifuri_app__chat_channels___channel_id
+    src__ifuri_app__chat_channels___service_channels --> src__ifuri_app__chat_channels___channel_id
     src__ifuri_app__chat_channels__channels_from_scan --> src__ifuri_app__web__url_state__set
+    src__ifuri_app__chat_channels__channels_from_scan --> src__ifuri_app__chat_channels___service_channels
+    src__ifuri_app__chat_channels__channels_from_scan --> src__ifuri_app__chat_channels___urisys_node_channels
+    src__ifuri_app__chat_channels__channels_from_scan --> src__ifuri_app__chat_channels___ifuri_peer_channels
     src__ifuri_app__chat_channels__list_chat_channels --> src__ifuri_app__network_scan__scan_network
     src__ifuri_app__chat_channels__list_chat_channels --> src__ifuri_app__webrtc_signal__local_peer_url
     src__ifuri_app__chat_channels__list_chat_channels --> src__ifuri_app__chat_channels__channels_from_scan
@@ -391,12 +429,13 @@ flowchart TD
     src__ifuri_app__chat_channels__resolve_data_endpoint --> src__ifuri_app__storage__load_workspace
     src__ifuri_app__chat_channels__fetch_chat_history --> src__ifuri_app__chat_channels__resolve_data_endpoint
     src__ifuri_app__chat_channels__fetch_chat_history --> src__ifuri_app__chat_channels___local_chat_store
+    src__ifuri_app__chat_channels__fetch_chat_history --> src__ifuri_app__chat_channels___router_unreachable
     src__ifuri_app__chat_channels__fetch_chat_history --> src__ifuri_app__chat_channels___urisys_chat_unavailable
     src__ifuri_app__chat_channels__fetch_chat_channel_index --> src__ifuri_app__chat_channels__resolve_data_endpoint
     src__ifuri_app__chat_channels__fetch_chat_channel_index --> src__ifuri_app__chat_channels___local_chat_store
     src__ifuri_app__chat_channels__persist_chat_turn --> src__ifuri_app__chat_channels__resolve_data_endpoint
     src__ifuri_app__chat_channels__persist_chat_turn --> src__ifuri_app__chat_channels___local_chat_store
-    src__ifuri_app__chat_channels__persist_chat_turn --> src__ifuri_app__chat_channels___urisys_chat_unavailable
+    src__ifuri_app__chat_channels__persist_chat_turn --> src__ifuri_app__chat_channels___router_unreachable
     src__ifuri_app__chat_channels__urisys_chat_available --> src__ifuri_app__chat_channels__resolve_data_endpoint
     src__ifuri_app__chat_channels__urisys_chat_available --> src__ifuri_app__chat_channels___urisys_chat_unavailable
     src__ifuri_app__chat_channels__migrate_local_chat_to_urisys --> src__ifuri_app__chat_channels__urisys_chat_available
@@ -408,9 +447,85 @@ flowchart TD
     src__ifuri_app__chat_channels__send_chat_message --> src__ifuri_app__voice_planner__plan_voice_command
     src__ifuri_app__chat_channels__send_chat_message_routed --> src__ifuri_app__chat_channels___payload_for_scheme
     src__ifuri_app__chat_channels__send_chat_message_routed --> src__ifuri_app__chat_channels__send_chat_message
-    src__ifuri_app__chat_channels__send_chat_message_routed --> src__ifuri_app__chat_channels___format_json_reply
+    src__ifuri_app__chat_channels__send_chat_message_routed --> src__ifuri_app__chat_channels___router_unreachable
     src__ifuri_app__chat_channels__send_chat_message_routed --> src__ifuri_app__chat_channels__persist_chat_turn
     src__ifuri_app__chat_channels___format_voice_reply --> src__ifuri_app__chat_channels___format_json_reply
+    src__ifuri_app__flow_compile__expand_flow_compiled --> src__ifuri_app__flow_compile___parse_flow_input
+    src__ifuri_app__flow_compile__expand_flow_compiled --> src__ifuri_app__flow_compile__uri2flow_available
+    src__ifuri_app__flow_compile__expand_flow_compiled --> src__ifuri_app__flow_compile___scheme
+    src__ifuri_app__flow_compile__flow_steps_from_document --> src__ifuri_app__flow_compile__uri2flow_available
+    src__ifuri_app__flow_compile__flow_steps_from_document --> src__ifuri_app__flow_compile___parse_flow_input
+    src__ifuri_app__flow_compile__flow_steps_from_document --> src__ifuri_app__flow_engine__extract_steps
+    src__ifuri_app__flow_compile__validate_flow_compiled --> src__ifuri_app__flow_compile___parse_flow_input
+    src__ifuri_app__flow_compile__validate_flow_compiled --> src__ifuri_app__flow_compile__uri2flow_available
+    src__ifuri_app__flow_compile__validate_flow --> src__ifuri_app__flow_compile__uri2flow_available
+    src__ifuri_app__flow_compile__validate_flow --> src__ifuri_app__flow_compile__validate_flow_compiled
+    src__ifuri_app__flow_compile__validate_flow --> src__ifuri_app__flow_engine___legacy_expand_flow
+    src__ifuri_app__runtime_bind__format_port_in_use_error --> src__ifuri_app__runtime_bind___port_listeners
+    src__ifuri_app__runtime_bind__find_free_port --> src__ifuri_app__runtime_bind___port_available
+    src__ifuri_app__runtime_bind__find_free_port --> src__ifuri_app__runtime_bind__format_port_in_use_error
+    src__ifuri_app__runtime_bind__bind_runtime_server --> src__ifuri_app__runtime_bind__format_port_in_use_error
+    src__ifuri_app__voice_planner__load_flow_catalog --> src__ifuri_app__flow_runner__examples_root
+    src__ifuri_app__voice_planner__plan_with_regex --> src__ifuri_app__voice_planner___flow_plan
+    src__ifuri_app__voice_planner__plan_with_catalog --> src__ifuri_app__voice_planner___flow_plan
+    src__ifuri_app__voice_planner__plan_with_catalog --> src__ifuri_app__voice_planner__load_flow_catalog
+    src__ifuri_app__voice_planner__plan_with_catalog --> src__ifuri_app__voice_planner___catalog_tokens
+    src__ifuri_app__voice_planner___parse_llm_plan_json --> src__ifuri_app__voice_planner___flow_plan
+    src__ifuri_app__voice_planner__plan_with_llm --> src__ifuri_app__voice_planner___parse_llm_plan_json
+    src__ifuri_app__voice_planner__plan_with_llm --> src__ifuri_app__voice_planner__node_has_llm
+    src__ifuri_app__voice_planner__plan_with_llm --> src__ifuri_app__voice_planner__load_flow_catalog
+    src__ifuri_app__voice_planner__plan_with_llm --> src__ifuri_app__voice_planner___unwrap_llm_result
+    src__ifuri_app__voice_planner__plan_with_llm --> src__ifuri_app__voice_planner___flow_plan
+    src__ifuri_app__voice_planner__plan_voice_command --> src__ifuri_app__voice_planner__load_flow_catalog
+    src__ifuri_app__voice_planner__plan_voice_command --> src__ifuri_app__voice_planner__plan_with_regex
+    src__ifuri_app__voice_planner__plan_voice_command --> src__ifuri_app__voice_planner__plan_with_catalog
+    src__ifuri_app__voice_planner__plan_voice_command --> src__ifuri_app__voice_planner__plan_with_llm
+    src__ifuri_app__voice_planner__plan_voice_command --> src__ifuri_app__voice_planner__voice_planner_mode
+    src__ifuri_app__webrtc_pipeline__webrtc_capabilities --> src__ifuri_app__urisys_client__node_webrtc_available
+    src__ifuri_app__webrtc_pipeline__webrtc_capabilities --> src__ifuri_app__webrtc_pipeline__webrtc_pack_install_hint
+    src__ifuri_app__webrtc_pipeline__install_webrtc_pack --> src__ifuri_app__webrtc_pipeline__webrtc_pack_install_hint
+    src__ifuri_app__webrtc_pipeline__install_webrtc_pack --> src__ifuri_app__flow_runner__run_flow_file
+    src__ifuri_app__webrtc_pipeline__install_webrtc_pack --> src__ifuri_app__urisys_client__node_webrtc_available
+    src__ifuri_app__webrtc_pipeline__webrtc_smoke --> src__ifuri_app__urisys_client__node_webrtc_available
+    src__ifuri_app__webrtc_pipeline__webrtc_pack_install_hint --> src__ifuri_app__urisys_client__node_webrtc_available
+    src__ifuri_app__runtime_state__RuntimeState__load --> src__ifuri_app__storage__load_workspace
+    src__ifuri_app__runtime_state__RuntimeState__load --> src__ifuri_app__storage__save_workspace
+    src__ifuri_app__runtime_state__RuntimeState__health --> src__ifuri_app__packs__runtime__local_runtime_info
+    src__ifuri_app__runtime_state__RuntimeState__health --> src__ifuri_app__urirun_bridge__urirun_info
+    src__ifuri_app__runtime_state__RuntimeState__health --> src__ifuri_app__flow_compile__uri2flow_available
+    src__ifuri_app__runtime_state__RuntimeState__health --> src__ifuri_app__storage__now_iso
+    src__ifuri_app__runtime_state__RuntimeState__health --> src__ifuri_app__flow_runner__examples_root
+    src__ifuri_app__runtime_state__RuntimeState__call_uri --> src__ifuri_app__flow_engine__dry_run_uri
+    src__ifuri_app__runtime_state__RuntimeState__call_uri --> src__ifuri_app__storage__add_event
+    src__ifuri_app__runtime_state__RuntimeState__call_uri --> src__ifuri_app__storage__save_workspace
+    src__ifuri_app__runtime_state__RuntimeState__call_uri --> src__ifuri_app__packs__runtime__dispatch_local_uri
+    src__ifuri_app__runtime_state__RuntimeState__call_uri --> src__ifuri_app__packs__runtime__get_local_uri_runtime
+    src__ifuri_app__runtime_state__RuntimeState__call_uri --> src__ifuri_app__urirun_bridge__default_urirun_registry
+    src__ifuri_app__runtime_state__RuntimeState__run_flow --> src__ifuri_app__flow_engine__expand_flow
+    src__ifuri_app__runtime_state__RuntimeState__run_flow --> src__ifuri_app__runtime_state__load_urirun_policy
+    src__ifuri_app__runtime_state__RuntimeState__run_flow --> src__ifuri_app__storage__add_event
+    src__ifuri_app__runtime_state__RuntimeState__run_flow --> src__ifuri_app__storage__save_workspace
+    src__ifuri_app__runtime_state__RuntimeState__run_flow --> src__ifuri_app__flow_engine__dry_run_flow
+    src__ifuri_app__runtime_state__RuntimeState__run_flow --> src__ifuri_app__urirun_bridge__default_urirun_registry
+    src__ifuri_app__runtime_state__RuntimeState__run_flow --> src__ifuri_app__packs__runtime__dispatch_local_uri
+    src__ifuri_app__runtime_handlers__make_handler --> src__ifuri_app__runtime_handlers__json_bytes
+    src__ifuri_app__voice_pipeline__run_voice_command --> src__ifuri_app__voice_planner__plan_voice_command
+    src__ifuri_app__voice_pipeline__run_voice_command --> src__ifuri_app__urisys_client__node_voice_capabilities
+    src__ifuri_app__voice_pipeline__run_voice_command --> src__ifuri_app__voice_pipeline___extract_stt_text
+    src__ifuri_app__voice_pipeline__run_voice_command --> src__ifuri_app__flow_runner__run_flow_file
+    src__ifuri_app__voice_pipeline__voice_capabilities --> src__ifuri_app__urisys_client__node_voice_capabilities
+    src__ifuri_app__voice_pipeline__voice_capabilities --> src__ifuri_app__voice_pipeline__voice_pack_install_hint
+    src__ifuri_app__voice_pipeline__voice_capabilities --> src__ifuri_app__voice_planner__voice_planner_mode
+    src__ifuri_app__voice_pipeline__install_voice_packs --> src__ifuri_app__voice_pipeline__voice_pack_install_hint
+    src__ifuri_app__voice_pipeline__install_voice_packs --> src__ifuri_app__flow_runner__run_flow_file
+    src__ifuri_app__voice_pipeline__install_voice_packs --> src__ifuri_app__urisys_client__node_voice_capabilities
+    src__ifuri_app__voice_pipeline__voice_pack_install_hint --> src__ifuri_app__urisys_client__node_voice_capabilities
+    src__ifuri_app__remote_screen__capture_remote_screen --> src__ifuri_app__remote_screen__resolve_node_id
+    src__ifuri_app__remote_screen__capture_remote_screen --> src__ifuri_app__remote_screen__screen_uri
+    src__ifuri_app__remote_screen__capture_remote_screen --> src__ifuri_app__remote_screen__unwrap_result
+    src__ifuri_app__remote_screen__probe_remote_control --> src__ifuri_app__remote_screen__resolve_node_id
+    src__ifuri_app__remote_screen__probe_remote_control --> src__ifuri_app__web__url_state__set
+    src__ifuri_app__remote_screen__probe_remote_control --> src__ifuri_app__remote_screen__capture_remote_screen
     src__ifuri_app__web__voice__screenTimer --> src__ifuri_app__web__voice__I
     src__ifuri_app__web__voice__screenTimer --> src__ifuri_app__web__voice__t
     src__ifuri_app__web__voice__autoSendPending --> src__ifuri_app__web__voice__I
@@ -539,110 +654,8 @@ flowchart TD
     src__ifuri_app__web__voice__transcript --> src__ifuri_app__web__voice__syncPromptToUrl
     src__ifuri_app__web__voice__cid --> src__ifuri_app__web__voice__selectChannel
     src__ifuri_app__web__voice__ch --> src__ifuri_app__web__voice__selectChannel
-    src__ifuri_app__flow_runner__resolve_flow_path --> src__ifuri_app__flow_runner__examples_root
-    src__ifuri_app__flow_runner__load_flow_steps --> src__ifuri_app__flow_compile__flow_steps_from_document
-    src__ifuri_app__flow_runner__load_flow_steps --> src__ifuri_app__flow_engine__extract_steps
-    src__ifuri_app__flow_runner__run_flow_file --> src__ifuri_app__flow_runner__resolve_flow_path
-    src__ifuri_app__flow_runner__run_flow_file --> src__ifuri_app__flow_runner__load_flow_steps
-    src__ifuri_app__novnc_demo__dashboard_ports --> src__ifuri_app__novnc_demo__read_env_file
-    src__ifuri_app__novnc_demo__dashboard_ports --> src__ifuri_app__novnc_demo__demo_dir
-    src__ifuri_app__novnc_demo__dashboard_url --> src__ifuri_app__novnc_demo__dashboard_ports
-    src__ifuri_app__novnc_demo__launch_info --> src__ifuri_app__novnc_demo__demo_dir
-    src__ifuri_app__novnc_demo__launch_info --> src__ifuri_app__novnc_demo__docker_available
-    src__ifuri_app__novnc_demo__launch_info --> src__ifuri_app__novnc_demo__dashboard_url
-    src__ifuri_app__urirun_bridge__call_urirun --> src__ifuri_app__urirun_bridge__urirun_info
-    src__ifuri_app__urirun_bridge__call_urirun --> src__ifuri_app__urirun_bridge__load_registry
-    src__ifuri_app__urirun_bridge__call_urirun --> src__ifuri_app__urirun_bridge__service_map_env
-    src__ifuri_app__urirun_bridge__registry_summary --> src__ifuri_app__urirun_bridge__load_registry
-    src__ifuri_app__urirun_bridge__default_urirun_registry --> src__ifuri_app__storage__load_workspace
-    src__ifuri_app__urirun_bridge__dispatch_local --> src__ifuri_app__urirun_bridge__urirun_info
-    src__ifuri_app__urirun_bridge__dispatch_local --> src__ifuri_app__urirun_bridge__load_registry
-    src__ifuri_app__urirun_bridge__dispatch_local --> src__ifuri_app__urirun_bridge__default_urirun_registry
-    src__ifuri_app__urirun_bridge__list_routes --> src__ifuri_app__urirun_bridge__urirun_info
-    src__ifuri_app__urirun_bridge__list_routes --> src__ifuri_app__urirun_bridge__load_registry
-    src__ifuri_app__urirun_bridge__list_routes --> src__ifuri_app__urirun_bridge__default_urirun_registry
-    src__ifuri_app__urirun_bridge__serve_http --> src__ifuri_app__urirun_bridge__urirun_info
-    src__ifuri_app__urirun_bridge__serve_http --> src__ifuri_app__urirun_bridge__load_registry
-    src__ifuri_app__urirun_bridge__serve_http --> src__ifuri_app__urirun_bridge__default_urirun_registry
-    src__ifuri_app__urirun_bridge__scan_project --> src__ifuri_app__urirun_bridge__urirun_info
-    src__ifuri_app__urirun_bridge__mcp_tools --> src__ifuri_app__urirun_bridge__urirun_info
-    src__ifuri_app__urirun_bridge__mcp_tools --> src__ifuri_app__urirun_bridge__load_registry
-    src__ifuri_app__urirun_bridge__mcp_tools --> src__ifuri_app__urirun_bridge__default_urirun_registry
-    src__ifuri_app__urirun_bridge__a2a_card --> src__ifuri_app__urirun_bridge__urirun_info
-    src__ifuri_app__urirun_bridge__a2a_card --> src__ifuri_app__urirun_bridge__load_registry
-    src__ifuri_app__urirun_bridge__a2a_card --> src__ifuri_app__urirun_bridge__default_urirun_registry
-    src__ifuri_app__urirun_bridge__serve_mcp --> src__ifuri_app__urirun_bridge__urirun_info
-    src__ifuri_app__urirun_bridge__serve_mcp --> src__ifuri_app__urirun_bridge__load_registry
-    src__ifuri_app__urirun_bridge__serve_mcp --> src__ifuri_app__urirun_bridge__default_urirun_registry
-    scripts__build_platform__run_pyinstaller --> scripts__build_platform__add_data_arg
-    scripts__build_platform__main --> scripts__build_platform__read_version
-    scripts__build_platform__main --> scripts__build_platform__platform_tag
-    scripts__build_platform__main --> scripts__build_platform__run_pyinstaller
-    scripts__build_platform__main --> scripts__build_platform__package_artifact
-    scripts__gui_smoke__run_gui_smoke --> src__ifuri_app__storage__load_workspace
-    scripts__gui_smoke__run_gui_smoke --> src__ifuri_app__storage__save_workspace
-    scripts__gui_smoke__main --> scripts__gui_smoke__parse_args
-    scripts__gui_smoke__main --> scripts__gui_smoke__run_gui_smoke
-    src__ifuri_app__runtime__format_port_in_use_error --> src__ifuri_app__runtime___port_listeners
-    src__ifuri_app__runtime__find_free_port --> src__ifuri_app__runtime___port_available
-    src__ifuri_app__runtime__find_free_port --> src__ifuri_app__runtime__format_port_in_use_error
-    src__ifuri_app__runtime__bind_runtime_server --> src__ifuri_app__runtime__format_port_in_use_error
-    src__ifuri_app__runtime__RuntimeState__load --> src__ifuri_app__storage__load_workspace
-    src__ifuri_app__runtime__RuntimeState__load --> src__ifuri_app__storage__save_workspace
-    src__ifuri_app__runtime__RuntimeState__health --> src__ifuri_app__packs__runtime__local_runtime_info
-    src__ifuri_app__runtime__RuntimeState__health --> src__ifuri_app__urirun_bridge__urirun_info
-    src__ifuri_app__runtime__RuntimeState__health --> src__ifuri_app__flow_compile__uri2flow_available
-    src__ifuri_app__runtime__RuntimeState__health --> src__ifuri_app__storage__now_iso
-    src__ifuri_app__runtime__RuntimeState__health --> src__ifuri_app__flow_runner__examples_root
-    src__ifuri_app__runtime__RuntimeState__call_uri --> src__ifuri_app__flow_engine__dry_run_uri
-    src__ifuri_app__runtime__RuntimeState__call_uri --> src__ifuri_app__storage__add_event
-    src__ifuri_app__runtime__RuntimeState__call_uri --> src__ifuri_app__storage__save_workspace
-    src__ifuri_app__runtime__RuntimeState__call_uri --> src__ifuri_app__packs__runtime__dispatch_local_uri
-    src__ifuri_app__runtime__RuntimeState__call_uri --> src__ifuri_app__packs__runtime__get_local_uri_runtime
-    src__ifuri_app__runtime__RuntimeState__call_uri --> src__ifuri_app__urirun_bridge__default_urirun_registry
-    src__ifuri_app__runtime__RuntimeState__run_flow --> src__ifuri_app__flow_engine__expand_flow
-    src__ifuri_app__runtime__RuntimeState__run_flow --> src__ifuri_app__runtime___load_urirun_policy
-    src__ifuri_app__runtime__RuntimeState__run_flow --> src__ifuri_app__storage__add_event
-    src__ifuri_app__runtime__RuntimeState__run_flow --> src__ifuri_app__storage__save_workspace
-    src__ifuri_app__runtime__RuntimeState__run_flow --> src__ifuri_app__flow_engine__dry_run_flow
-    src__ifuri_app__runtime__RuntimeState__run_flow --> src__ifuri_app__urirun_bridge__default_urirun_registry
-    src__ifuri_app__runtime__RuntimeState__run_flow --> src__ifuri_app__packs__runtime__dispatch_local_uri
-    src__ifuri_app__runtime__make_handler --> src__ifuri_app__runtime__json_bytes
-    src__ifuri_app__runtime__RuntimeServer____init__ --> src__ifuri_app__runtime__bind_runtime_server
-    src__ifuri_app__runtime__RuntimeServer____init__ --> src__ifuri_app__runtime__make_handler
-    src__ifuri_app__gui__IfuriDesktop____init__ --> src__ifuri_app__storage__load_workspace
-    src__ifuri_app__gui__IfuriDesktop___set_app_icon --> src__ifuri_app__paths__assets_dir
-    src__ifuri_app__gui__IfuriDesktop___connector_endpoints --> src__ifuri_app__web__url_state__set
-    src__ifuri_app__gui__IfuriDesktop__refresh_connectors --> src__ifuri_app__connectors__fetch_node_routes
-    src__ifuri_app__gui__IfuriDesktop___connectors_done --> src__ifuri_app__connectors__group_by_scheme
-    src__ifuri_app__gui__IfuriDesktop__refresh_catalog --> src__ifuri_app__connect_store__fetch_catalog
-    src__ifuri_app__gui__IfuriDesktop___on_package_select --> src__ifuri_app__connect_store__install_command
-    src__ifuri_app__gui__IfuriDesktop___render_payload_form --> packages__ifuri_page__handlers__next
-    src__ifuri_app__gui__IfuriDesktop___render_payload_form --> src__ifuri_app__connect_store__payload_form_fields
-    src__ifuri_app__gui__IfuriDesktop__install_selected_connector --> src__ifuri_app__connect_store__install_command
-    src__ifuri_app__gui__IfuriDesktop__refresh_registry_status --> src__ifuri_app__connect_store__local_registry_status
-    src__ifuri_app__gui__IfuriDesktop__save_current_flow --> src__ifuri_app__storage__add_event
-    src__ifuri_app__gui__IfuriDesktop__dry_run_current_flow --> src__ifuri_app__flow_engine__dry_run_flow
-    src__ifuri_app__gui__IfuriDesktop__dry_run_current_flow --> src__ifuri_app__storage__add_event
-    src__ifuri_app__gui__IfuriDesktop__dry_run_current_flow --> src__ifuri_app__storage__save_workspace
-    src__ifuri_app__gui__IfuriDesktop__dry_run_current_flow --> src__ifuri_app__flow_engine__as_pretty_json
-    src__ifuri_app__gui__IfuriDesktop__add_service --> src__ifuri_app__storage__add_event
-    src__ifuri_app__gui__IfuriDesktop__start_runtime --> src__ifuri_app__storage__save_workspace
-    src__ifuri_app__gui__IfuriDesktop__open_voice_ui --> src__ifuri_app__url_params__voice_url
-    src__ifuri_app__gui__IfuriDesktop__discover_peers --> src__ifuri_app__network_scan__scan_network
-    src__ifuri_app__gui__IfuriDesktop__discover_peers --> src__ifuri_app__storage__load_workspace
-    src__ifuri_app__gui__IfuriDesktop__discover_peers --> src__ifuri_app__flow_engine__as_pretty_json
-    src__ifuri_app__gui__IfuriDesktop___novnc_precheck --> src__ifuri_app__novnc_demo__demo_dir
-    src__ifuri_app__gui__IfuriDesktop___novnc_precheck --> src__ifuri_app__novnc_demo__docker_available
-    src__ifuri_app__gui__IfuriDesktop___run_compose --> src__ifuri_app__novnc_demo__compose_args
-    src__ifuri_app__gui__IfuriDesktop__open_novnc_dashboard --> src__ifuri_app__novnc_demo__dashboard_url
-    src__ifuri_app__gui__IfuriDesktop___apply_node_endpoint --> src__ifuri_app__storage__save_workspace
-    src__ifuri_app__gui__IfuriDesktop__refresh_log --> src__ifuri_app__storage__load_workspace
-    src__ifuri_app__gui__IfuriDesktop__save_all --> src__ifuri_app__storage__save_workspace
-    src__ifuri_app__gui__FirstRunWizard___scan --> src__ifuri_app__network_scan__scan_network
-    src__ifuri_app__gui__FirstRunWizard___finish --> src__ifuri_app__storage__save_workspace
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class src__ifuri_app__connect_store__normalize_packages,src__ifuri_app__flow_compile__expand_flow_compiled,src__ifuri_app__network_scan__scan_urisys_nodes,src__ifuri_app__network_scan__scan_network,src__ifuri_app__connectors__normalize_routes,src__ifuri_app__cli__cmd_chat_send,src__ifuri_app__gui_chat__ChatTabMixin___apply_chat_channels,src__ifuri_app__voice_pipeline__run_voice_command,src__ifuri_app__chat_channels__channels_from_scan,src__ifuri_app__chat_channels__migrate_local_chat_to_urisys,src__ifuri_app__chat_channels__send_chat_message,src__ifuri_app__chat_channels__send_chat_message_routed,src__ifuri_app__chat_channels___format_voice_reply,src__ifuri_app__web__voice__renderChannelList,src__ifuri_app__web__voice__handleWebRtcEnvelope,src__ifuri_app__web__voice__connectWebRtc,src__ifuri_app__runtime__RuntimeState__run_flow,src__ifuri_app__gui__IfuriDesktop___refresh_network_views highCC
-    class packages__ifuri_page__handlers__get_url_state,packages__ifuri_page__handlers__set_url_state,packages__ifuri_page__handlers__toggle_view,src__ifuri_app__connect_store___normalize_route,src__ifuri_app__connect_store__payload_form_fields,packages__ifuri_bridge__handlers__urisys_call___endpoint,packages__ifuri_bridge__handlers__urisys_call__urisys_call,src__ifuri_app__webrtc_signal__post_signal,src__ifuri_app__webrtc_signal__poll_signals,src__ifuri_app__flow_compile___parse_flow_input,src__ifuri_app__flow_compile__flow_steps_from_document,packages__ifuri_voice__handlers__plan__plan,src__ifuri_app__webrtc_pipeline__install_webrtc_pack,src__ifuri_app__chat_store__LocalChatStore__list_channels,src__ifuri_app__urisys_client__node_voice_capabilities,src__ifuri_app__network_scan___collect_local_services,src__ifuri_app__network_scan___services_from_peers,src__ifuri_app__voice_planner__load_flow_catalog,src__ifuri_app__voice_planner___catalog_tokens,src__ifuri_app__voice_planner__plan_with_catalog,src__ifuri_app__voice_planner___parse_llm_plan_json,src__ifuri_app__voice_planner___unwrap_llm_result,src__ifuri_app__voice_planner__plan_with_llm,src__ifuri_app__voice_planner__plan_voice_command,src__ifuri_app__cli__cmd_serve,src__ifuri_app__web__page__handlers__get_url_state,src__ifuri_app__web__page__handlers__set_url_state,src__ifuri_app__web__page__handlers__toggle_view,src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___dispatch,src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__start medCC
+    class src__ifuri_app__gui__IfuriDesktop___refresh_network_views,src__ifuri_app__network_scan__scan_urisys_nodes,src__ifuri_app__network_scan__scan_network,src__ifuri_app__gui_chat__ChatTabMixin___apply_chat_channels,src__ifuri_app__connectors__normalize_routes,src__ifuri_app__cli__cmd_chat_send,src__ifuri_app__connect_store___normalize_package_item,src__ifuri_app__chat_channels__migrate_local_chat_to_urisys,src__ifuri_app__chat_channels__send_chat_message,src__ifuri_app__chat_channels__send_chat_message_routed,src__ifuri_app__chat_channels___format_voice_reply,src__ifuri_app__flow_compile__expand_flow_compiled,src__ifuri_app__runtime_state__RuntimeState__run_flow,src__ifuri_app__voice_pipeline__run_voice_command,src__ifuri_app__web__voice__renderChannelList,src__ifuri_app__web__voice__handleWebRtcEnvelope,src__ifuri_app__web__voice__connectWebRtc highCC
+    class packages__ifuri_voice__handlers__plan__plan,packages__ifuri_page__handlers__get_url_state,packages__ifuri_page__handlers__set_url_state,packages__ifuri_page__handlers__toggle_view,packages__ifuri_bridge__handlers__urisys_call___endpoint,packages__ifuri_bridge__handlers__urisys_call__urisys_call,src__ifuri_app__webrtc_signal__post_signal,src__ifuri_app__webrtc_signal__poll_signals,src__ifuri_app__gui__IfuriDesktop___connector_endpoints,src__ifuri_app__gui__IfuriDesktop___render_payload_form,src__ifuri_app__gui__FirstRunWizard___scan_done,src__ifuri_app__urisys_client__node_voice_capabilities,src__ifuri_app__network_scan___collect_local_services,src__ifuri_app__network_scan___services_from_peers,src__ifuri_app__chat_store__LocalChatStore__list_channels,src__ifuri_app__discovery__DiscoveryResponder___loop,src__ifuri_app__discovery__discover,src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___dispatch,src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__start,src__ifuri_app__web__webrtc_peer__WebRtcPeerSession___applySignal,src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__t,src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__payload,src__ifuri_app__web__webrtc_peer__WebRtcPeerSession__sendVoiceReply,src__ifuri_app__web__url_state__write,src__ifuri_app__web__url_state__withParams,scripts__build_platform__run_pyinstaller,src__ifuri_app__urirun_bridge__call_urirun,src__ifuri_app__urirun_bridge__registry_summary,src__ifuri_app__urirun_bridge__dispatch_local,src__ifuri_app__urirun_bridge__scan_project medCC

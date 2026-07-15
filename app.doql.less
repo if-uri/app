@@ -222,6 +222,36 @@ workflow[name="clean"] {
   step-2: run cmd=find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true;
 }
 
+workflow[name="koru-cycle"] {
+  trigger: manual;
+  step-1: run cmd=echo "▶ Koru cycle (apply=true) — użyje execute-via-twin-human dla kvm/lenovo (realne kvm://laptop/... do queue.log + done z actor)";
+  step-2: run cmd=$(PYTHON) -m urirun_connector_loop cycle --project . --apply || $(PYTHON) -c '\;
+}
+
+workflow[name="koru-plan"] {
+  trigger: manual;
+  step-1: run cmd=echo "▶ Dry-run plan (bez apply)";
+  step-2: run cmd=$(PYTHON) -m urirun_connector_loop cycle --project .;
+}
+
+workflow[name="koru-execute-twin"] {
+  trigger: manual;
+  step-1: run cmd=echo "▶ Bezpośrednie wykonanie przez twin-human (dla testu IFURI-226 lub podobnego)";
+  step-2: run cmd=$(PYTHON) -c '\;
+}
+
+workflow[name="koru-logs"] {
+  trigger: manual;
+  step-1: run cmd=echo "▶ Ostatnie linie queue.log (to co widać w panelu Na żywo)";
+  step-2: run cmd=tail -30 ../.planfile/.koru/queue.log 2>/dev/null || tail -30 .planfile/.koru/queue.log 2>/dev/null || echo "brak queue.log";
+}
+
+workflow[name="koru-status"] {
+  trigger: manual;
+  step-1: run cmd=echo "▶ Stan koru + queue";
+  step-2: run cmd=$(PYTHON) -c '\;
+}
+
 tests {
   import: testql-scenarios/**/*.testql.toon.yaml;
 }

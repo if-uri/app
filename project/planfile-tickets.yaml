@@ -1,31 +1,13 @@
 source: code2llm
 # generated in 0.06s
 schema: code2llm.planfile_tickets.v1
-project_root: ~/github/if-uri/app
+project_root: /home/tom/github/if-uri/app
 tickets:
 - signal: code2llm_cc
-  title: 'Reduce cyclomatic complexity: src.ifuri_app.chat_channels.channels_from_scan
-    (CC=34)'
-  description: 'code2llm reports `src.ifuri_app.chat_channels.channels_from_scan`
-    at `src/ifuri_app/chat_channels.py:25` with cyclomatic complexity 34 (limit 15).
-
-
-    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
-    code2llm after the change and keep tests green.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - complexity
-  - refactor
-  files:
-  - src/ifuri_app/chat_channels.py
-  dedupe_key: code2llm:cc:src/ifuri_app/chat_channels.py:src.ifuri_app.chat_channels.channels_from_scan
-- signal: code2llm_cc
-  title: 'Reduce cyclomatic complexity: src.ifuri_app.connect_store.normalize_packages
-    (CC=31)'
-  description: 'code2llm reports `src.ifuri_app.connect_store.normalize_packages`
-    at `src/ifuri_app/connect_store.py:82` with cyclomatic complexity 31 (limit 15).
+  title: 'Reduce cyclomatic complexity: src.ifuri_app.connect_store._normalize_package_item
+    (CC=25)'
+  description: 'code2llm reports `src.ifuri_app.connect_store._normalize_package_item`
+    at `src/ifuri_app/connect_store.py:82` with cyclomatic complexity 25 (limit 15).
 
 
     Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
@@ -38,24 +20,7 @@ tickets:
   - refactor
   files:
   - src/ifuri_app/connect_store.py
-  dedupe_key: code2llm:cc:src/ifuri_app/connect_store.py:src.ifuri_app.connect_store.normalize_packages
-- signal: code2llm_god
-  title: 'Split god module: src/ifuri_app/runtime.py'
-  description: 'code2llm reports `src/ifuri_app/runtime.py` as a large module (811
-    lines, 4 classes).
-
-
-    Split it by responsibility, keep public imports stable, and add focused tests
-    around the moved behavior.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - god-module
-  - refactor
-  files:
-  - src/ifuri_app/runtime.py
-  dedupe_key: code2llm:god:src/ifuri_app/runtime.py
+  dedupe_key: code2llm:cc:src/ifuri_app/connect_store.py:src.ifuri_app.connect_store._normalize_package_item
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: build_parser'
   description: 'code2llm reports `God Function: build_parser` in `src/ifuri_app/cli.py:472`.
@@ -96,10 +61,10 @@ tickets:
     discover'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: make_handler'
-  description: 'code2llm reports `God Function: make_handler` in `src/ifuri_app/runtime.py:285`.
+  description: 'code2llm reports `God Function: make_handler` in `src/ifuri_app/runtime_handlers.py:59`.
 
 
-    Function ''make_handler'' is oversized: CC=1, fan-out=99, mutations=1.
+    Function ''make_handler'' is oversized: CC=1, fan-out=103, mutations=3.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -110,9 +75,9 @@ tickets:
   - code-smell
   - god-function
   files:
-  - src/ifuri_app/runtime.py
-  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/runtime.py:285:God Function:
-    make_handler'
+  - src/ifuri_app/runtime_handlers.py
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/runtime_handlers.py:59:God
+    Function: make_handler'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: run_gui_smoke'
   description: 'code2llm reports `God Function: run_gui_smoke` in `scripts/gui_smoke.py:46`.
@@ -132,52 +97,12 @@ tickets:
   - scripts/gui_smoke.py
   dedupe_key: 'code2llm:smell:god_function:scripts/gui_smoke.py:46:God Function: run_gui_smoke'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: base'
-  description: 'code2llm reports `Shotgun Surgery: base` in `src/ifuri_app/packs/loader.py:21`.
-
-
-    Mutation of variable ''base'' spans 7 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/packs/loader.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/packs/loader.py:21:Shotgun
-    Surgery: base'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: body'
-  description: 'code2llm reports `Shotgun Surgery: body` in `packages/ifuri-bridge/handlers/urisys_call.py:26`.
-
-
-    Mutation of variable ''body'' spans 12 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - packages/ifuri-bridge/handlers/urisys_call.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/ifuri-bridge/handlers/urisys_call.py:26:Shotgun
-    Surgery: body'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: client'
   description: 'code2llm reports `Shotgun Surgery: client` in `src/ifuri_app/cli.py:163`.
 
 
-    Mutation of variable ''client'' spans 25 functions. Changing this logic requires
-    work in many places.
+    Mutation of variable ''client'' spans 13 functions in /home/tom/github/if-uri/app/src/ifuri_app/cli.py.
+    Changing this logic requires work in many places.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -192,492 +117,32 @@ tickets:
   dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/cli.py:163:Shotgun Surgery:
     client'
 - signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: client'
+  description: 'code2llm reports `Shotgun Surgery: client` in `src/ifuri_app/chat_channels.py:301`.
+
+
+    Mutation of variable ''client'' spans 7 functions in /home/tom/github/if-uri/app/src/ifuri_app/chat_channels.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/ifuri_app/chat_channels.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/chat_channels.py:301:Shotgun
+    Surgery: client'
+- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: data'
-  description: 'code2llm reports `Shotgun Surgery: data` in `src/ifuri_app/network_scan.py:40`.
+  description: 'code2llm reports `Shotgun Surgery: data` in `src/ifuri_app/cli.py:89`.
 
 
-    Mutation of variable ''data'' spans 32 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/network_scan.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/network_scan.py:40:Shotgun
-    Surgery: data'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: ep'
-  description: 'code2llm reports `Shotgun Surgery: ep` in `packages/ifuri-bridge/handlers/urisys_call.py:26`.
-
-
-    Mutation of variable ''ep'' spans 16 functions. Changing this logic requires work
-    in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - packages/ifuri-bridge/handlers/urisys_call.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/ifuri-bridge/handlers/urisys_call.py:26:Shotgun
-    Surgery: ep'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: health'
-  description: 'code2llm reports `Shotgun Surgery: health` in `packages/ifuri-bridge/handlers/urisys_call.py:54`.
-
-
-    Mutation of variable ''health'' spans 12 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - packages/ifuri-bridge/handlers/urisys_call.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/ifuri-bridge/handlers/urisys_call.py:54:Shotgun
-    Surgery: health'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: hint'
-  description: 'code2llm reports `Shotgun Surgery: hint` in `src/ifuri_app/chat_channels.py:510`.
-
-
-    Mutation of variable ''hint'' spans 6 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/chat_channels.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/chat_channels.py:510:Shotgun
-    Surgery: hint'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: info'
-  description: 'code2llm reports `Shotgun Surgery: info` in `src/ifuri_app/connect_store.py:152`.
-
-
-    Mutation of variable ''info'' spans 11 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/connect_store.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/connect_store.py:152:Shotgun
-    Surgery: info'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: node'
-  description: 'code2llm reports `Shotgun Surgery: node` in `src/ifuri_app/webrtc_pipeline.py:82`.
-
-
-    Mutation of variable ''node'' spans 14 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/webrtc_pipeline.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/webrtc_pipeline.py:82:Shotgun
-    Surgery: node'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: ok'
-  description: 'code2llm reports `Shotgun Surgery: ok` in `src/ifuri_app/chat_channels.py:510`.
-
-
-    Mutation of variable ''ok'' spans 6 functions. Changing this logic requires work
-    in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/chat_channels.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/chat_channels.py:510:Shotgun
-    Surgery: ok'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: out'
-  description: 'code2llm reports `Shotgun Surgery: out` in `src/ifuri_app/network_scan.py:103`.
-
-
-    Mutation of variable ''out'' spans 16 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/network_scan.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/network_scan.py:103:Shotgun
-    Surgery: out'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: packs'
-  description: 'code2llm reports `Shotgun Surgery: packs` in `src/ifuri_app/urisys_client.py:48`.
-
-
-    Mutation of variable ''packs'' spans 5 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/urisys_client.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/urisys_client.py:48:Shotgun
-    Surgery: packs'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: parsed'
-  description: 'code2llm reports `Shotgun Surgery: parsed` in `src/ifuri_app/flow_engine.py:89`.
-
-
-    Mutation of variable ''parsed'' spans 6 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/flow_engine.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/flow_engine.py:89:Shotgun
-    Surgery: parsed'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: path'
-  description: 'code2llm reports `Shotgun Surgery: path` in `src/ifuri_app/connect_store.py:152`.
-
-
-    Mutation of variable ''path'' spans 8 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/connect_store.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/connect_store.py:152:Shotgun
-    Surgery: path'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: policy'
-  description: 'code2llm reports `Shotgun Surgery: policy` in `src/ifuri_app/urirun_bridge.py:404`.
-
-
-    Mutation of variable ''policy'' spans 5 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/urirun_bridge.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/urirun_bridge.py:404:Shotgun
-    Surgery: policy'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: raw'
-  description: 'code2llm reports `Shotgun Surgery: raw` in `src/ifuri_app/discovery.py:92`.
-
-
-    Mutation of variable ''raw'' spans 5 functions. Changing this logic requires work
-    in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/discovery.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/discovery.py:92:Shotgun
-    Surgery: raw'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: reg'
-  description: 'code2llm reports `Shotgun Surgery: reg` in `src/ifuri_app/urirun_bridge.py:404`.
-
-
-    Mutation of variable ''reg'' spans 5 functions. Changing this logic requires work
-    in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/urirun_bridge.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/urirun_bridge.py:404:Shotgun
-    Surgery: reg'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: registry'
-  description: 'code2llm reports `Shotgun Surgery: registry` in `src/ifuri_app/packs/loader.py:35`.
-
-
-    Mutation of variable ''registry'' spans 5 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/packs/loader.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/packs/loader.py:35:Shotgun
-    Surgery: registry'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: result'
-  description: 'code2llm reports `Shotgun Surgery: result` in `src/ifuri_app/urirun_bridge.py:83`.
-
-
-    Mutation of variable ''result'' spans 40 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/urirun_bridge.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/urirun_bridge.py:83:Shotgun
-    Surgery: result'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: room'
-  description: 'code2llm reports `Shotgun Surgery: room` in `src/ifuri_app/webrtc_signal.py:86`.
-
-
-    Mutation of variable ''room'' spans 5 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/webrtc_signal.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/webrtc_signal.py:86:Shotgun
-    Surgery: room'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: route'
-  description: 'code2llm reports `Shotgun Surgery: route` in `src/ifuri_app/flow_engine.py:89`.
-
-
-    Mutation of variable ''route'' spans 5 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/flow_engine.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/flow_engine.py:89:Shotgun
-    Surgery: route'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: routes'
-  description: 'code2llm reports `Shotgun Surgery: routes` in `src/ifuri_app/connect_store.py:82`.
-
-
-    Mutation of variable ''routes'' spans 6 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/connect_store.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/connect_store.py:82:Shotgun
-    Surgery: routes'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: row'
-  description: 'code2llm reports `Shotgun Surgery: row` in `src/ifuri_app/webrtc_signal.py:49`.
-
-
-    Mutation of variable ''row'' spans 5 functions. Changing this logic requires work
-    in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/webrtc_signal.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/webrtc_signal.py:49:Shotgun
-    Surgery: row'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: scheme'
-  description: 'code2llm reports `Shotgun Surgery: scheme` in `src/ifuri_app/network_scan.py:103`.
-
-
-    Mutation of variable ''scheme'' spans 5 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/network_scan.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/network_scan.py:103:Shotgun
-    Surgery: scheme'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: steps'
-  description: 'code2llm reports `Shotgun Surgery: steps` in `src/ifuri_app/chat_channels.py:510`.
-
-
-    Mutation of variable ''steps'' spans 5 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/chat_channels.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/chat_channels.py:510:Shotgun
-    Surgery: steps'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: store'
-  description: 'code2llm reports `Shotgun Surgery: store` in `src/ifuri_app/chat_channels.py:173`.
-
-
-    Mutation of variable ''store'' spans 6 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/ifuri_app/chat_channels.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/chat_channels.py:173:Shotgun
-    Surgery: store'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: target'
-  description: 'code2llm reports `Shotgun Surgery: target` in `packages/ifuri-bridge/handlers/urisys_call.py:11`.
-
-
-    Mutation of variable ''target'' spans 5 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - packages/ifuri-bridge/handlers/urisys_call.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/ifuri-bridge/handlers/urisys_call.py:11:Shotgun
-    Surgery: target'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: text'
-  description: 'code2llm reports `Shotgun Surgery: text` in `src/ifuri_app/cli.py:287`.
-
-
-    Mutation of variable ''text'' spans 16 functions. Changing this logic requires
-    work in many places.
+    Mutation of variable ''data'' spans 5 functions in /home/tom/github/if-uri/app/src/ifuri_app/cli.py.
+    Changing this logic requires work in many places.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -689,15 +154,15 @@ tickets:
   - shotgun-surgery
   files:
   - src/ifuri_app/cli.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/cli.py:287:Shotgun Surgery:
-    text'
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/cli.py:89:Shotgun Surgery:
+    data'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: url'
-  description: 'code2llm reports `Shotgun Surgery: url` in `src/ifuri_app/network_scan.py:40`.
+  title: 'Address code smell: Shotgun Surgery: ep'
+  description: 'code2llm reports `Shotgun Surgery: ep` in `src/ifuri_app/chat_channels.py:119`.
 
 
-    Mutation of variable ''url'' spans 12 functions. Changing this logic requires
-    work in many places.
+    Mutation of variable ''ep'' spans 7 functions in /home/tom/github/if-uri/app/src/ifuri_app/chat_channels.py.
+    Changing this logic requires work in many places.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -708,14 +173,74 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/ifuri_app/network_scan.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/network_scan.py:40:Shotgun
-    Surgery: url'
+  - src/ifuri_app/chat_channels.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/chat_channels.py:119:Shotgun
+    Surgery: ep'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: info'
+  description: 'code2llm reports `Shotgun Surgery: info` in `src/ifuri_app/urirun_bridge.py:229`.
+
+
+    Mutation of variable ''info'' spans 8 functions in /home/tom/github/if-uri/app/src/ifuri_app/urirun_bridge.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/ifuri_app/urirun_bridge.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/urirun_bridge.py:229:Shotgun
+    Surgery: info'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: out'
+  description: 'code2llm reports `Shotgun Surgery: out` in `src/ifuri_app/chat_channels.py:440`.
+
+
+    Mutation of variable ''out'' spans 6 functions in /home/tom/github/if-uri/app/src/ifuri_app/chat_channels.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/ifuri_app/chat_channels.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/chat_channels.py:440:Shotgun
+    Surgery: out'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: result'
+  description: 'code2llm reports `Shotgun Surgery: result` in `src/ifuri_app/cli.py:183`.
+
+
+    Mutation of variable ''result'' spans 12 functions in /home/tom/github/if-uri/app/src/ifuri_app/cli.py.
+    Changing this logic requires work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/ifuri_app/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/ifuri_app/cli.py:183:Shotgun Surgery:
+    result'
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: src.ifuri_app.chat_channels._format_voice_reply
     (CC=16)'
   description: 'code2llm reports `src.ifuri_app.chat_channels._format_voice_reply`
-    at `src/ifuri_app/chat_channels.py:510` with cyclomatic complexity 16 (limit 15).
+    at `src/ifuri_app/chat_channels.py:527` with cyclomatic complexity 16 (limit 15).
 
 
     Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
@@ -733,7 +258,7 @@ tickets:
   title: 'Reduce cyclomatic complexity: src.ifuri_app.chat_channels.migrate_local_chat_to_urisys
     (CC=16)'
   description: 'code2llm reports `src.ifuri_app.chat_channels.migrate_local_chat_to_urisys`
-    at `src/ifuri_app/chat_channels.py:299` with cyclomatic complexity 16 (limit 15).
+    at `src/ifuri_app/chat_channels.py:301` with cyclomatic complexity 16 (limit 15).
 
 
     Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
@@ -751,7 +276,7 @@ tickets:
   title: 'Reduce cyclomatic complexity: src.ifuri_app.chat_channels.send_chat_message
     (CC=18)'
   description: 'code2llm reports `src.ifuri_app.chat_channels.send_chat_message` at
-    `src/ifuri_app/chat_channels.py:361` with cyclomatic complexity 18 (limit 15).
+    `src/ifuri_app/chat_channels.py:363` with cyclomatic complexity 18 (limit 15).
 
 
     Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
@@ -767,9 +292,9 @@ tickets:
   dedupe_key: code2llm:cc:src/ifuri_app/chat_channels.py:src.ifuri_app.chat_channels.send_chat_message
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: src.ifuri_app.chat_channels.send_chat_message_routed
-    (CC=17)'
+    (CC=19)'
   description: 'code2llm reports `src.ifuri_app.chat_channels.send_chat_message_routed`
-    at `src/ifuri_app/chat_channels.py:438` with cyclomatic complexity 17 (limit 15).
+    at `src/ifuri_app/chat_channels.py:440` with cyclomatic complexity 19 (limit 15).
 
 
     Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
@@ -908,10 +433,10 @@ tickets:
   - src/ifuri_app/network_scan.py
   dedupe_key: code2llm:cc:src/ifuri_app/network_scan.py:src.ifuri_app.network_scan.scan_urisys_nodes
 - signal: code2llm_cc
-  title: 'Reduce cyclomatic complexity: src.ifuri_app.runtime.RuntimeState.run_flow
+  title: 'Reduce cyclomatic complexity: src.ifuri_app.runtime_state.RuntimeState.run_flow
     (CC=17)'
-  description: 'code2llm reports `src.ifuri_app.runtime.RuntimeState.run_flow` at
-    `src/ifuri_app/runtime.py:233` with cyclomatic complexity 17 (limit 15).
+  description: 'code2llm reports `src.ifuri_app.runtime_state.RuntimeState.run_flow`
+    at `src/ifuri_app/runtime_state.py:126` with cyclomatic complexity 17 (limit 15).
 
 
     Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
@@ -923,8 +448,8 @@ tickets:
   - complexity
   - refactor
   files:
-  - src/ifuri_app/runtime.py
-  dedupe_key: code2llm:cc:src/ifuri_app/runtime.py:src.ifuri_app.runtime.RuntimeState.run_flow
+  - src/ifuri_app/runtime_state.py
+  dedupe_key: code2llm:cc:src/ifuri_app/runtime_state.py:src.ifuri_app.runtime_state.RuntimeState.run_flow
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: src.ifuri_app.voice_pipeline.run_voice_command
     (CC=23)'
@@ -996,86 +521,6 @@ tickets:
   files:
   - src/ifuri_app/web/voice.js
   dedupe_key: code2llm:cc:src/ifuri_app/web/voice.js:src.ifuri_app.web.voice.renderChannelList
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: channel_id, text, role, self'
-  description: 'code2llm reports `Data Clump: channel_id, text, role, self` in `src/ifuri_app/chat_store.py:30`.
-
-
-    Arguments (channel_id, text, role, self) are used together in multiple functions:
-    src.ifuri_app.chat_store.LocalChatStore.append, src.ifuri_app.urisys_client.UrisysNodeClient.app_chat_append.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/ifuri_app/chat_store.py
-  dedupe_key: 'code2llm:smell:data_clump:src/ifuri_app/chat_store.py:30:Data Clump:
-    channel_id, text, role, self'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: channel_id, text, role, self'
-  description: 'code2llm reports `Data Clump: channel_id, text, role, self` in `src/ifuri_app/urisys_client.py:114`.
-
-
-    Arguments (channel_id, text, role, self) are used together in multiple functions:
-    src.ifuri_app.chat_store.LocalChatStore.append, src.ifuri_app.urisys_client.UrisysNodeClient.app_chat_append.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/ifuri_app/urisys_client.py
-  dedupe_key: 'code2llm:smell:data_clump:src/ifuri_app/urisys_client.py:114:Data Clump:
-    channel_id, text, role, self'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: host, port, self'
-  description: 'code2llm reports `Data Clump: host, port, self` in `src/ifuri_app/runtime.py:144`.
-
-
-    Arguments (host, port, self) are used together in multiple functions: src.ifuri_app.runtime.RuntimeState.__init__,
-    src.ifuri_app.runtime.RuntimeServer.__init__.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/ifuri_app/runtime.py
-  dedupe_key: 'code2llm:smell:data_clump:src/ifuri_app/runtime.py:144:Data Clump:
-    host, port, self'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: host, port, self'
-  description: 'code2llm reports `Data Clump: host, port, self` in `src/ifuri_app/runtime.py:788`.
-
-
-    Arguments (host, port, self) are used together in multiple functions: src.ifuri_app.runtime.RuntimeState.__init__,
-    src.ifuri_app.runtime.RuntimeServer.__init__.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/ifuri_app/runtime.py
-  dedupe_key: 'code2llm:smell:data_clump:src/ifuri_app/runtime.py:788:Data Clump:
-    host, port, self'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: __init__'
   description: 'code2llm reports `God Function: __init__` in `src/ifuri_app/gui.py:43`.
@@ -1246,6 +691,25 @@ tickets:
   - src/ifuri_app/gui.py
   dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/gui.py:85:God Function: _build_ui'
 - signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _ifuri_peer_channels'
+  description: 'code2llm reports `God Function: _ifuri_peer_channels` in `src/ifuri_app/chat_channels.py:41`.
+
+
+    Function ''_ifuri_peer_channels'' is oversized: CC=11, fan-out=8, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/ifuri_app/chat_channels.py
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/chat_channels.py:41:God Function:
+    _ifuri_peer_channels'
+- signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _load_chat_history_from_urisys'
   description: 'code2llm reports `God Function: _load_chat_history_from_urisys` in
     `src/ifuri_app/gui_chat.py:202`.
@@ -1323,6 +787,25 @@ tickets:
   dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/gui_chat.py:253:God Function:
     _send_chat_message'
 - signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _service_channels'
+  description: 'code2llm reports `God Function: _service_channels` in `src/ifuri_app/chat_channels.py:62`.
+
+
+    Function ''_service_channels'' is oversized: CC=11, fan-out=6, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/ifuri_app/chat_channels.py
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/chat_channels.py:62:God Function:
+    _service_channels'
+- signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: add_service'
   description: 'code2llm reports `God Function: add_service` in `src/ifuri_app/gui.py:621`.
 
@@ -1343,7 +826,7 @@ tickets:
     add_service'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: call_uri'
-  description: 'code2llm reports `God Function: call_uri` in `src/ifuri_app/runtime.py:175`.
+  description: 'code2llm reports `God Function: call_uri` in `src/ifuri_app/runtime_state.py:69`.
 
 
     Function ''call_uri'' is oversized: CC=11, fan-out=16, mutations=0.
@@ -1357,12 +840,12 @@ tickets:
   - code-smell
   - god-function
   files:
-  - src/ifuri_app/runtime.py
-  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/runtime.py:175:God Function:
+  - src/ifuri_app/runtime_state.py
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/runtime_state.py:69:God Function:
     call_uri'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: call_urirun'
-  description: 'code2llm reports `God Function: call_urirun` in `src/ifuri_app/urirun_bridge.py:83`.
+  description: 'code2llm reports `God Function: call_urirun` in `src/ifuri_app/urirun_bridge.py:82`.
 
 
     Function ''call_urirun'' is oversized: CC=9, fan-out=7, mutations=9.
@@ -1377,8 +860,27 @@ tickets:
   - god-function
   files:
   - src/ifuri_app/urirun_bridge.py
-  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/urirun_bridge.py:83:God Function:
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/urirun_bridge.py:82:God Function:
     call_urirun'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: capture_remote_screen'
+  description: 'code2llm reports `God Function: capture_remote_screen` in `src/ifuri_app/remote_screen.py:60`.
+
+
+    Function ''capture_remote_screen'' is oversized: CC=11, fan-out=9, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/ifuri_app/remote_screen.py
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/remote_screen.py:60:God Function:
+    capture_remote_screen'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: classify_route'
   description: 'code2llm reports `God Function: classify_route` in `src/ifuri_app/flow_engine.py:89`.
@@ -1403,7 +905,7 @@ tickets:
   description: 'code2llm reports `God Function: cmd_init` in `src/ifuri_app/cli.py:57`.
 
 
-    Function ''cmd_init'' is oversized: CC=7, fan-out=17, mutations=9.
+    Function ''cmd_init'' is oversized: CC=5, fan-out=15, mutations=9.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -1512,10 +1014,10 @@ tickets:
     discover_peers'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: dispatch_local'
-  description: 'code2llm reports `God Function: dispatch_local` in `src/ifuri_app/urirun_bridge.py:176`.
+  description: 'code2llm reports `God Function: dispatch_local` in `src/ifuri_app/urirun_bridge.py:187`.
 
 
-    Function ''dispatch_local'' is oversized: CC=10, fan-out=7, mutations=8.
+    Function ''dispatch_local'' is oversized: CC=11, fan-out=8, mutations=8.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -1527,7 +1029,7 @@ tickets:
   - god-function
   files:
   - src/ifuri_app/urirun_bridge.py
-  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/urirun_bridge.py:176:God
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/urirun_bridge.py:187:God
     Function: dispatch_local'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: dry_run_current_flow'
@@ -1572,7 +1074,7 @@ tickets:
   description: 'code2llm reports `God Function: fetch_chat_history` in `src/ifuri_app/chat_channels.py:173`.
 
 
-    Function ''fetch_chat_history'' is oversized: CC=9, fan-out=13, mutations=9.
+    Function ''fetch_chat_history'' is oversized: CC=10, fan-out=14, mutations=9.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -1607,7 +1109,7 @@ tickets:
     flow_steps_from_document'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: health'
-  description: 'code2llm reports `God Function: health` in `src/ifuri_app/runtime.py:156`.
+  description: 'code2llm reports `God Function: health` in `src/ifuri_app/runtime_state.py:50`.
 
 
     Function ''health'' is oversized: CC=2, fan-out=12, mutations=0.
@@ -1621,8 +1123,8 @@ tickets:
   - code-smell
   - god-function
   files:
-  - src/ifuri_app/runtime.py
-  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/runtime.py:156:God Function:
+  - src/ifuri_app/runtime_state.py
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/runtime_state.py:50:God Function:
     health'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: install_selected_connector'
@@ -1816,7 +1318,7 @@ tickets:
     normalize_workspace'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: payload_form_fields'
-  description: 'code2llm reports `God Function: payload_form_fields` in `src/ifuri_app/connect_store.py:189`.
+  description: 'code2llm reports `God Function: payload_form_fields` in `src/ifuri_app/connect_store.py:194`.
 
 
     Function ''payload_form_fields'' is oversized: CC=8, fan-out=11, mutations=0.
@@ -1831,14 +1333,14 @@ tickets:
   - god-function
   files:
   - src/ifuri_app/connect_store.py
-  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/connect_store.py:189:God
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/connect_store.py:194:God
     Function: payload_form_fields'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: persist_chat_turn'
   description: 'code2llm reports `God Function: persist_chat_turn` in `src/ifuri_app/chat_channels.py:242`.
 
 
-    Function ''persist_chat_turn'' is oversized: CC=11, fan-out=11, mutations=11.
+    Function ''persist_chat_turn'' is oversized: CC=13, fan-out=12, mutations=11.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -1895,7 +1397,7 @@ tickets:
   description: 'code2llm reports `God Function: plan_with_llm` in `src/ifuri_app/voice_planner.py:190`.
 
 
-    Function ''plan_with_llm'' is oversized: CC=14, fan-out=14, mutations=9.
+    Function ''plan_with_llm'' is oversized: CC=13, fan-out=14, mutations=9.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -1930,10 +1432,10 @@ tickets:
     post_signal'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: probe_remote_control'
-  description: 'code2llm reports `God Function: probe_remote_control` in `src/ifuri_app/remote_screen.py:76`.
+  description: 'code2llm reports `God Function: probe_remote_control` in `src/ifuri_app/remote_screen.py:104`.
 
 
-    Function ''probe_remote_control'' is oversized: CC=7, fan-out=9, mutations=15.
+    Function ''probe_remote_control'' is oversized: CC=7, fan-out=10, mutations=16.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -1945,8 +1447,8 @@ tickets:
   - god-function
   files:
   - src/ifuri_app/remote_screen.py
-  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/remote_screen.py:76:God Function:
-    probe_remote_control'
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/remote_screen.py:104:God
+    Function: probe_remote_control'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: read_env_file'
   description: 'code2llm reports `God Function: read_env_file` in `src/ifuri_app/novnc_demo.py:52`.
@@ -1986,6 +1488,25 @@ tickets:
   dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/web/voice.js:356:God Function:
     refreshChannels'
 - signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: resolve_flow_path'
+  description: 'code2llm reports `God Function: resolve_flow_path` in `src/ifuri_app/flow_runner.py:35`.
+
+
+    Function ''resolve_flow_path'' is oversized: CC=8, fan-out=11, mutations=3.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/ifuri_app/flow_runner.py
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/flow_runner.py:35:God Function:
+    resolve_flow_path'
+- signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: route_scheme'
   description: 'code2llm reports `God Function: route_scheme` in `src/ifuri_app/connectors.py:35`.
 
@@ -2006,7 +1527,7 @@ tickets:
     route_scheme'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: run_flow_file'
-  description: 'code2llm reports `God Function: run_flow_file` in `src/ifuri_app/flow_runner.py:56`.
+  description: 'code2llm reports `God Function: run_flow_file` in `src/ifuri_app/flow_runner.py:61`.
 
 
     Function ''run_flow_file'' is oversized: CC=9, fan-out=10, mutations=8.
@@ -2021,7 +1542,7 @@ tickets:
   - god-function
   files:
   - src/ifuri_app/flow_runner.py
-  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/flow_runner.py:56:God Function:
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/flow_runner.py:61:God Function:
     run_flow_file'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: run_pyinstaller'
@@ -2063,7 +1584,7 @@ tickets:
     save_workspace'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: scan_project'
-  description: 'code2llm reports `God Function: scan_project` in `src/ifuri_app/urirun_bridge.py:330`.
+  description: 'code2llm reports `God Function: scan_project` in `src/ifuri_app/urirun_bridge.py:343`.
 
 
     Function ''scan_project'' is oversized: CC=10, fan-out=5, mutations=9.
@@ -2078,7 +1599,7 @@ tickets:
   - god-function
   files:
   - src/ifuri_app/urirun_bridge.py
-  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/urirun_bridge.py:330:God
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/urirun_bridge.py:343:God
     Function: scan_project'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: selectChannel'
@@ -2139,7 +1660,7 @@ tickets:
     Function: sendVoiceRequest'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: serve_http'
-  description: 'code2llm reports `God Function: serve_http` in `src/ifuri_app/urirun_bridge.py:235`.
+  description: 'code2llm reports `God Function: serve_http` in `src/ifuri_app/urirun_bridge.py:248`.
 
 
     Function ''serve_http'' is oversized: CC=7, fan-out=29, mutations=5.
@@ -2154,7 +1675,7 @@ tickets:
   - god-function
   files:
   - src/ifuri_app/urirun_bridge.py
-  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/urirun_bridge.py:235:God
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/urirun_bridge.py:248:God
     Function: serve_http'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: show_urirun_routes'
@@ -2232,6 +1753,25 @@ tickets:
   - packages/ifuri-bridge/handlers/urisys_call.py
   dedupe_key: 'code2llm:smell:god_function:packages/ifuri-bridge/handlers/urisys_call.py:26:God
     Function: urisys_call'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: validate_flow'
+  description: 'code2llm reports `God Function: validate_flow` in `src/ifuri_app/flow_compile.py:151`.
+
+
+    Function ''validate_flow'' is oversized: CC=8, fan-out=11, mutations=5.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/ifuri_app/flow_compile.py
+  dedupe_key: 'code2llm:smell:god_function:src/ifuri_app/flow_compile.py:151:God Function:
+    validate_flow'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Module: src.ifuri_app.gui'
   description: 'code2llm reports `God Module: src.ifuri_app.gui` in `src/ifuri_app/gui.py:1`.

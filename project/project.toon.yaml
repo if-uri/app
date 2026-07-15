@@ -1,52 +1,52 @@
-# app | 512 func | 48f | 13762L | python | 2026-06-21
+# app | 510 func | 50f | 13955L | python | 2026-07-14
 # generated in 0.00s
 
 HEALTH:
-  CC̄=4.1  critical=45 (limit:10)  dup=0  cycles=0
+  CC̄=4.1  critical=47 (limit:10)  dup=0  cycles=0
 
 ALERTS[20]:
-  !!! high_fan_out     make_handler = 99 (limit:10)
+  !!! high_fan_out     make_handler = 103 (limit:10)
   !!! high_fan_out     build_parser = 66 (limit:10)
   !!! high_fan_out     run_gui_smoke = 57 (limit:10)
-  !!! cc_exceeded      channels_from_scan = 34 (limit:15)
-  !!! cc_exceeded      normalize_packages = 31 (limit:15)
-  !!! high_fan_out     ChatTabMixin._build_chat_tab = 31 (limit:10)
   !!! high_fan_out     IfuriDesktop._build_flows_tab = 31 (limit:10)
+  !!! high_fan_out     ChatTabMixin._build_chat_tab = 31 (limit:10)
   !!! high_fan_out     IfuriDesktop._build_network_tab = 30 (limit:10)
   !!! high_fan_out     IfuriDesktop._build_connect_tab = 30 (limit:10)
   !!! high_fan_out     serve_http = 29 (limit:10)
+  !!! high_fan_out     IfuriDesktop._build_services_tab = 28 (limit:10)
+  !!! cc_exceeded      _normalize_package_item = 25 (limit:15)
 
-MODULES[86] (top by size):
+MODULES[89] (top by size):
   M[desktop/src-tauri/gen/schemas/desktop-schema.json] 2310L C:0 F:0 CC↑0 D:0 (json)
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
   M[src/ifuri_app/gui.py] 1005L C:2 F:67 CC↑15 D:1 (python)
-  M[src/ifuri_app/runtime.py] 811L C:4 F:16 CC↑17 D:2 (python)
   M[src/ifuri_app/cli.py] 675L C:0 F:34 CC↑19 D:0 (python)
   M[src/ifuri_app/web/voice.js] 641L C:0 F:118 CC↑21 D:0 (javascript)
-  M[src/ifuri_app/chat_channels.py] 531L C:0 F:17 CC↑34 D:3 (python)
+  M[src/ifuri_app/runtime_handlers.py] 638L C:0 F:2 CC↑1 D:1 (python)
+  M[src/ifuri_app/chat_channels.py] 548L C:0 F:21 CC↑19 D:3 (python)
   M[goal.yaml] 527L C:0 F:0 CC↑0 D:0 (yaml)
-  M[src/ifuri_app/urirun_bridge.py] 415L C:0 F:14 CC↑10 D:3 (python)
+  M[src/ifuri_app/urirun_bridge.py] 428L C:0 F:15 CC↑11 D:4 (python)
   M[src/ifuri_app/gui_chat.py] 292L C:1 F:15 CC↑16 D:0 (python)
-  M[src/ifuri_app/voice_planner.py] 289L C:0 F:11 CC↑14 D:5 (python)
+  M[src/ifuri_app/voice_planner.py] 289L C:0 F:11 CC↑13 D:5 (python)
   M[src/ifuri_app/web/webrtc_peer.js] 232L C:1 F:25 CC↑14 D:0 (javascript)
   M[src/ifuri_app/network_scan.py] 228L C:0 F:9 CC↑17 D:5 (python)
+  M[Makefile] 228L C:0 F:0 CC↑0 D:0 ()
   M[scripts/gui_smoke.py] 222L C:0 F:4 CC↑5 D:0 (python)
-  M[src/ifuri_app/connect_store.py] 211L C:0 F:10 CC↑31 D:1 (python)
-  LANGS: python:41/shell:11/javascript:10/yaml:10/json:5/rust:3/toml:2/yml:2/other:1/gui-novnc:1
+  LANGS: python:44/shell:11/yaml:10/javascript:8/json:5/rust:3/toml:2/txt:2/yml:2/other:1/gui-test:1
 
 HOTSPOTS[10]:
-  ★ make_handler fan=99  // Orchestrates 99 calls
+  ★ make_handler fan=103  // Orchestrates 103 calls
   ★ build_parser fan=66  // Orchestrates 66 calls
   ★ run_gui_smoke fan=57  // Orchestrates 57 calls
-  ★ ChatTabMixin._build_chat_tab fan=31  // Orchestrates 31 calls
   ★ IfuriDesktop._build_flows_tab fan=31  // Orchestrates 31 calls
+  ★ ChatTabMixin._build_chat_tab fan=31  // Orchestrates 31 calls
 
 REFACTOR[15]:
-  [1] H/L Split normalize_packages (CC=31)
-  [2] H/L Split channels_from_scan (CC=34)
-  [3] H/H Split god module src/ifuri_app/chat_channels.py (531L, 0 classes)
-  [4] H/H Split god module src/ifuri_app/web/voice.js (641L, 0 classes)
-  [5] H/H Split god module src/ifuri_app/cli.py (675L, 0 classes)
+  [1] H/L Split _normalize_package_item (CC=25)
+  [2] H/H Split god module src/ifuri_app/web/voice.js (641L, 0 classes)
+  [3] H/H Split god module src/ifuri_app/chat_channels.py (548L, 0 classes)
+  [4] H/H Split god module src/ifuri_app/cli.py (675L, 0 classes)
+  [5] H/H Split god module src/ifuri_app/gui.py (1005L, 2 classes)
 
 EVOLUTION:
-  2026-06-21 CC̄=4.1 crit=45 13762L // Automated analysis
+  2026-07-14 CC̄=4.1 crit=47 13955L // Automated analysis

@@ -1,10 +1,13 @@
 flowchart TD
-%% generated in 0.01s
+%% generated in 0.02s
 
     %% Entry points (blue)
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph Core
+        packages__ifuri_chat__handlers__messages__list_messages["list_messages"]
+        packages__ifuri_chat__handlers__messages__list_channels["list_channels"]
+        packages__ifuri_voice__handlers__plan__plan["plan"]
         packages__ifuri_page__handlers__get_url_state["get_url_state"]
         packages__ifuri_page__handlers__key["key"]
         packages__ifuri_page__handlers__us["us"]
@@ -13,14 +16,11 @@ flowchart TD
         packages__ifuri_page__handlers__value["value"]
         packages__ifuri_page__handlers__toggle_view["toggle_view"]
         packages__ifuri_page__handlers__current["current"]
-        src__ifuri_app__url_params__merge_voice_url["merge_voice_url"]
-        src__ifuri_app__connect_store__normalize_packages{{normalize_packages CC=31}}
         packages__ifuri_bridge__handlers__urisys_call__urisys_call["urisys_call"]
         packages__ifuri_bridge__handlers__urisys_call__node_health["node_health"]
-        src__ifuri_app__paths__web_dir["web_dir"]
-        src__ifuri_app__paths__packages_dir["packages_dir"]
         src__ifuri_app__webrtc_signal__is_webrtc_initiator["is_webrtc_initiator"]
-        ...["+298 more"]
+        src__ifuri_app__webrtc_signal__room_stats["room_stats"]
+        ...["+288 more"]
     end
 
-    class packages__ifuri_page__handlers__get_url_state,packages__ifuri_page__handlers__key,packages__ifuri_page__handlers__us,packages__ifuri_page__handlers__state,packages__ifuri_page__handlers__set_url_state,packages__ifuri_page__handlers__value,packages__ifuri_page__handlers__toggle_view,packages__ifuri_page__handlers__current,src__ifuri_app__url_params__merge_voice_url,packages__ifuri_bridge__handlers__urisys_call__urisys_call entry
+    class packages__ifuri_chat__handlers__messages__list_messages,packages__ifuri_chat__handlers__messages__list_channels,packages__ifuri_voice__handlers__plan__plan,packages__ifuri_page__handlers__get_url_state,packages__ifuri_page__handlers__key,packages__ifuri_page__handlers__us,packages__ifuri_page__handlers__state,packages__ifuri_page__handlers__set_url_state,packages__ifuri_page__handlers__value,packages__ifuri_page__handlers__toggle_view entry

@@ -1,9 +1,9 @@
 flowchart TD
-%% generated in 0.01s
+%% generated in 0.02s
     packages__ifuri_page["packages.ifuri-page<br/>10 funcs"]
     packages__ifuri_voice["packages.ifuri-voice<br/>1 funcs"]
     scripts__gui_smoke["scripts.gui_smoke<br/>4 funcs"]
-    src__ifuri_app["src.ifuri_app<br/>477 funcs"]
-    src__ifuri_app ==>|6| packages__ifuri_page
+    src__ifuri_app["src.ifuri_app<br/>475 funcs"]
     scripts__gui_smoke ==>|6| src__ifuri_app
+    src__ifuri_app ==>|5| packages__ifuri_page
     packages__ifuri_voice -->|1| src__ifuri_app
