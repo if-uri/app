@@ -18,7 +18,7 @@ import subprocess
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 INSTALL_HINT = (
@@ -242,20 +242,38 @@ def _resolve_available_registry(
     return reg, None
 
 
+def _project_registry(
+    registry_path: str | Path | None,
+    *,
+    registry: dict[str, Any] | None,
+    module_name: str,
+    result_key: str,
+    project: Callable[[Any, dict[str, Any]], Any],
+) -> dict[str, Any]:
+    """Run a registry projection with the shared public error contract."""
+    reg, error = _resolve_available_registry(registry_path, registry=registry)
+    if error:
+        return error
+    try:
+        module = importlib.import_module(module_name)
+        return {"ok": True, result_key: project(module, reg)}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "error": str(exc)}
+
+
 def list_routes(
     registry_path: str | Path | None = None,
     *,
     registry: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """List routes in a urirun registry (uses urirun.v2.list_routes)."""
-    reg, error = _resolve_available_registry(registry_path, registry=registry)
-    if error:
-        return error
-    try:
-        v2 = importlib.import_module("urirun.v2")
-        return {"ok": True, "routes": v2.list_routes(reg)}
-    except Exception as exc:  # noqa: BLE001
-        return {"ok": False, "error": str(exc)}
+    return _project_registry(
+        registry_path,
+        registry=registry,
+        module_name="urirun.v2",
+        result_key="routes",
+        project=lambda module, reg: module.list_routes(reg),
+    )
 
 
 def serve_http(
@@ -391,14 +409,13 @@ def scan_project(
 
 def mcp_tools(registry_path: str | Path | None = None, *, registry: dict[str, Any] | None = None) -> dict[str, Any]:
     """Project a urirun registry to an MCP tools/list (via urirun.v2_mcp)."""
-    reg, error = _resolve_available_registry(registry_path, registry=registry)
-    if error:
-        return error
-    try:
-        m = importlib.import_module("urirun.v2_mcp")
-        return {"ok": True, "tools": m.to_mcp_tools(reg)}
-    except Exception as exc:  # noqa: BLE001
-        return {"ok": False, "error": str(exc)}
+    return _project_registry(
+        registry_path,
+        registry=registry,
+        module_name="urirun.v2_mcp",
+        result_key="tools",
+        project=lambda module, reg: module.to_mcp_tools(reg),
+    )
 
 
 def a2a_card(
@@ -410,15 +427,13 @@ def a2a_card(
     version: str = "0.8.0",
 ) -> dict[str, Any]:
     """Project a urirun registry to an A2A agent card (via urirun.v2_mcp)."""
-    reg, error = _resolve_available_registry(registry_path, registry=registry)
-    if error:
-        return error
-    try:
-        m = importlib.import_module("urirun.v2_mcp")
-        card = m.to_a2a_card(reg, name=name, url=url, version=version)
-        return {"ok": True, "card": card}
-    except Exception as exc:  # noqa: BLE001
-        return {"ok": False, "error": str(exc)}
+    return _project_registry(
+        registry_path,
+        registry=registry,
+        module_name="urirun.v2_mcp",
+        result_key="card",
+        project=lambda module, reg: module.to_a2a_card(reg, name=name, url=url, version=version),
+    )
 
 
 def serve_mcp(*, registry_path: str | Path | None = None, execute: bool = False, policy: dict[str, Any] | None = None) -> None:
