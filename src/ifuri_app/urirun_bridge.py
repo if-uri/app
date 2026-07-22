@@ -226,18 +226,31 @@ def dispatch_local(
     return result
 
 
+def _resolve_available_registry(
+    registry_path: str | Path | None = None,
+    *,
+    registry: dict[str, Any] | None = None,
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+    """Resolve a registry or return the public error envelope to propagate."""
+    info = urirun_info()
+    if not info["available"]:
+        error = {"ok": False, "available": False, "error": "urirun is not installed", "install": INSTALL_HINT}
+        return None, error
+    reg = registry if registry is not None else load_registry(registry_path or default_urirun_registry())
+    if not reg:
+        return None, {"ok": False, "error": "no urirun registry configured"}
+    return reg, None
+
+
 def list_routes(
     registry_path: str | Path | None = None,
     *,
     registry: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """List routes in a urirun registry (uses urirun.v2.list_routes)."""
-    info = urirun_info()
-    if not info["available"]:
-        return {"ok": False, "available": False, "error": "urirun is not installed", "install": INSTALL_HINT}
-    reg = registry if registry is not None else load_registry(registry_path or default_urirun_registry())
-    if not reg:
-        return {"ok": False, "error": "no urirun registry configured"}
+    reg, error = _resolve_available_registry(registry_path, registry=registry)
+    if error:
+        return error
     try:
         v2 = importlib.import_module("urirun.v2")
         return {"ok": True, "routes": v2.list_routes(reg)}
@@ -378,12 +391,9 @@ def scan_project(
 
 def mcp_tools(registry_path: str | Path | None = None, *, registry: dict[str, Any] | None = None) -> dict[str, Any]:
     """Project a urirun registry to an MCP tools/list (via urirun.v2_mcp)."""
-    info = urirun_info()
-    if not info["available"]:
-        return {"ok": False, "available": False, "error": "urirun is not installed", "install": INSTALL_HINT}
-    reg = registry if registry is not None else load_registry(registry_path or default_urirun_registry())
-    if not reg:
-        return {"ok": False, "error": "no urirun registry configured"}
+    reg, error = _resolve_available_registry(registry_path, registry=registry)
+    if error:
+        return error
     try:
         m = importlib.import_module("urirun.v2_mcp")
         return {"ok": True, "tools": m.to_mcp_tools(reg)}
@@ -400,12 +410,9 @@ def a2a_card(
     version: str = "0.8.0",
 ) -> dict[str, Any]:
     """Project a urirun registry to an A2A agent card (via urirun.v2_mcp)."""
-    info = urirun_info()
-    if not info["available"]:
-        return {"ok": False, "available": False, "error": "urirun is not installed", "install": INSTALL_HINT}
-    reg = registry if registry is not None else load_registry(registry_path or default_urirun_registry())
-    if not reg:
-        return {"ok": False, "error": "no urirun registry configured"}
+    reg, error = _resolve_available_registry(registry_path, registry=registry)
+    if error:
+        return error
     try:
         m = importlib.import_module("urirun.v2_mcp")
         card = m.to_a2a_card(reg, name=name, url=url, version=version)

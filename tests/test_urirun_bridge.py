@@ -26,6 +26,29 @@ def test_call_without_installed_urirun(monkeypatch):
     assert "pip install" in result["install"]
 
 
+@pytest.mark.parametrize("operation", [urirun_bridge.list_routes, urirun_bridge.mcp_tools, urirun_bridge.a2a_card])
+def test_registry_operations_report_missing_urirun(monkeypatch, operation):
+    monkeypatch.setattr(urirun_bridge, "urirun_info", lambda: {"available": False})
+
+    result = operation(registry={"routes": []})
+
+    assert result == {
+        "ok": False,
+        "available": False,
+        "error": "urirun is not installed",
+        "install": urirun_bridge.INSTALL_HINT,
+    }
+
+
+@pytest.mark.parametrize("operation", [urirun_bridge.list_routes, urirun_bridge.mcp_tools, urirun_bridge.a2a_card])
+def test_registry_operations_report_missing_registry(monkeypatch, operation):
+    monkeypatch.setattr(urirun_bridge, "urirun_info", lambda: {"available": True})
+
+    result = operation(registry={})
+
+    assert result == {"ok": False, "error": "no urirun registry configured"}
+
+
 def test_parse_json_object_rejects_arrays():
     with pytest.raises(ValueError):
         urirun_bridge.parse_json_object("[]", name="payload")
