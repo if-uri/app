@@ -115,3 +115,8 @@ badge_color_thresholds = { low = 1.0, medium = 5.0, high = 10.0, critical = 50.0
 markers = [
   "e2e: browser E2E tests (Playwright)",
 ]
+
+[tool.ruff.lint]
+# CI promises dead-code/import checks. Keep that contract explicit so a new
+# Ruff release cannot silently enable unrelated rule families fleet-wide.
+select = ["E4", "E7", "E9", "F"]
