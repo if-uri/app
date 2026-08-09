@@ -8,7 +8,7 @@ from __future__ import annotations
 from unittest.mock import patch
 
 from ifuri_app.flow_engine import expand_flow
-from ifuri_app.network_scan import scan_network
+from ifuri_app.network_scan import scan_network, scan_urisys_nodes
 from ifuri_app.remote_screen import unwrap_result, screen_uri, capture_remote_screen, resolve_node_id
 from ifuri_app.urisys_client import node_voice_capabilities
 from ifuri_app.voice_pipeline import plan_voice_command, _connection_hint
@@ -65,6 +65,17 @@ def test_scan_network_structure():
     assert result["counts"]["ifuri_peers"] == 1
     assert result["counts"]["urisys_nodes"] == 1
     assert any(s["scheme"] == "mcp" for s in result["mcp_agent_services"])
+
+
+def test_scan_urisys_nodes_treats_executor_deadline_as_partial_result():
+    from concurrent.futures import TimeoutError as FuturesTimeoutError
+
+    with (
+        patch("ifuri_app.network_scan.load_workspace", return_value={}),
+        patch("ifuri_app.network_scan._local_ipv4", return_value="192.168.1.2"),
+        patch("ifuri_app.network_scan.as_completed", side_effect=FuturesTimeoutError()),
+    ):
+        assert scan_urisys_nodes(timeout=0.01) == []
 
 
 def test_node_voice_capabilities_without_voice_packs():

@@ -11,7 +11,7 @@ import os
 import socket
 import urllib.error
 import urllib.request
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError, as_completed
 from typing import Any
 
 from .discovery import discover
@@ -157,7 +157,7 @@ def scan_urisys_nodes(
                 hit = fut.result()
                 if hit:
                     found[hit["endpoint"]] = hit
-        except TimeoutError:
+        except FuturesTimeoutError:
             pass
     return list(found.values())
 
