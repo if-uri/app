@@ -9,7 +9,7 @@ PORT ?= 8766
 URISYS ?= http://192.168.188.201:8790
 VENV ?= .venv
 
-.PHONY: help install install-dev test test-api test-e2e install-e2e test-gui test-gui-docker smoke-novnc \
+.PHONY: help install install-dev doctor-setup test test-api test-e2e install-e2e test-gui test-gui-docker smoke-novnc \
 	run run-gui run-voice run-voice-bg run-tauri-dev stop health api-smoke chat-status chat-migrate \
 	voice-capabilities voice-install-packs webrtc-capabilities webrtc-install-pack webrtc-smoke \
 	urirun-info vendor-uricore-js wheel build clean
@@ -66,6 +66,9 @@ install-dev:
 		$(PYTHON) -m pip install -e ".[flows,dev,packs]"; \
 		$(PYTHON) -m pip install -e ../../tellmesh/uri2flow ../../tellmesh/uricore 2>/dev/null || true; \
 	fi
+
+doctor-setup:
+	$(PYTHON) -m pip install -e . pytest pyyaml
 
 vendor-uricore-js:
 	bash scripts/vendor-uricore-js.sh
